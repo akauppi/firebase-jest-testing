@@ -1,22 +1,22 @@
 /*
-* Extensions to Jest 'expect', _without_ outside dependencies.
+* Extensions to Jest 'expect':
 *
-* '.eventually':
+* '.eventuallyPromise':
 *   - within the remaining lifespan of the test, ensure that the condition is true at least once
 *
-* '.never':
+* '.after':
+*
+* '.neverPromise':
 *   - within the remaining lifespan of the test, ensure that the condition does not become true
 *
 * These tools are suitable for integration tests, where reactions to a change are affected by things outside of the
-* control of the existing node.js context. This means e.g. listening to changes indirectly caused in a database.
+* control of the existing 'node.js' context. This means e.g. listening to changes indirectly caused in a database,
+* by server-side functions.
 *
-* Usage:
-*   <<
-*     import '.../expect.eventually.js'
-*   <<
-*
-* Note: Without outside packages ('deasync' in particular) the calling test _MUST_ be 'async' and it _MUST_ do 'await'
-*     on the returned test.
+* Note!:
+*   Without outside packages ('deasync' in particular -> https://github.com/abbr/deasync ) the calling test _MUST_
+*   handle the promise. It looks like we cannot implement mere 'expect.eventually', unless we use the 'deasync' package
+*   that interacts with Node internal event queue, allowing other execution to continue while we wait.
 */
 import { expect, afterAll, jest } from '@jest/globals'
 
@@ -34,13 +34,23 @@ afterAll( () => {
 /*
 * An internal implementation. Could be used as:
 *   <<
-*       await expect(eventually( _ => ...condition... )).resolves.toBe();     // clumsy
+*       await expect(eventually( _ => ...condition... )).resolves.toBe();
 *   <<
+*
+* Note: Ability to be called slightly before a Jest test times out would allow us to turn timeouts into pass/fail.
+*   See 'PROBLEMS.md'.
 */
 async function eventually(cond) {   // (() => Boolean) => Promise of ()    ; resolves if 'cond' becomes true, otherwise does not
   let timer;
 
   let prom = new Promise( (resolve,reject) => {
+
+    /* HYPOTHETICAL API that would allow us to reject a test instead of it timing out.
+    jest.onTimeout( () => {
+      reject();
+    });
+    */
+
     function check() {
       if (cond()) {
         console.debug("[eventually] Condition passes:", cond);
@@ -66,14 +76,28 @@ async function eventually(cond) {   // (() => Boolean) => Promise of ()    ; res
 *       await expect.eventually( _ => ...condition... );
 *   <<
 *
-* NOTE!!! 'await' is needed. If you omit it, the test will succeed instantly (since it's not waiting for a promise).
-*     Be aware! A way to bypass that is to use the 'deasync' version.
+* NOTE!!! 'await' is needed.
 * */
-expect.eventuallyPromise = (cond) => {       // (() => Boolean) => Promise of ()  ; resolves on pass
+expect.eventually /*Promise*/ = (cond) => {       // (() => Boolean) => Promise of ()  ; resolves on pass
   const prom = eventually(cond);
 
   return expect(prom).resolves.toBe();
 }
+
+/*
+* Make sure something has happened after a delay.
+*
+* Usage:
+*   <<
+*       const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+*         ...
+*       await sleep(300).then( expect(...condition...) );
+*   <<
+*
+* Note: Above is so simple it's best to just copy-paste the code to one's tests, instead of providing library support.
+*
+* NOTE!!! 'await' is needed.
+*/
 
 /*
 * Make sure some condition does not happen, within the timeout period of the test.
@@ -91,14 +115,7 @@ expect.eventuallyPromise = (cond) => {       // (() => Boolean) => Promise of ()
 expect.neverPromise = (cond) => {       // (() => Boolean, Number) => Promise of ()  ; resolves on pass
   const prom = eventually(cond);
 
-  // Jest API: would LOVE ❤️ to get metadata about the currently executing test.
-  //jest.currentTest.timeoutMs    // e.g. 500
-
-  // ..or having an 'onTimeout' callback that could be defined within a test (i.e. here), to be called once/if the test
-  // times out. (and the return value could turn such a test into a success).
-
-  // Note: Promise is running. If the condition never happens, Jest would end the test in a timeout. We want that
-  //    to be a success.
+  // Q: Is there any way to sniff the current test's timeout value?
 
   return expect(prom).rejects.toBe();
 

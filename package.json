@@ -8,8 +8,11 @@
   },
   "type": "module",
   "scripts": {
-    "test": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _test_2'",
-    "_test_2": "npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles",
+    "test": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs -f eventual.test.js  --verbose --detectOpenHandles",
+    "test2": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs -f eventual.deasync.test.js --verbose --detectOpenHandles",
+    "---": "",
+    "ci": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _ci_2'",
+    "_ci_2": "npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles",
     "_init": "FIREBASE_JSON=./firebase.testing1.json node --harmony-top-level-await dummy/prime-docs.js",
     "---": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --config firebase.testing1.json --only functions,firestore\" \"npm run _start_2\"",
@@ -17,8 +20,7 @@
     "test:monitoring": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
     "test:callables": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f callables.test.js --detectOpenHandles",
     "test:userInfo": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f dummy/userInfo.test.js --detectOpenHandles",
-    "test:all": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles",
-    "test:eventually": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs --verbose --detectOpenHandles"
+    "test:all": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles"
   },
   "dependencies": {
     "deasync": "^0.1.20",

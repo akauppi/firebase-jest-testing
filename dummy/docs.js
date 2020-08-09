@@ -17,8 +17,6 @@ const anyPastDate = new Date();
 const docs = {
   // Project 1 - active project
   "/projects/1": {
-    title: "Jolly Jumper",
-    created: new Date('01 Jan 1880 00:00:00 GMT'),
     members: ["abc", "def"]
   },
   //"/projects/1/userInfo/{uid}": initially empty

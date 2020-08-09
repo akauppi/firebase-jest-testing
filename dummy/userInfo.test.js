@@ -4,12 +4,13 @@
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
 */
-import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
+import { test, expect, describe, beforeAll, afterAll, jest } from '@jest/globals'
 
 import { db } from './tools/db.js'
-import { bestBeforePromise } from "./tools/promiseTools.js"
 
-import './matchers/toContainObject'
+import './matchers/toContainObject.js'
+
+import '../src/expect.eventually.js'
 
 // Clear '/projects/1/userInfo/abc'
 //
@@ -25,10 +26,18 @@ beforeAll( async () => {    // takes about 456, 419 ms
     await wipe( db.collection("userInfo") );
   }
   catch(err) {
-    console.error("Initialization failed:", err);
-    throw err;    // tbd. how to NOT run tests if 'beforeAll' fails? #jest
+    console.error("Initialization failed:", err);   // not seen in wild
+    throw err;
   }
 });
+
+async function wipe(collection) {   // CollectionReference => Promise of ()
+  const qss = await collection.get();
+  const proms = qss.docs.map( qdss => {
+    return qdss.ref.delete()
+  } );
+  await Promise.all(proms);
+}
 
 /*
 * Cleanup
@@ -39,6 +48,28 @@ afterAll( async () => {
 
 describe("userInfo shadowing", () => {
 
+  // During execution of the tests, collect changes to 'projects/1/userInfo/{uid}' here:
+  //
+  const shadow = new Map();   // { <uid>: { ... } }
+
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  let unsub;
+
+  beforeAll( () => {
+    unsub = db.collection("projects/1/userInfo")
+      .onSnapshot(qss => {    // intention is enough (write to cache)
+        qss.forEach( qdss => {
+          //console.debug("Sniffed:", qdss);
+          shadow.set( qdss.id, qdss.data() );
+        })
+      });
+  });
+
+  afterAll( () => {
+    unsub();
+  });
+
   // Note: We don't declare 'async done => ...' for Jest. That is an oxymoron: only either 'done' or the end of an
   //    async/await body would resolve a test but not both.
   //
@@ -48,67 +79,22 @@ describe("userInfo shadowing", () => {
       photoURL: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Dalton_Bill-edit.png"
     };
 
-    const exProm = bestBeforePromise({ timeoutMs: 2000 });    // { promise: Promise, resolve: () => (), reject: () => () }
-
-    // Prepare a watch
-    //
-    const unsub = db.collection("projects/1/userInfo").doc("abc")
-      .onSnapshot(dss => {    // enough to see the intention (write to cache)
-        const o = dss.data();
-        //console.debug("Noticed: ", o);   // DEBUG
-
-        if (o) {   // 'undefined' on first call (initially no doc)
-          expect(o).toContainObject(william);
-          exProm.resolve();   // stop the wait
-        }
-      });
-
-    // Write in central -> should cause Cloud Functions to update the above (but not immediately)
+    // Write in 'userInfo' -> causes Cloud Function to update 'projectC/{project-id}/userInfo/{uid}' -> mock gets called
     //
     await db.collection("userInfo").doc("abc").set(william);
 
-    try {
-      await exProm;   // resolved by the database change or rejected by timeout
-    }
-    finally {
-      unsub();    // tbd. is this the best place? (does it always get called?)
-    }
+    await expect.eventually( _ => shadow.has("abc") );
+
+    expect( shadow.get("abc") ).toContainObject(william);
   });
 
   test('Central user information is not distributed to a project where the user is not a member', async () => {
-    const exProm = bestBeforePromise({ timeoutMs: 200, onTimeout: () => true });
 
-    // Prepare a watch (should NOT get called!)
-    //
-    const unsub = db.collection("projects/1/userInfo").doc("xyz")
-      .onSnapshot(dss => {    // enough to see the intention (write to cache)
-        const o = dss.data();
-        if (o) {  // 'undefined'|obj
-          console.debug("Not expecting visitors...", o);   // DEBUG
-          exProm.resolve(false);    // shouldn't have reached here; cuts the wait
-        }
-      });
-
-    // Write in central -> should NOT cause the above to happen
+    // Write in central -> should NOT turn up
     //
     await db.collection("userInfo").doc("xyz").set({ name: "blah", photoURL: "https://no-such.png" });
 
-    // Resolves to true|false
-    expect(await exProm).toBe(true);
-    unsub();
-  });
+    await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );    // should pass
+
+  }, 500 /*ms*/ );
 });
-
-// tbd. move to 'tools/'
-/*
-* Delete all (prior) documents from a collection.
-*/
-async function wipe(collection) {   // CollectionReference => Promise of ()
-
-  const qss = await collection.get();
-  const proms = qss.docs.map( qdss => {
-    //console.debug("Deleting:", collection.id +"/"+ qdss.id);
-    return qdss.ref.delete()
-  } );
-  await Promise.all(proms);
-}

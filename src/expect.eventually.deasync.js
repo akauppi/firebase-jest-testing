@@ -1,106 +1,91 @@
 /*
-* Extensions to Jest 'expect':
+* EXPERIMENTAL
 *
-* '.eventually':
-*   - within the remaining lifespan of the test, ensure that the condition is true at least once
+* 'expect.eventually' so that we wouldn't need a Promise API.
 *
-* '.never':
-*   - within the remaining lifespan of the test, ensure that the condition does not become true
+* Why?
+*   - may look more natural as simply 'expect.eventually( _ => ...condition... )' ?
 *
-* These tools are suitable for integration tests, where reactions to a change are affected by things outside of the
-* control of the existing node.js context. This means e.g. listening to changes indirectly caused in a database.
-*
-* Usage:
-*   <<
-*     import '.../expect.eventually.js'
-*   <<
-*
-* The ideology of Cypress testing framework has influenced the idea to make this. -> https://docs.cypress.io
+* Need feedback, whether this is preferred over 'await expect.eventually(...)'.
 */
 import { expect, afterAll } from '@jest/globals'
 
-import { spawnSync } from 'child_process'
-
 const timeSliceMs = 100;
 
-// We cannot know when Jest has timed out on a certain test. To avoid warnings (of open handles, but also of e.g. trying
-// to log when everything's done), clear the timeouts once we hear tests are over.
-//
-const cleanup = new Set();    // map of timers still ticking
+import deasync from 'deasync'
 
+/** disabled. Uncertain if this is needed or not.
+/*
+* Delay the overall Jest exit a bit.
+*
+* Without this, tests sometime pass but often there's this:
+*   <<
+*     Assertion failed: (handle->type == UV_TCP || handle->type == UV_TTY || handle->type == UV_NAMED_PIPE), function uv___stream_fd, file ../deps/uv/src/unix/stream.c, line 1622.
+*   <<
+*_/
 afterAll( () => {
-  cleanup.forEach( h => clearTimeout(h) );
+
+  //deasync.sleep(0);
 });
-
-async function eventually(cond) {   // (() => Boolean) => Promise of ()    ; resolves if 'cond' becomes true, otherwise does not
-  let timer;
-
-  let prom = new Promise( (resolve,reject) => {
-    function check() {
-      if (cond()) {
-        console.debug("[eventually] Condition passes:", cond);
-        resolve();
-        cleanup.delete(timer);
-      } else {
-        //console.debug("[eventually] Waiting..");
-        timer = setTimeout(check, timeSliceMs);   // try again
-        cleanup.add(timer);
-      }
-    }
-    check();    // immediate first try, then tik-tok
-  });
-
-  await prom;
-}
-
-/*** REMOVE
-function sleepSync(ms) {
-  const sleep = spawnSync('sleep', [ms/1000]);
-}
-***/
+*/
 
 /*
-* Make 'expect.eventually' as a _synchronous_ element. Waits until the (internal) promise resolves.
+* Pass if 'cond()' becomes true, at some point within the test's timeout period.
 *
-* Moving between async approach to a non-async outer layer is *not* normal. We use the 'deasync' package for this
-* (read its use case -> https://www.npmjs.com/package/deasync) and did consider sleep, generators etc. first.
-*
-* We *could* provide a Promise to the test. This leads to either of these syntaxes:
-*
-*   <<
-*       await expect(eventually( _ => a !== undefined )).resolves.toBe();    // works!
-*   <<
-*
-*   <<
-*       await expect.eventually( _ => a !== undefined );
-*   <<
-*
-* Both of them require the test writer to use 'await' (or to remember to return the Promise). By using 'deasync' we
-* get away from this, into:
-*
-*   <<
-*       expect.eventually( _ => a !== undefined );
-*   <<
-* */
-expect.eventuallyPromise = (cond) => {       // (() => Boolean) => Promise of ()  ; resolves on pass
-  const prom = eventually(cond);
+* NOTE: This code GETS STUCK on timeout, without the '.onTimeout' hook from Jest. DO NOT USE!!!
+*/
+expect.eventually = (cond) => {       // (() => Boolean) => ()  ; returns on pass
+  let counter= 0;
+  let timedOut = false;
 
-  return expect(prom).resolves.toBe();
+  /* HYPOTHETICAL. Jest (26.2) does not have '.onTimeout'
+  jest.onTimeout( () => {
+    timedOut = true;
+  });
+  */
+
+  // Note: The '.loopWhile' only checks with us occasionally, in our tests 5 times within 500ms. This means it should
+  //    not consume CPU a lot.
+  //
+  deasync.loopWhile(_ => {
+    ++counter;
+    return (!timedOut) && (!cond());
+  });    // lets node.js event queue run on each loop
+
+  //console.debug("Finished with loops: ", counter);    // 5
+
+  if (timedOut) {
+    throw new Error("Timed out");
+  }
+
+  // tbd. Is there any benefit of making a dummy 'expect'?
+  //expect(true).toBeTruthy();
 }
 
-expect.eventually = (cond) => {       // (() => Boolean) => ()    ; returns on pass
-  const prom = eventually(cond);
+/*
+* Pass if 'cond()' remains false, throughout the the test's timeout period (measured in samples).
+*/
+expect.never = (cond) => {       // (() => Boolean) => ()  ; returns on pass
+  let counter= 0;
+  let timedOut = false;
 
-  throw new Error("not implemented");
-  //return expect(prom).resolves.toBe();
-}
+  /* HYPOTHETICAL
+  jest.onTimeout( () => {
+    timedOut = true;
+  });
+  */
 
-function never(cond) {   // (() => Boolean) => ()   ; returns only if failing
+  deasync.loopWhile(_ => {
+    ++counter;
+    return (!timedOut) && cond();
+  });    // lets node.js event queue run on each loop
 
-  throw new Error("not implemented");
-}
+  //console.debug("Finished with loops: ", counter);    // 5
 
-export {
-  eventually,
-  never
+  if (!timedOut) {
+    throw new Error("Condition happened before timeout");
+  }
+
+  // tbd. Is there any benefit of making a dummy 'expect'?
+  //expect(true).toBeTruthy();
 }
