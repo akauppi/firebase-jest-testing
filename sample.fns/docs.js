@@ -1,5 +1,5 @@
 /*
-* dummy/docs.js
+* sample.fns/docs.js
 *
 * Initial data used for the functions test cases
 */

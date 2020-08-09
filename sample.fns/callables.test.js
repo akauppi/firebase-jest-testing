@@ -1,5 +1,5 @@
 /*
-* dummy/callables.test.js
+* sample.fns/callables.test.js
 */
 import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
 

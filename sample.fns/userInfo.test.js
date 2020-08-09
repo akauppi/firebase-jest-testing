@@ -1,5 +1,5 @@
 /*
-* dummy/userInfo.test.js
+* sample.fns/userInfo.test.js
 *
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
@@ -10,7 +10,7 @@ import { db } from './tools/db.js'
 
 import './matchers/toContainObject.js'
 
-import '../src/expect.eventually.js'
+import { eventually } from '../src/eventually.js'
 
 // Clear '/projects/1/userInfo/abc'
 //
@@ -83,9 +83,7 @@ describe("userInfo shadowing", () => {
     //
     await db.collection("userInfo").doc("abc").set(william);
 
-    await expect.eventually( _ => shadow.has("abc") );
-
-    expect( shadow.get("abc") ).toContainObject(william);
+    await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
   });
 
   test('Central user information is not distributed to a project where the user is not a member', async () => {

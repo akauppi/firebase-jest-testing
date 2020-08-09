@@ -1,5 +1,5 @@
 /*
-* dummy/monitoring.test.js
+* sample.fns/monitoring.test.js
 *
 * Test the central monitoring functions (logs etc.)
 */
