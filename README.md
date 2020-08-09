@@ -1,50 +1,9 @@
-# Developer notes
+# firebase-jest-testing
 
-For contributors.
-
-
-## Requirements
-
-- npm
-- `firebase` CLI:
-   
-   `$ npm install -g firebase-tools`
-- Have a Firebase project set up
-
-Tie to the Firebase project:
-
-```
-firebase use --add
-```
-
->Note: We need the Firebase project, even when all we do is run a local emulation.
-
-<!-- Q: is this strictly necessary?
-Set up the Firestore emulator:
-
-```
-$ firebase setup:emulators:firestore
-```
--->
-
-## Running the tests
-
-Let's first test the tools work on your system:
-
-```
-$ npm test
-```
-
->Note: Some of the tests are skipped, because their correct outcome is a time-out and we can only test that manually by enabling them and letting them fail.
-
-`expect.never` tests are skipped, because we cannot implement it in the way we'd like. 
-
----
-
-Though the current behaviour of `expect.eventually` and `expect.never` is meager, we did get enough tools to make the necessary Cloud Functions tests happen.
+Tools for testing Firebase Cloud Functions and Security Rules, using Jest.
 
 
-## Firebase Testability design
+## Philosophy
 
 Firebase provides some npm modules to help with testing:
 
@@ -66,10 +25,54 @@ For testing Cloud Functions, we use integration testing and normal JavaScript cl
 
 As a testing framework, we use Jest, and have explored possibilities of extending its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks (Cypress and Jest).
 
-Now, let's proceed to our samples.
+Let's get started.
 
 
-## Sample 1: Testing Cloud Functions
+## Requirements
+
+- npm
+- `firebase` CLI:
+   
+   `$ npm install -g firebase-tools`
+- Have a Firebase project set up
+
+Tie to the Firebase project:
+
+```
+$ firebase use --add --config firebase.testing1.json
+```
+
+The alias you choose does not matter.
+
+>Note: Firebase needs the project, even when all we do is run a local emulation.
+
+<!-- Q: is this strictly necessary?
+Set up the Firestore emulator:
+
+```
+$ firebase setup:emulators:firestore
+```
+-->
+
+
+## Getting started
+
+Fetch dependencies:
+
+```
+$ npm install
+```
+
+You'll need to do this separately also for the functions emulated:
+
+```
+$ (cd functions && npm install)
+```
+
+After this, you're ready to start the emulation and run tests against it.
+
+
+## Testing Cloud Functions
 
 There are two ways to run these tests, each with their own pros and cons. We'll start with the one where a server is manually started.
 
@@ -118,6 +121,19 @@ $ npm run ci
 ## Using in your project
 
 <font color=red>...tbd. about how to pull in...</font>
+
+
+## Developer notes
+
+The structure is made to resemble that of your Firebase project, so that it would feel normal to test the tools out.
+
+- `functions/`: This is where your Cloud Function sources live. Demanded by Firebase to have this name.
+- `test.fns/`: Tests for your cloud functions. Choose a suitable name.
+- `src/`: Tool sources. Don't copy to your project but take the files via `npm`.
+
+Some files:
+
+- `firebase.testing1.json`: The Firebase configuration file.
 
 
 <!--
