@@ -1,0 +1,15 @@
+{
+  "firestore": {
+    "//rules": "no rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": "6768"
+    }
+  },
+  "//": {
+    "": [
+      "For testing Cloud Functions (we allow unlimited access)"
+    ]
+  }
+}

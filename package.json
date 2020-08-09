@@ -1,0 +1,56 @@
+{
+  "name": "@akauppi/firebase-jest-testing",
+  "version": "0.0.0",
+  "description": "Tools for testing Firebase Cloud Functions with Jest",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akauppi/firebase-jest-testing.git"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _test_2'",
+    "_test_2": "npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles",
+    "_init": "FIREBASE_JSON=./firebase.testing1.json node --harmony-top-level-await dummy/prime-docs.js",
+    "---": "",
+    "start": "concurrently -n emul,init \"firebase emulators:start --config firebase.testing1.json --only functions,firestore\" \"npm run _start_2\"",
+    "_start_2": "wait-on http://localhost:4000 && npm run _init",
+    "test:monitoring": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
+    "test:callables": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f callables.test.js --detectOpenHandles",
+    "test:userInfo": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs -f dummy/userInfo.test.js --detectOpenHandles",
+    "test:all": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config dummy/jest.config.cjs --verbose --detectOpenHandles",
+    "test:eventually": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs --verbose --detectOpenHandles"
+  },
+  "dependencies": {
+    "deasync": "^0.1.20",
+    "firebase": "^7.17.1"
+  },
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "jest": "^26.2.2",
+    "wait-on": "^5.1.0"
+  },
+  "engines": {
+    "node": ">=14.3"
+  },
+  "//": {
+    "--experimental-vm-modules": [
+      "Needed for now (Aug 2020), to use native ES6 modules with Jest"
+    ],
+    "--detectOpenHandles speeds up tests": [
+      "This is weird, but consistent. If we keep it in 'npm test', the test execution is ~2x faster (as reported, per test).",
+      "Doing this, since it means our timeouts can be smaller."
+    ],
+    "engines.node": [
+      ">=14.3: has --harmony-top-level-await",
+      ">=13.2: native ES module support"
+    ],
+    "scripts": {
+      "start": [
+        "Must use 'firebase emulators:start' so that the Emulators UI shows the data. This causes 'concurrently'",
+        "and 'wait-on' to be needed, as dependencies.",
+        "",
+        "Update: Since 'firebase-tools' 8.7.0, the '--ui' parameter is there, but we're already used to this."
+      ]
+    }
+  }
+}
