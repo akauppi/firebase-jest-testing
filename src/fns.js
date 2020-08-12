@@ -31,15 +31,16 @@ const FUNCTIONS_URL = "http://localhost:5001";    // not available in any Fireba
 
 /*
 * Initialize access to Firestore and provide a handle.
+*
+* Note: By providing a name, we are independent of other apps created (such as for Cloud Firestore testing).
 */
 const app = firebase.initializeApp({
   projectId,
   auth: null    // unauth is enough
-});
+}, "fns-testing");
 
-firebase.functions().useFunctionsEmulator(FUNCTIONS_URL);   // must be *after* '.initializeApp'
-
-const fns = firebase.app().functions(/*"europe-west3"*/);
+const fns = app.functions(/*"europe-west3"*/);
+fns.useFunctionsEmulator(FUNCTIONS_URL);
 
 export {
   fns

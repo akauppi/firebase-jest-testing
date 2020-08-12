@@ -131,7 +131,7 @@ exports.userInfoShadow = regionalFunctions.firestore
         .select()   // don't ship the fields, just matching ref
         .get();
 
-      if (qss.size == 0) {
+      if (qss.size === 0) {
         console.debug(`User '${uid}' not found in any of the projects.`);
 
       } else {

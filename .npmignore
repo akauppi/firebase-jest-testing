@@ -1,0 +1,16 @@
+#
+# .npmignore
+#
+/graves
+/sample.*
+/test
+
+# Note: README, LICENSE, CHANGELOG are anyways included, as per:
+#       -> http://npm.github.io/publishing-pkgs-docs/publishing/the-npmignore-file.html
+*.md
+
+firebase.*.json
+*.log
+
+# temp
+/rules-test

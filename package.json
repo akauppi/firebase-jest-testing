@@ -1,32 +1,55 @@
 {
-  "name": "@akauppi/firebase-jest-testing",
-  "version": "0.0.0",
-  "description": "Tools for testing Firebase Cloud Functions with Jest",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/akauppi/firebase-jest-testing.git"
+  "name": "firebase-jest-testing",
+  "version": "0.0.1-alpha.1",
+  "publishConfig": {
+    "tag": "alpha"
   },
+  "description": "Tools for testing Firebase back-end features, using Jest.",
+  "license": "MIT",
+  "repository": "github:akauppi/firebase-jest-testing",
   "type": "module",
+  "main": "index.js",
+  "keywords": [
+    "firebase",
+    "jest"
+  ],
+  "bugs": {
+    "url": "https://github.com/akauppi/firebase-jest-testing/issues"
+  },
+  "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
+  "directories": {
+    "lib": "src"
+  },
+  "files": [
+    "src/**"
+  ],
   "scripts": {
-    "test": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs -f eventual.test.js  --verbose --detectOpenHandles",
-    "test2": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs -f eventual.deasync.test.js --verbose --detectOpenHandles",
+    "test": "npm run ci",
     "---": "",
-    "ci": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _ci_2'",
-    "_ci_2": "npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
-    "_init": "FIREBASE_JSON=./firebase.testing1.json node --harmony-top-level-await sample.fns/prime-docs.js",
-    "---": "",
+    "ci": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _ci_main && npm run _ci_fns'",
+    "ci:main": "firebase emulators:exec --config firebase.testing1.json --only firestore,functions 'npm run _init && npm run _ci_main'",
+    "_ci_main": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs --verbose --detectOpenHandles",
+    "_ci_fns": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
+    "_init": "FIREBASE_JSON=./firebase.testing1.json node --harmony-top-level-await sample/prime-docs.js",
+    "--- ": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --config firebase.testing1.json --only functions,firestore\" \"npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && npm run _init",
-    "test:monitoring": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
-    "test:callables": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
-    "test:userInfo": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f sample.fns/userInfo.test.js --detectOpenHandles",
-    "test:all": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles"
+    "test:sample.fns:monitoring": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
+    "test:sample.fns:callables": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
+    "test:sample.fns:userInfo": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f sample.fns/userInfo.test.js --detectOpenHandles",
+    "test:sample.fns:all": "FIREBASE_JSON=./firebase.testing1.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
+    "---  ": "",
+    "_test:eventual": "npx --node-arg=--experimental-vm-modules jest --config test/jest.config.cjs -f eventual.test.js  --verbose --detectOpenHandles"
+  },
+  "peerDependencies": {
+    "firebase": ">= 7.17.1 < 8"
   },
   "dependencies": {
-    "firebase": "^7.17.1"
+    "@firebase/testing": "^0.20.10"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
+    "firebase": "^7.17.2",
     "jest": "^26.2.2",
     "wait-on": "^5.1.0"
   },
@@ -45,6 +68,13 @@
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
     ],
+    "peerDependencies": [
+      "Force the downstream project to explicitly depend on 'firebase'. It would be wrong that we bring all that in.",
+      "However, use of '@firebase/testing' is seen as an implementation detail they should not worry about."
+    ],
+    "devDependencies": {
+      "jest": "It's a development dependency. The published code is not Jest specific; only our samples are."
+    },
     "scripts": {
       "start": [
         "Must use 'firebase emulators:start' so that the Emulators UI shows the data. This causes 'concurrently'",

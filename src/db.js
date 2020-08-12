@@ -54,13 +54,15 @@ const FIRESTORE_HOST = process.env["FIRESTORE_EMULATOR_HOST"] || (() => {
 
 /*
 * Initialize access to Firestore and provide a handle.
+*
+* Note: By providing a name, we are independent of other apps created (such as for functions testing).
 */
 const app = firebase.initializeApp({
   projectId,
   auth: null    // unauth is enough
-});
+}, "db-testing");
 
-const db = firebase.firestore();
+const db = app.firestore();
 db.settings({         // affects all subsequent use (and can be done only once)
   host: FIRESTORE_HOST,
   ssl: false

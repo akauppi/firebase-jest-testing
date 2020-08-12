@@ -6,8 +6,14 @@ This repo provides a "one stop", opinionated approach to testing Firebase projec
 
 Also, the tools handle configuring emulation for you. In all, we're trying to give a simpler development experience than the current (Aug 2020) Firebase tooling by itself.
 
-More about the [DESIGN](DESIGN.md).
+More about
 
+- the [DESIGN](DESIGN.md)
+
+<!-- tbd.
+- [writing Cloud Functions tests](...)
+- [writing Security Rules tests](...)
+-->
 
 ## Requirements
 
@@ -93,15 +99,26 @@ This command starts the emulator in the background, for the duration of running 
 ```
 $ npm run ci
 ...
+Test Suites: 3 passed, 3 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        6.56 s
+Ran all test suites.
+✔  Script exited successfully (code 0)
+i  emulators: Shutting down emulators.
+i  hub: Stopping emulator hub
+i  functions: Stopping Functions Emulator
+i  firestore: Stopping Firestore Emulator
 ```
-
-<_!-- tbd. output above --_>
--->
 
 
 ## Using in your project
 
 <font color=red>...tbd. about how to pull in...</font>
+
+- tbd. setting up
+- tbd. Writing Cloud Functions tests
+- tbd. Writing Security Rules tests
 
 
 <!--
@@ -118,9 +135,7 @@ Some files:
 - `firebase.testing1.json`: The Firebase configuration file.
 -->
 
-<!--
 ## References
 
-- Cloud Functions > [Get Started](https://firebase.google.com/docs/functions/get-started) (Firebase docs)
--->
+- [ES modules in Node today](https://blog.logrocket.com/es-modules-in-node-today/) (blog, Mar 2020)
 
