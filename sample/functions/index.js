@@ -75,29 +75,6 @@ exports.greet = regionalFunctions.https
   });
 
 
-/*** not used
-// Mirrors changes to '/temp/some.in' (string) in '/temp/other.out' (string).
-//
-exports.mirror = regionalFunctions.firestore
-  .document('/temp/some')
-  .onWrite( async (event, context) => {
-
-    const [before,after] = [event.before, event.after];   // [QueryDocumentSnapshot, QueryDocumentSnapshot]
-
-    if (after.get("in") != before.get("in")) {
-      const v = after.get("in");
-
-      // Write to 'other.out'
-      //
-      // Note: For writing to the same document, 'after.ref.set(...)' would also work.
-      //
-      await admin.firestore().doc("/temp/other").set({ out: v });
-
-      console.debug("/temp/some{in} -> /temp/other{out}:", v);
-    }
-  })
-***/
-
 // UserInfo shadowing
 //
 // Track changes to global 'userInfo' table, and update projects where the changed user is participating with their

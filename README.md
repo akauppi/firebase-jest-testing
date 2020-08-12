@@ -4,16 +4,13 @@ Tools for testing Firebase back-end features, using Jest.
 
 This repo provides a "one stop", opinionated approach to testing Firebase projects. Using it may save you from reading countless pages of documentation and evaluating different testing strategies and libraries.
 
-Also, the tools handle configuring emulation for you. In all, we're trying to give a simpler development experience than the current (Aug 2020) Firebase tooling by itself.
+Also, the tools handle configuring emulation for you. In all, this tries to give a simpler development experience than the current (Aug 2020) Firebase tooling does.
 
 More about
 
 - the [DESIGN](DESIGN.md)
+- [Writing tests](Writing%20tests.md) (your TL;DR destination ✈️)
 
-<!-- tbd.
-- [writing Cloud Functions tests](...)
-- [writing Security Rules tests](...)
--->
 
 ## Requirements
 
@@ -50,16 +47,16 @@ Fetch dependencies:
 $ npm install
 ```
 
-You'll need to do this separately also for the functions emulated:
+You'll need to do this also for the functions emulated:
 
 ```
-$ (cd functions && npm install)
+$ (cd sample/functions && npm install)
 ```
 
 After this, you're ready to start the emulation and run tests against it.
 
 
-## Testing Cloud Functions
+## Two ways ahead
 
 There are two ways to run these tests, each with their own pros and cons. We'll start with the one where a server is manually started.
 
@@ -80,11 +77,10 @@ Once we run tests, it's worth checking the emulator output, occasionally.
 In another terminal:
 
 ```
-$ npm run test:monitoring
-$ npm run test:callables
-$ npm run test:userInfo
+$ npm run test:fns:monitoring
+$ npm run test:fns:callables
+$ npm run test:fns:userInfo
 ...
-$ npm run test:all
 ```
 
 These are prepared for you in `package.json`. When developing functions, it's meaningful to run only one suit, at a time.
@@ -114,26 +110,14 @@ i  firestore: Stopping Firestore Emulator
 
 ## Using in your project
 
-<font color=red>...tbd. about how to pull in...</font>
+```
+$ npm install --save-dev firebase-jest-testing@alpha
+```
 
-- tbd. setting up
-- tbd. Writing Cloud Functions tests
-- tbd. Writing Security Rules tests
+See [Writing tests](Writing%20tests.md) for what then.
 
+>Note: Though Jest is in the name, it's not currently (Aug 2020) a dependency. You can use the tools with other test frameworks as well (though they might provide tools like `eventually` built-in, i.e. Cypress is built on that concept).
 
-<!--
-## Developer notes
-
-The structure is made to resemble that of your Firebase project, so that it would feel normal to test the tools out.
-
-- `functions/`: This is where your Cloud Function sources live. Demanded by Firebase to have this name.
-- `test.fns/`: Tests for your cloud functions. Choose a suitable name.
-- `src/`: Tool sources. Don't copy to your project but take the files via `npm`.
-
-Some files:
-
-- `firebase.testing1.json`: The Firebase configuration file.
--->
 
 ## References
 

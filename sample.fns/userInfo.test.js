@@ -10,7 +10,7 @@ import { db } from './tools/db.js'
 
 import './matchers/toContainObject.js'
 
-import { eventually } from '../src/eventually.js'
+import { eventually } from './tools/eventually.js'
 
 // Clear '/projects/1/userInfo/abc'
 //

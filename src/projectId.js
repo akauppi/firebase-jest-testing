@@ -6,9 +6,17 @@
 import { strict as assert } from 'assert'
 import fs from 'fs'
 
+// Firebase (8.7.0) requires 'firebase.json' and '.firebaserc' to exist in the same directory. Thus, we make
+// 'FIREBASE_JSON' steer also the detection of '.firebaserc' (this is really fishy).
+//
+const fn = process.env["FIREBASE_JSON"] && (() => {
+    const tmp = process.env["FIREBASE_JSON"].replace(/[^/]+$/, '.firebaserc');
+    return tmp;
+  })() || '.firebaserc';
+
 const projectId = (() => {
   const o = JSON.parse(
-    fs.readFileSync('./.firebaserc', 'utf8')
+    fs.readFileSync(fn, 'utf8')
   );
   const vs = Object.values(o["projects"]);
   assert(vs.length === 1);
