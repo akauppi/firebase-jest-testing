@@ -7,6 +7,8 @@ import { dbAuth } from '../src/firestoreTesting/readOnly.js';
 //import { FieldValue } from 'firebase-jest-testing/firestoreTesting';
 import { FieldValue } from '../src/firestoreTesting/index.js';
 
+import { describe, expect, beforeAll } from '@jest/globals'
+
 const anyDate = new Date();   // a non-server date
 
 describe("'/visited' rules", () => {

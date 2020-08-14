@@ -47,11 +47,12 @@
     "test:rest:all": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",
     "start:rules": "firebase emulators:start --config sample/firebase.json --only firestore",
-    "projects": "",
-    "symbols": "",
-    "//test:rules:userInfo":  "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles",
-    "test:rules:visited":     "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles",
-    "//test:rules:all":       "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.fns/jest.config.js --verbose --detectOpenHandles"
+    "test:rules:invites":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles",
+    "test:rules:projects":  "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles",
+    "test:rules:symbols":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles",
+    "test:rules:userInfo":  "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles",
+    "test:rules:visited":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles",
+    "test:rules:all":       "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js --verbose --detectOpenHandles"
   },
   "peerDependencies": {
     "firebase": ">= 7.17.1 < 8",
