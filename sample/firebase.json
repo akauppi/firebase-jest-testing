@@ -1,6 +1,6 @@
 {
   "firestore": {
-    "//rules": "no rules"
+    "rules": "firestore.rules"
   },
   "emulators": {
     "firestore": {
@@ -9,7 +9,7 @@
   },
   "//": {
     "": [
-      "For testing Cloud Functions (we allow unlimited access)"
+      "The normal Firebase config. Used for deployments and testing of Security Rules (with '@firebase/testing' client)"
     ]
   }
 }

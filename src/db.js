@@ -3,6 +3,9 @@
 *
 * Provide access to an emulator-facing Firebase client for Firestore.
 *
+* NOTE: The client is the NORMAL JavaScript client (not '@firebase/testing'). This client can be used in concert with
+*     Cloud Functions.
+*
 * Sniffs the Firestore emulator port from:
 *   1. 'FIRESTORE_EMULATOR_HOST' env.var. ('firebase emulator:exec' sets this)
 *   2. 'FIREBASE_JSON' file
@@ -18,13 +21,15 @@ import { strict as assert } from 'assert'
 // Note: Importing JSON is still experimental (behind '--experimental-json-modules').
 import fs from 'fs'
 
+// tbd. test whether the right way to load would work (this was with Firebase 7.17.x):
 // This gives:
 // <<
 //    Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '.../node_modules/firebase/app' is not supported resolving ES modules imported from ...
 // <<
 //import * as firebase from 'firebase/app'
 //import "firebase/firestore"
-
+//
+// Work-around:
 import firebase from 'firebase/app/dist/index.cjs.js'
 import "firebase/firestore/dist/index.cjs.js"
 

@@ -1,4 +1,8 @@
 /*
+* src/jest/eventually.js
+*
+ */
+/*
 * A promise for polling a certain condition. Resolves (with the value of the condition) if the condition becomes
 * other than 'undefined'.
 *
@@ -6,6 +10,8 @@
 * existing 'node.js' context. This means e.g. listening to changes indirectly caused in a database, by server-side
 * functions.
 */
+import { afterAll } from '@jest/globals'
+
 const timeSliceMs = 100;
 
 // To avoid warnings (of open handles, but also of e.g. trying to log when everything's done), clear the timeouts once

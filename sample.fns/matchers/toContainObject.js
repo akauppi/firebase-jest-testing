@@ -3,6 +3,13 @@
 *
 * From -> https://medium.com/@andrei.pfeiffer/jest-matching-objects-in-array-50fe2f4d6b98
 *   (but against a single object, not array)
+*
+* Usage:
+*   <<
+*     const state = { type: 'START', data: 'foo' }
+*     expect(state).toContainObject({ type: 'START' })
+*     expect(state).not.toContainObject({ data: 'bar' })
+*   <<
 */
 expect.extend({
   toContainObject(received, argument) {
@@ -25,13 +32,3 @@ expect.extend({
     }
   }
 })
-
-/*** disabled (self check)
- * : note: if you enable these don't use 'expect' or 'assert'. It messes the assert count for tests.
-const state = { type: 'START', data: 'foo' }
-
-expect(state).toContainObject({ type: 'START' })
-expect(state).toContainObject({ data: 'foo' })
-expect(state).not.toContainObject({ type: 'NONE' })
-expect(state).not.toContainObject({ data: 'bar' })
-***/

@@ -1,9 +1,9 @@
 /*
-* src/prime.js
+* src/prime/index.js
 *
 * Write data to the emulated Firestore.
 */
-import { db } from './db.js'
+import { db } from '../db.js'   // normal client
 
 /*
 * Prime a database with data

@@ -6,11 +6,11 @@
 */
 import { test, expect, describe, beforeAll, afterAll, jest } from '@jest/globals'
 
-import { db } from './tools/db.js'
+import { db } from '../src/db.js'
 
 import './matchers/toContainObject.js'
 
-import { eventually } from './tools/eventually.js'
+import { eventually } from 'firebase-jest-testing@alpha/eventually'
 
 // Clear '/projects/1/userInfo/abc'
 //

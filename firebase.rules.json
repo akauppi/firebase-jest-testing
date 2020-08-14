@@ -1,0 +1,15 @@
+{
+  "firestore": {
+    "rules": "sample.rules/firestore.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": "6767"
+    }
+  },
+  "//": {
+    "": [
+      "For testing Security Rules"
+    ]
+  }
+}

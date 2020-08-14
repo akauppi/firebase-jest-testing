@@ -78,4 +78,17 @@ We enable this approach, by making a layer above the Cloud Firestore access func
 ```
 ```
 
+### WARNING: Use of dates in `data.js`
+
+Firebase clients can take JavaScript `Date` objects and convert them to its `Timestamp` automatically.
+
+HOWEVER, `Date.now()` and `Date.parse` do <u>not</u> produce Date objects but Unix epoch numbers, so be warned.
+
+||Use|<font color=red>Don't use!</font>|
+|---|---|---|
+|Current time|`new Date()`|<strike>`Date.now()`</strike>|
+|Specific time|`new Date('27 Mar 2020 14:17:00 EET')`|<strike>`Date.parse('27 Mar 2020 14:17:00 EET')`</strike>|
+
+*Note: One could detect these automatically by applying the access rules also to the admin setup. That would catch the discrepancies when priming data.*
+
 

@@ -116,7 +116,8 @@ $ npm install --save-dev firebase-jest-testing@alpha
 
 See [Writing tests](Writing%20tests.md) for what then.
 
->Note: Though Jest is in the name, it's not currently (Aug 2020) a dependency. You can use the tools with other test frameworks as well (though they might provide tools like `eventually` built-in, i.e. Cypress is built on that concept).
+>Note: Though Jest is in the name, you *can* use the `db` and `fns` tools in any testing framework.
+>`eventually` is Jest specific, only because the framework lacks that feature (maybe we should split the node module to two, separate ones - but not yet).
 
 
 ## References
