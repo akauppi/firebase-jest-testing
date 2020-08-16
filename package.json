@@ -21,7 +21,6 @@
   ],
   "exports": {
     ".": "src/index.js",
-    "//./firestoreTesting": "./src/firestoreTesting/index.js",
     "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js",
     "./firestoreTestingReadOnly": "./src/firestoreTesting/readOnly.js",
     "./jest": "./src/jest/index.js",
@@ -33,26 +32,26 @@
     "ci": "concurrently -n rules,rest \"npm run ci:rules\" \"npm run ci:rest\"",
     "---": "",
     "ci:rest": "firebase emulators:exec --config sample/firebase.norules.json --only firestore,functions 'npm run _ci_init && npm run _ci_fns'",
-    "_ci_fns": "FIREBASE_JSON=sample/firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
+    "_ci_fns": "FIREBASE_JSON=sample/firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "_ci_init": "FIREBASE_JSON=sample/firebase.norules.json node --harmony-top-level-await sample/prime-docs.js",
     "--- ": "",
     "ci:rules": "firebase emulators:exec --config sample/firebase.json --only firestore 'npm run _ci_rules'",
-    "_ci_rules": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.rules/jest.config.mjs --verbose --detectOpenHandles",
+    "_ci_rules": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample/test-rules/jest.config.mjs --verbose --detectOpenHandles",
     "---  ": "",
-    "start:rest": "concurrently -n emul,init \"firebase emulators:start --config sample/firebase.json --only functions,firestore\" \"npm run _start_rest_2\"",
+    "start:rest": "concurrently -n emul,init \"firebase emulators:start --config sample/firebase.norules.json --only functions,firestore\" \"npm run _start_rest_2\"",
     "_start_rest_2": "wait-on http://localhost:4000 && FIREBASE_JSON=sample/firebase.norules.json node --harmony-top-level-await sample/prime-docs.js",
-    "test:monitoring": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
-    "test:callables": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
-    "test:userInfo": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs -f sample.fns/userInfo.test.js --detectOpenHandles",
-    "test:rest:all": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample.fns/jest.config.cjs --verbose --detectOpenHandles",
+    "test:monitoring": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
+    "test:callables": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
+    "test:userInfo": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
+    "test:rest:all": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",
     "start:rules": "firebase emulators:start --config sample/firebase.json --only firestore",
-    "test:rules:invites":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles",
-    "test:rules:projects":  "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles",
-    "test:rules:symbols":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles",
-    "test:rules:userInfo":  "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles",
-    "test:rules:visited":   "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles",
-    "test:rules:all":       "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample.rules/jest.config.js --verbose --detectOpenHandles"
+    "test:rules:invites": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles",
+    "test:rules:projects": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles",
+    "test:rules:symbols": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles",
+    "test:rules:userInfo": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles",
+    "test:rules:visited": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles",
+    "test:rules:all": "FIREBASE_JSON=sample/firebase.json npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles"
   },
   "peerDependencies": {
     "firebase": ">= 7.17.1 < 8",
@@ -65,6 +64,7 @@
     "concurrently": "^5.2.0",
     "firebase": "^7.18.0",
     "jest": "^26.4.0",
+    "proper-lockfile": "^4.1.1",
     "wait-on": "^5.1.0"
   },
   "engines": {
@@ -87,7 +87,10 @@
       "However, use of '@firebase/testing' is seen as an implementation detail they should not worry about."
     ],
     "devDependencies": {
-      "jest": "It's a development dependency. The published code is not Jest specific; only our samples are."
+      "proper-lockfile": [
+        "Unfortunately, node (14.8.0) does not provide OS level locking. There are multiple choices for this - this is",
+        "just one."
+      ]
     },
     "scripts": {
       "start": [

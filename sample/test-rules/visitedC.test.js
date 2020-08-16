@@ -1,5 +1,5 @@
 /*
-* sample.rules/visitedC.test.js
+* sample/test-rules/visitedC.test.js
 */
 //import { dbAuth } from 'firebase-jest-testing/firestoreTestingReadOnly';
 import { dbAuth } from '../src/firestoreTesting/readOnly.js';

@@ -1,5 +1,5 @@
 /*
-* sample.rules/userInfoC.test.js
+* sample/test-rules/userInfoC.test.js
 */
 import { strict as assert } from 'assert'
 import { test, expect, describe, beforeAll } from '@jest/globals'

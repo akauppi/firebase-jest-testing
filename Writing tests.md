@@ -1,6 +1,6 @@
 # Writing tests
 
-You can see the [sample.fns/](sample.fns/) tests for practical samples. This serves as a quick reference.
+You can see the [sample/test-fns](sample/test-fns) tests for practical samples. This serves as a quick reference.
 
 ## Testing Cloud Function callables
 

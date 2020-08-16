@@ -1,5 +1,5 @@
 /*
-* rules-test/invitesC.test.js
+* sample/test-rules/invitesC.test.js
 */
 import { strict as assert } from 'assert'
 
@@ -48,7 +48,7 @@ describe("'/invites' rules", () => {
 
   //--- InvitesC create rules ---
 
-  test('only a user within a project can invite others to it; only author can invite as-author', async () => {
+  test('only a member of a project can invite; only author can invite as-author', async () => {
     const template = { email: "aa@b.com", project: "1" };
     const dGen = (uid, asAuthor) => ({ ...template,
       asAuthor: asAuthor, by: uid, at: FieldValue.serverTimestamp()

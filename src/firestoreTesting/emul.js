@@ -7,6 +7,8 @@
 *     in parallel. These are in separate JavaScript contexts (courtesy Jest architecture). Thus, any locking needs
 *     to be in the OS level, spanning all Jest contexts (since they use the same data).
 */
+import { lockable } from "../tools/lockable.js"
+import {existsSync, writeFileSync} from "fs";
 
 const DEBUG = false;  // switch tracing on/off
 
@@ -46,14 +48,19 @@ function emul(collAdmin, collAuth) {   // (CollectionReference, CollectionRefere
 
 //--- private ---
 
-const mutex = {
-  claim() {
-    //...
-  },
-  release() {
-    //...
-  }
+const lockFn = ".lock";
+
+// 'proper-lockfile' needs the lockfile to exist.
+//
+// Note: This creation is who-gets-there-first and as such not the best way. Works in practise, though.
+//    To be safe, you can create it in Jest 'globalSetup' (and remove in 'globalTeardown').
+//
+if (!existsSync(lockFn)) {
+  console.debug(`Lock file '${lockFn}' not found - creating it.`);
+  writeFileSync(lockFn,"Lock file. You may remove it but it will come back...");
 }
+
+const sherlocked = genProm => lockable(lockFn, genProm)
 
 /*
 * Carry out one get/set/update/delete, preventing other operations from touching the same document, while we're in.
@@ -61,45 +68,42 @@ const mutex = {
 async function SERIAL_op(opDebug, adminD, realF, restore = true) {   // (string, DocumentReference, () => Promise of any, false|undefined) => Promise of any
   const fullDocPath = adminD.path;
 
-  await mutex.claim();    // LOCKED
-
-  let was;
-  try {
-    if (DEBUG) console.debug('>> IN', opDebug, fullDocPath);
-    was = restore ? undefined : await adminD.get();   // undefined | firebase.firestore.DocumentSnapshot
-    return await realF();
-  }
-  catch (err) {
-    // "Permission denied" are normal. Other exceptions may happen at the Firebase protocol level, and Jest did not
-    // necessarily report them (this may have changed).
-    //
-    // For now, make sure we catch them. e.g. (seen in the wild):
-    //    <<
-    //      Response deserialization failed: invalid wire type 7 at offset 8
-    //    <<
-    //
-    if (err.name === "FirebaseError" && err.code === "permission-denied") {
-      // nothing
-    } else {
-      console.fatal("UNEXPECTED exception within Firebase operation:", err);
+  return await sherlocked( async () => {
+    let was;
+    try {
+      if (DEBUG) console.debug('>> IN', opDebug, fullDocPath);
+      was = restore ? undefined : await adminD.get();   // undefined | firebase.firestore.DocumentSnapshot
+      return await realF();
     }
-    throw err;    // pass on; matchers may filter them and Jest reports the rest.
-  }
-  finally {
-    if (was) {
-      try {
-        const o = was.data();   // Object | undefined
-        await o ? adminD.set(o) : adminD.delete();
+    catch (err) {
+      // "Permission denied" are normal. Other exceptions may happen at the Firebase protocol level, and Jest did not
+      // necessarily report them (this may have changed).
+      //
+      // For now, make sure we catch them. e.g. (seen in the wild):
+      //    <<
+      //      Response deserialization failed: invalid wire type 7 at offset 8
+      //    <<
+      //
+      if (err.name === "FirebaseError" && err.code === "permission-denied") {
+        // nothing
+      } else {
+        console.fatal("UNEXPECTED exception within Firebase operation:", err);
       }
-      catch (err) {
-        console.fatal("UNEXPECTED exception within Firebase restore - it may have failed!", err);   // not seen
-        throw err;
-      }
-      finally {
-        mutex.release();
+      throw err;    // pass on; matchers may filter them and Jest reports the rest.
+    }
+    finally {
+      if (was) {
+        try {
+          const o = was.data();   // Object | undefined
+          await o ? adminD.set(o) : adminD.delete();
+        }
+        catch (err) {
+          console.fatal("UNEXPECTED exception within Firebase restore - it may have failed!", err);   // not seen
+          throw err;
+        }
       }
     }
-  }
+  });
 }
 
 export {

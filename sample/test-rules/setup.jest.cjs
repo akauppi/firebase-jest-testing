@@ -1,5 +1,5 @@
 /*
-* sample.rules/setup.jest.cjs
+* sample/test-rules/setup.jest.cjs
 *
 * Note! Jest 2.4.0 does NOT allow this to be an ES module!
 *     See -> https://github.com/facebook/jest/issues/9430#issuecomment-653818834

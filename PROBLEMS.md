@@ -96,7 +96,7 @@ import "firebase/firestore/dist/index.cjs.js"
 
 [Self-referencing a package using its name](https://nodejs.org/api/esm.html#esm_self_referencing_a_package_using_its_name) (node.js docs) should be possible, but does not work for us.
 
-With `sample.rules/*test.js` having:
+With `sample/test-rules/*test.js` having:
 
 ```
 import { another } from 'firebase-jest-testing';
@@ -137,3 +137,52 @@ import { dbAuth, FieldValue } from '../src/firestoreTestingReadOnly.js';
 - Doesn't work so well as a sample.
 - Bypasses the `exports` mapping. :(((
 - Dependent on directory structure.
+
+
+## Firebase: where to place project files?
+
+In a normal Firebase project, the `firebase.json` and `.firebaserc` files are in the root.
+
+Here are examples:
+
+**firebase.json**
+
+```
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "emulators": {
+    "firestore": {
+      "port": "6768"
+    }
+  }
+}
+```
+
+**.firebaserc**
+
+```
+{
+  "projects": {
+    "abc": "vue-rollup-example"
+  }
+}
+```
+
+>Note: It also seems, these must be in the same folder.
+
+If we place them in the root, that limits the number of possible samples to 1, so we've placed them in the subdir.
+
+But ideally, we'd like not to have them. At all. Please...
+
+The short idea the author has is that the launch and configuration of the emulator should be separated from the configuration of the sources. This could be done e.g. by:
+
+- allow command line arguments to steer the emulator. All of it. Now most details (e.g. rules or not) can only be provided via the configuration file. This would make `firebase.json`'s (we have two of them) disappear.
+- expose the running emulator(s) settings in a (new) REST API. This way, code could sniff the settings instead of trying to parse the configuration files that steer Firebase. 
+
+The current situation seems to be "in flux" (`firebase` 8.7.0). An overhaul of how emulation is configured would make this side of the development experience as simple as the API side of the various Firebase products is.
+
+<font size="+7">💐</font>
+
+

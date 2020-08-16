@@ -1,8 +1,8 @@
 # Todo
 
-## Speed up! 🚀
+## Speed up! 🚀 
 
-The overall test execution time is pretty slow.
+The overall test execution of rules is pretty slow.
 
 |||
 |---|---|

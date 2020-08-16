@@ -1,5 +1,5 @@
 /*
-* sample.rules/docs.js
+* sample/test-rules/docs.js
 *
 * Constant data used for the rules test cases
 */

@@ -1,4 +1,4 @@
-// jest.config.mjs
+// sample/test.rules/jest.config.mjs
 
 export default {
   // Recommended for native ES6 use (Aug-20):

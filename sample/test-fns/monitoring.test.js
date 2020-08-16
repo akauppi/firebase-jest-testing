@@ -1,11 +1,12 @@
 /*
-* sample.fns/monitoring.test.js
+* sample/test-fns/monitoring.test.js
 *
 * Test the central monitoring functions (logs etc.)
 */
 import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
 
-import { fns } from '../src/fns.js'
+//import { fns } from 'firebase-jest-testing'
+import { fns } from '../../src/fns.js'
 
 describe("monitoring functions", () => {
   const fnLogs = fns.httpsCallable('logs_v190720');

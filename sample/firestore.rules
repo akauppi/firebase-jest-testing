@@ -6,8 +6,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // tbd. removed projects likely to get their own collection (simpler)
-
     // Access cost:
     //    read: 1
     //    write: 1

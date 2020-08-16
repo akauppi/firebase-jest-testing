@@ -12,6 +12,27 @@ More about
 - [Writing tests](Writing%20tests.md) (your TL;DR destination ✈️)
 
 
+## Folder structure
+
+In addition to developing the npm package, the folder structure tries to emulate a front-end application project folder layout(*).
+
+(*): This is obviously just a suggestion.
+
+`sample` contains the back-end definitions. You might have this as `back-end` in your front-end project.
+
+`sample/test-fns` contains Cloud Function tests
+
+`sample/test-rules`contains Firestore Security Rules tests
+
+This way, your project's root remains mostly for the front-end building, and front end and back end are also mentally separated.
+
+>Note: We call it `sample` because it's possible to have multiple different app samples, at some point. Something you wouldn't have in your project.
+
+`sample/functions` has the definitions of the Cloud Functions.
+
+When working in this repo, you are expected to stay at the root level, and execute the commands from there.
+
+
 ## Requirements
 
 - npm
@@ -20,15 +41,19 @@ More about
    `$ npm install -g firebase-tools`
 - Have a Firebase project set up
 
+### Firebase project
+
+Firebase needs to be tied to a project in the cloud, even when we only run a local emulation. Creating a project is described [here](https://firebase.google.com/docs/projects/learn-more#setting_up_a_firebase_project_and_registering_apps).
+
+Your project should have Cloud Functions and Cloud Firestore enabled, and an app created.
+
 Tie to the Firebase project:
 
 ```
-$ firebase use --add --config firebase.testing1.json
+$ (cd sample && firebase use --add --config firebase.json)
 ```
 
 The alias you choose does not matter.
-
->Note: Firebase needs the project, even when all we do is run a local emulation.
 
 <!-- Q: is this strictly necessary?
 Set up the Firestore emulator:
@@ -37,6 +62,8 @@ Set up the Firestore emulator:
 $ firebase setup:emulators:firestore
 ```
 -->
+
+>Note: Firebase could consider not needing the project id at all, for an emulation-only use case like ours. That would simplify the documentation and developer experience.
 
 
 ## Getting started
@@ -47,7 +74,7 @@ Fetch dependencies:
 $ npm install
 ```
 
-You'll need to do this also for the functions emulated:
+You need to do this also for `sample/functions` (runs its own Node version):
 
 ```
 $ (cd sample/functions && npm install)
@@ -58,39 +85,29 @@ After this, you're ready to start the emulation and run tests against it.
 
 ## Two ways ahead
 
-There are two ways to run these tests, each with their own pros and cons. We'll start with the one where a server is manually started.
+There are two ways to run these tests, each with their own pros and cons. We'll call them the "CI" (Continuous Integration) and "dev" (development) flows, according to their main use cases.
 
-### Dev: Start an emulator
-
-We start a Firebase emulator in one terminal, and run the tests in another - or in an IDE.
-
-**Starting the emulator**
-
-```
-$ npm run start
-```
-
-Once we run tests, it's worth checking the emulator output, occasionally.
-
-**Running tests**
-
-In another terminal:
-
-```
-$ npm run test:fns:monitoring
-$ npm run test:fns:callables
-$ npm run test:fns:userInfo
-...
-```
-
-These are prepared for you in `package.json`. When developing functions, it's meaningful to run only one suit, at a time.
+Let's start with the simpler one.
 
 
-### CI: As a single command
+### CI: Run all the tests
 
-Once tests pass, you'll likely be just running them over and over, e.g. from a CI script.
+The `npm` targets in this flow:
 
-This command starts the emulator in the background, for the duration of running the tests. Launching adds ~5..6s to the execution time.
+|target|what it does|
+|---|---|
+|`ci`|Runs both `ci:rest` and `ci:rules`, i.e. tests everything.|
+|`ci:rest`|Tests everything but Security Rules|
+|`ci:rules`|Tests Security Rules|
+
+The reason for the division are:
+
+- `ci:rules` uses the `@firebase/testing` client whereas `ci:rest` uses the normal JavaScript client.
+- `ci:rules` has the security rules enabled whereas `ci:rest` omits them (there are two configuration files, for this)
+
+>Note: If there is a way to merge the execution environments, launch only a single emulator and run with only a single configuration file, please inform the author via Issues. That would be very welcome, and bring simplicity.
+
+Launching the tests is easy:
 
 ```
 $ npm run ci
@@ -107,6 +124,52 @@ i  functions: Stopping Functions Emulator
 i  firestore: Stopping Firestore Emulator
 ```
 
+The downside is that for each test run, "CI" flow launches a new emulator. This takes ~5..6s that we can spare, by using the "dev" mode(s).
+
+All the tests should pass (or be skipped). If you find some that don't, please file an Issue.
+
+
+### Dev mode(s)
+
+Use dev modes when you are developing the Security Rules, Cloud Functions or their tests. Here, a server runs continuously on the background so running the tests is a bit faster.
+
+Also dev modes are cut in half, for Security Rules and the rest (Cloud Functions), for the reasons discussed above. Choose the mode based on what you're working on.
+
+**Starting the emulator**
+
+Start the emulator in one terminal, and leave it running:
+
+```
+$ npm run start:rest		# or start:rules
+```
+
+Once we run tests, it's worth checking the emulator output, occasionally.
+
+**Running tests**
+
+In another terminal:
+
+```
+$ npm run test:monitoring
+$ npm run test:callables
+$ npm run test:userInfo
+...
+```
+
+For testing Security Rules (use `npm run start:rules`):
+
+```
+$ npm run test:rules:invites
+$ npm run test:rules:projects
+$ npm run test:rules:symbols
+$ npm run test:rules:userInfo
+$ npm run test:rules:visited
+```
+
+Sure you get the gist of it. 
+
+These are prepared for you in `package.json`. When developing something, it's meaningful to run only one suit, at a time.
+
 
 ## Using in your project
 
@@ -116,8 +179,9 @@ $ npm install --save-dev firebase-jest-testing@alpha
 
 See [Writing tests](Writing%20tests.md) for what then.
 
->Note: Though Jest is in the name, you *can* use the `db` and `fns` tools in any testing framework.
->`eventually` is Jest specific, only because the framework lacks that feature (maybe we should split the node module to two, separate ones - but not yet).
+>Note: Though Jest is in the name, you *can* use the `db` and `fns` tools in any testing framework, but you'd have to dig the necessary bits out and apply to your project.
+>
+>`eventually` is Jest specific, only because the framework lacks that feature.
 
 
 ## References

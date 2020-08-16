@@ -2,7 +2,7 @@
 
 ## Jest allowing `globalSetup` to use `import`
 
-We use this in `sample.rules/jest.config.[cm]js`:
+We use this in `sample/test-rules/jest.config.[cm]js`:
 
 ```
   globalSetup: "./setup.jest.[cm]js"
@@ -53,7 +53,7 @@ Track:
 
 **Work around:**
  
-- Do the priming of `sample.rules` using CommonJS - including dependencies.
+- Do the priming of `sample/test-rules` using CommonJS - including dependencies.
 
  
 ## firebase-js-sdk #2895

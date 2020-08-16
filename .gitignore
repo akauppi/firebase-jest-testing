@@ -3,6 +3,9 @@
 # Either in root or sample/ (we'll see)
 .firebaserc
 
+/.lock
+/.lock.tmp
+
 # Created by Firebase runs
 firebase-debug.log
 firestore-debug.log

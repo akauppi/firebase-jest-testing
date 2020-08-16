@@ -1,16 +1,18 @@
 /*
-* sample.fns/userInfo.test.js
+* sample/test-fns/userInfo.test.js
 *
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
 */
 import { test, expect, describe, beforeAll, afterAll, jest } from '@jest/globals'
 
-import { db } from '../src/db.js'
+//import { db } from 'firebase-jest-testing'
+import { db } from '../../src/db.js'
 
 import './matchers/toContainObject.js'
 
-import { eventually } from 'firebase-jest-testing@alpha/eventually'
+//import { eventually } from 'firebase-jest-testing/eventually'
+import { eventually } from '../../src/jest/eventually.js'
 
 // Clear '/projects/1/userInfo/abc'
 //
