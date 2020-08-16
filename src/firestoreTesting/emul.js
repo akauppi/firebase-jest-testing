@@ -72,7 +72,7 @@ async function SERIAL_op(opDebug, adminD, realF, restore = true) {   // (string,
     let was;
     try {
       if (DEBUG) console.debug('>> IN', opDebug, fullDocPath);
-      was = restore ? undefined : await adminD.get();   // undefined | firebase.firestore.DocumentSnapshot
+      was = restore ? await adminD.get() : undefined;   // firebase.firestore.DocumentSnapshot | undefined
       return await realF();
     }
     catch (err) {
@@ -92,10 +92,14 @@ async function SERIAL_op(opDebug, adminD, realF, restore = true) {   // (string,
       throw err;    // pass on; matchers may filter them and Jest reports the rest.
     }
     finally {
+      if (DEBUG && !restore) console.debug('>> OUT without restore');
+
       if (was) {
         try {
           const o = was.data();   // Object | undefined
           await o ? adminD.set(o) : adminD.delete();
+
+          if (DEBUG) console.debug('>> OUT with restored to:', o);
         }
         catch (err) {
           console.fatal("UNEXPECTED exception within Firebase restore - it may have failed!", err);   // not seen
