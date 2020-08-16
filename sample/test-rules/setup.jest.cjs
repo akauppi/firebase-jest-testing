@@ -17,10 +17,12 @@ const projectId = "rules-test";
 //import { clearAndPrime } from './tools/clearAndPrime.js'
 const clearAndPrime = require('./tools/clearAndPrime.cjs');
 
-async function setup(_) {
+const setup = async _ => {
   // Clean the existing data and prime with ours
 
   await clearAndPrime(projectId, docs);
+
+  console.debug("Docs primed for test-rules.");
 }
 
 //export default setup;

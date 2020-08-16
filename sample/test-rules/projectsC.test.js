@@ -14,7 +14,7 @@ const anyDate = new Date();   // a non-server date
 
 let unauth_projectsC, auth_projectsC, abc_projectsC, def_projectsC, ghi_projectsC;
 
-beforeAll( async () => {
+beforeAll(  () => {
   try {
     const coll = dbAuth.collection('projects');
 
@@ -109,7 +109,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  // tbd. fails #study
+  // tbd. Cannot figure out why this fails. #help
   test.skip("An author can mark a project '.removed'", async () => {
     const p1mod = {
       removed: FieldValue.serverTimestamp()
@@ -120,7 +120,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  // tbd. fails #study
+  // tbd. Cannot figure out why this fails. #help
   test.skip("An author can remove the '.removed' mark", async () => {
     const p2mod = {
       removed: FieldValue.delete()

@@ -14,7 +14,7 @@ const anyDate = new Date();   // a non-server date
 describe("'/visited' rules", () => {
   let unauth_visitedC, auth_visitedC, abc_visitedC, def_visitedC;
 
-  beforeAll( () => {         // note: applies only to tests in this describe block
+  beforeAll(  () => {         // note: applies only to tests in this describe block
     try {
       const coll = dbAuth.collection('projects/1/visited');
 

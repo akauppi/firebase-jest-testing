@@ -15,6 +15,8 @@ import { firebase } from './firebase.js'
 import { projectId } from './projectId.js'
 import { emul } from './emul.js'
 
+assert(firebase.initializeAdminApp);
+
 const PRIME_ROUND = !global.afterAll;   // check we are imported from a test (not 'globalSetup')
 assert(!PRIME_ROUND);
 

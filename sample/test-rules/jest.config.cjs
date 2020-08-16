@@ -1,6 +1,6 @@
-// sample/test.rules/jest.config.mjs
+// sample/test-rules/jest.config.cjs
 
-export default {
+module.exports = {
   // Recommended for native ES6 use (Aug-20):
   testEnvironment: 'jest-environment-node',
   transform: {},

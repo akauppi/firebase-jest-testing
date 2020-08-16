@@ -9,6 +9,15 @@
 */
 import { firebaseJson } from "../config"
 
+/***
+ * This tries to avoid needing to place 'FIRESTORE_EMULATOR_HOST' in 'package.json', but while it works on individual
+ * tests, Jest has a teardown problem when all tests are run.
+ * <<
+ *  ReferenceError: You are trying to `import` a file after the Jest environment has been torn down.
+ *    23 | const firebase= (await import('@firebase/testing')).default;
+ *                         ^
+ * <<
+
 // Set 'FIRESTORE_EMULATOR_HOST', to guide '@firebase/testing' (unless already set)
 //
 const tmp = process.env["FIRESTORE_EMULATOR_HOST"];
@@ -21,5 +30,7 @@ if (!tmp) {
 // Load _dynamically_ so that the changed 'process.env' applies.
 //
 const firebase= (await import('@firebase/testing')).default;
+***/
 
+import firebase from '@firebase/testing'
 export { firebase }

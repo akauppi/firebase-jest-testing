@@ -40,14 +40,14 @@ const docs = {
     size: 50,
     fillColor: "peru",
     center: { x: 100, y: 100 },
-    claimed: { by: 'def', at: new Date() }
+    claimed: { by: 'def', at: anyPastDate }
   },
 
   // Project 2 - removed (archived)
   "/projects/2-removed": {
     title: "Jack",
     created: new Date('01 Jan 1880 00:00:00 GMT'),
-    removed: new Date(),
+    removed: anyPastDate,
     authors: ["abc"],
     collaborators: ["def"]
   },

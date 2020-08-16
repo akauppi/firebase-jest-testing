@@ -12,17 +12,9 @@ import { FieldValue } from '../../src/firestoreTesting/index.js';
 
 const anyDate = new Date();   // a non-server date
 
-// Perform extra tests to see the test data isn't changed by other tests (if it is, our guards didn't work!)
-//
-async function HYGIENE( title, doc, f ) {
-  const o = await doc._dump();
-  //console.trace( "HYGIENE: "+ title, o );   // enable for debugging
-  f(o);
-}
-
 let unauth_symbolsC, auth_symbolsC, abc_symbolsC, def_symbolsC;
 
-beforeAll( async () => {
+beforeAll( () => {
   try {
     const coll = dbAuth.collection('projects/1/symbols');
 
@@ -99,22 +91,13 @@ describe("'/symbols' rules", () => {
   test('members may do changes to an already claimed (by them) symbol', async () => {
     const s2_mod = { size: 999 };
 
-    await HYGIENE( "Before setting to 999", def_symbolsC.doc("2-claimed"), o => {
-      assert( o.size === 50 );
-      assert(o.claimed.by === "def");
-    });
-
     await Promise.all([
       expect( def_symbolsC.doc("2-claimed").update( s2_mod )).toAllow(),     // claimed by him
       expect( abc_symbolsC.doc("2-claimed").update( s2_mod )).toDeny()      // not claimed by them
     ]);
-
-    await HYGIENE( "After setting to 999", def_symbolsC.doc("2-claimed"), o => {
-      assert( o.size === 50 );
-    });
   });
 
-  // BUG: systematically fails #later
+  // tbd. Cannot figure out why this fails. #help
   test.skip('members may revoke a claim', async () => {
     const s2_revoke = { claimed: FieldValue.delete() };
 
@@ -134,21 +117,10 @@ describe("'/symbols' rules", () => {
 
   test('members may delete a symbol claimed to themselves', async () => {
 
-    await HYGIENE( "Before delete", def_symbolsC.doc("2-claimed"), o => {
-      console.debug( "Has:", o );
-      assert( o.size === 50 );
-      assert(o.claimed && o.claimed.by === "def");
-    });
-
     await Promise.all([
       expect( def_symbolsC.doc("2-claimed").delete()).toAllow(),     // claimed by him
       expect( abc_symbolsC.doc("2-claimed").delete()).toDeny()      // not claimed by them
     ]);
-
-    await HYGIENE( "After delete", def_symbolsC.doc("2-claimed"), o => {
-      assert( o.size === 50 );
-      assert(o.claimed && o.claimed.by === "def");
-    });
   });
 
 });

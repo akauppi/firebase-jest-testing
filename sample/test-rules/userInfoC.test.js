@@ -10,7 +10,7 @@ import { dbAuth } from '../../src/firestoreTesting/readOnly.js';
 describe("'/userInfo' rules", () => {
   let unauth_userinfoC, abc_userinfoC, def_userinfoC;
 
-  beforeAll( () => {
+  beforeAll( async () => {    // tbd. remove 'async' when all tests pass
     try {
       const coll = dbAuth.collection('userInfo');   // root collection
 
@@ -22,7 +22,7 @@ describe("'/userInfo' rules", () => {
     }
     catch (err) {
       // tbd. How to cancel the tests if we end up here? #help
-      console.error( "Failed to initialize the database: ", err );
+      console.error( "Failed to initialize the database: ", err );    // not happened
       throw err;
     }
   });
