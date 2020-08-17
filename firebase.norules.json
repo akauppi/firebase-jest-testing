@@ -10,6 +10,10 @@
   "//": {
     "": [
       "For other testing than security rules. Uses normal 'firebase' JavaScript client."
+    ],
+    "Wishes": [
+      "'functions.dir' to be able to state where the functions folder is. We'd prefer *not* having it in the root,",
+      "but under the 'sample' (or 'back-end') directory."
     ]
   }
 }

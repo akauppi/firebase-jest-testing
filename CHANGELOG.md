@@ -1,5 +1,10 @@
 # Changelog
 
+## 17-Aug-20
+
+- `firebase**.json` and `.firebaserc` brought to the root dir
+- Everything mentioned in `README` should work.
+
 ## 16-Aug-20
 
 - reorganisation to `sample/test-fns`, `sample/test-rules`
