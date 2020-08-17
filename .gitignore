@@ -1,7 +1,6 @@
 /node_modules/
 
-# Either in root or sample/ (we'll see)
-.firebaserc
+/.firebaserc
 
 /.lock
 /.lock.tmp

@@ -18,7 +18,20 @@ $ npm publish
 
 >Deep note: `tag: alpha` and `access: public` come from the `publishConfig` section in `package.json`.
 
-### Testing the outcome
+### Tag the repo
+
+```
+# See everything's committed
+$ git tag alpha.2
+$ git push --tags
+```
+
+This helps us get back to what got published, if we ever need to. (yes, it could be automated but we're not putting *that* much love into the repo).
+
+
+## Tips
+
+### `npm pack`
 
 To see what files would end up being published:
 

@@ -14,23 +14,32 @@ More about
 
 ## Folder structure
 
-In addition to developing the npm package, the folder structure tries to emulate a front-end application project folder layout(*).
-
-(*): This is obviously just a suggestion.
+In addition to developing the npm package, the folder structure tries to emulate a front-end application project folder layout. This is obviously just a suggestion.
 
 `sample` contains the back-end definitions. You might have this as `back-end` in your front-end project.
+
+`sample/functions` has the definitions of the Cloud Functions.
+`sample/firestore.rules` has the Firestore Security Rules
 
 `sample/test-fns` contains Cloud Function tests
 
 `sample/test-rules`contains Firestore Security Rules tests
 
-This way, your project's root remains mostly for the front-end building, and front end and back end are also mentally separated.
 
->Note: We call it `sample` because it's possible to have multiple different app samples, at some point. Something you wouldn't have in your project.
+This arrangement provides two banefits:
 
-`sample/functions` has the definitions of the Cloud Functions.
+1. For this repo, it allows bringing more samples later, if needed.
+2. For an application repo, it provides clear differentiation between the front end (in the root) and the back-end.
 
-When working in this repo, you are expected to stay at the root level, and execute the commands from there.
+`firebase.json`, `firebase.norules.json` and `.firebaserc` are intentionally in the root. These are project specific configuration files and in one's application project they are normally in the root. If we ever have more than one samples, we'll deal with that by naming the files.
+
+<!-- 
+>Note: Firebase (8.7.0) requires `firebase.**.json` and `.firebaserc` to be in the same directory.
+-->
+
+>Note: Firebase (8.7.0) requires `functions` to be in the same directory as `firebase.json` (and `.firebaserc`). We don't support this convention, and would like to have a **configuration** (maybe in `firebase.json`) that allows the folder path to be overridden.
+>
+>In order to keep our head, but also have the code working, we've made a symbolic link at the root level.
 
 
 ## Requirements
@@ -39,18 +48,21 @@ When working in this repo, you are expected to stay at the root level, and execu
 - `firebase` CLI:
    
    `$ npm install -g firebase-tools`
-- Have a Firebase project set up
 
 ### Firebase project
 
 Firebase needs to be tied to a project in the cloud, even when we only run a local emulation. Creating a project is described [here](https://firebase.google.com/docs/projects/learn-more#setting_up_a_firebase_project_and_registering_apps).
 
-Your project should have Cloud Functions and Cloud Firestore enabled, and an app created.
+Your project should have Cloud Functions and Cloud Firestore enabled.
+
+<!-- #whisper
+maybe also an app needs to be created - or maybe not. They are needed for authentication but it's uncertain whether it matters since we only emulate auth with the `@firebase/testing` client.
+-->
 
 Tie to the Firebase project:
 
 ```
-$ (cd sample && firebase use --add --config firebase.json)
+$ firebase use --add
 ```
 
 The alias you choose does not matter.
