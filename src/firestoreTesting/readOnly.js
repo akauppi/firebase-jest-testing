@@ -11,7 +11,8 @@
 */
 import { strict as assert } from 'assert'
 
-import { firebase } from './firebase.js'
+import firebase from '@firebase/testing'
+//import { firebase } from './firebase.js'  //REMOVE
 import { projectId } from './projectId.js'
 import { emul } from './emul.js'
 

@@ -51,7 +51,7 @@
     "test:rules:invites": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
     "test:rules:projects": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f projectsC.test.js --verbose --detectOpenHandles",
     "test:rules:symbols": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles",
-    "test:rules:userInfo": "FIRESTORE_EMULATOR_HOST=localhost:6767 npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
+    "test:rules:userInfo": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
     "test:rules:visited": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
     "test:rules:all": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
   },
@@ -63,11 +63,11 @@
     "@firebase/testing": "^0.20.11"
   },
   "devDependencies": {
-    "concurrently": "^5.2.0",
+    "concurrently": "^5.3.0",
     "firebase": "^7.18.0",
     "jest": "^26.4.0",
     "proper-lockfile": "^4.1.1",
-    "wait-on": "^5.1.0"
+    "wait-on": "^5.2.0"
   },
   "engines": {
     "node": ">=14.3"

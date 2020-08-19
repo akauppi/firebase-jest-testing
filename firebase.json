@@ -9,7 +9,7 @@
   },
   "//": {
     "": [
-      "The normal Firebase config. Used for deployments and testing of Security Rules (with '@firebase/testing' client)"
+      "The normal Firebase config. Used for deployments and testing of Security Rules"
     ]
   }
 }
