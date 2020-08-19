@@ -41,11 +41,11 @@ service cloud.firestore {
       //    | /authors | author may change; at least one author must remain |
       //    | /collaborators | author may change |
       //
-      allow update: if debug( isAuthor() )
+      allow update: if isAuthor()
         && validProjectWrite()
         && after().created == prior().created
-        && removedUnaffected() ||
-            onlyRemovedAffected()
+        && (removedUnaffected() ||
+            onlyRemovedAffected())
 
       function onlyRemovedAffected() {
         return diff().affectedKeys() == ["removed"].toSet()
@@ -100,7 +100,7 @@ service cloud.firestore {
 
       function isAuthor() {
         return isSignedIn() &&
-          request.auth.uid in debug(resource.data.authors)    // prior().authors
+          request.auth.uid in prior().authors
       }
 
       function isCollaborator() {
@@ -126,14 +126,14 @@ service cloud.firestore {
         // Read:
         //	- all project members can read each other's last visit time
         //
-        allow read: if EXT_isCollaboratorOrAuthor()
+        allow read: if EXT_isMember()
 
         // Write:
         //	- only the user themselves can reset their value
         //
         // Note: requiring the 'after' value to be the server time stamp essentially disallows deletes.
         //
-        allow write: if EXT_isCollaboratorOrAuthor()
+        allow write: if EXT_isMember()
           && validVisitedWrite()
           && userId == request.auth.uid
           && after().at == request.time
@@ -164,13 +164,13 @@ service cloud.firestore {
         // Read:
         //  - all members of the project can read
         //
-        allow read: if EXT_isCollaboratorOrAuthor()
+        allow read: if EXT_isMember()
           //&& validSymbol()      // guards against bad data in test setup, manual Firestore edits or from earlier schemas
 
         // Creation:
         //	- the creator needs to claim the symbol to themselves, at creation (we can relax this, if needed)
         //
-        allow create: if EXT_isCollaboratorOrAuthor()
+        allow create: if EXT_isMember()
           && validSymbolWrite()
           && after().claimed.by == request.auth.uid
           && after().claimed.at == request.time
@@ -181,7 +181,7 @@ service cloud.firestore {
         //  - can revoke the claim
         //  - claim itself cannot be changed; only revoked
         //
-        allow update: if EXT_isCollaboratorOrAuthor()
+        allow update: if EXT_isMember()
           && validSymbolWrite()
           && (
             !isClaimed() ? (        // case A: claiming an unclaimed symbol
@@ -198,7 +198,7 @@ service cloud.firestore {
         // Delete:
         //	- can delete a symbol claimed to themselves
         //
-        allow delete: if EXT_isCollaboratorOrAuthor()
+        allow delete: if EXT_isMember()
           && isClaimedByMe()
 
         function validSymbolWrite() {
@@ -237,7 +237,7 @@ service cloud.firestore {
       // While the 'project' documents can address their 'authors' and 'collaborators' fields directly, sub-collection
       // documents must use 'get'. This also implies an added billing cost for processing those security rules.
 
-      function EXT_isCollaboratorOrAuthor() {
+      function EXT_isMember() {
         let data = isSignedIn() ? get( /databases/$(database)/documents/projects/$(projectId) ).data : {};
 
         return isSignedIn() && (
@@ -268,7 +268,7 @@ service cloud.firestore {
         // if (inviting as author) invitor must be an author (this gets checked again, once the guest turns up)
         && after().asAuthor ?
             PROJ_isAuthor_COST1( after().project ) :
-            PROJ_isCollaboratorOrAuthor_COST1( after().project )      // else anyone in the project can invite
+            PROJ_isMember_COST1( after().project )      // else anyone in the project can invite
         && validInviteWrite()
 
       // tbd. if we want to allow extending existing invite, the 'update' rule needs to be opened (a 'set' for an
@@ -301,13 +301,13 @@ service cloud.firestore {
       function _PROJ_isMember_COST1(projectId, mustBeAuthor) {  // (string, bool) => bool
         let data = isSignedIn() ? get( /databases/$(database)/documents/projects/$(projectId) ).data : {};
 
-        return isSignedIn() && (
-          request.auth.uid in data.authors ||
-          ((!mustBeAuthor) && request.auth.uid in data.collaborators)
-        )
+         return isSignedIn() && (
+           request.auth.uid in data.authors ||
+             ((!mustBeAuthor) && request.auth.uid in data.collaborators)
+         )
       }
       function PROJ_isAuthor_COST1(projectId) { return _PROJ_isMember_COST1(projectId, true); }
-      function PROJ_isCollaboratorOrAuthor_COST1(projectId) { return _PROJ_isMember_COST1(projectId, false); }
+      function PROJ_isMember_COST1(projectId) { return _PROJ_isMember_COST1(projectId, false); }
 
     } // invites
 

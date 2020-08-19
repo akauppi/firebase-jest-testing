@@ -186,3 +186,25 @@ The current situation seems to be "in flux" (`firebase` 8.7.0). An overhaul of h
 <font size="+7">💐</font>
 
 
+## Jest: using with `npm link`
+
+For development of both this repo and the app, [Groundlevel ♠️ ES6 ♠️ Firebase](https://github.com/akauppi/GroundLevel-es6-firebase-web) uses `npm link`. 
+
+Jest doesn't seem to find a module, used this way:
+
+```
+$ npm run test:fns:callables
+
+> groundlevel-es6-firebase@0.0.0 test:fns:callables /Users/.../GroundLevel-es6-firebase-web
+> FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config back-end/test-fns/jest.config.cjs -f callables.test.js --detectOpenHandles
+
+ FAIL  back-end/test-fns/callables.test.js
+  ● Test suite failed to run
+
+    Cannot find module 'firebase-jest-testing' from 'callables.test.js'
+
+      at Resolver.resolveModule (../../node_modules/jest-resolve/build/index.js:307:11)
+```
+
+Note: The current folder here is the app project's root folder but config is in `back-end/test-fns`.
+

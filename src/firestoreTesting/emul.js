@@ -8,7 +8,7 @@
 *     to be in the OS level, spanning all Jest contexts (since they use the same data).
 */
 import { lockable } from "../tools/lockable.js"
-import {existsSync, writeFileSync} from "fs";
+import { existsSync, writeFileSync } from "fs"
 
 const DEBUG = false;  // switch tracing on/off
 

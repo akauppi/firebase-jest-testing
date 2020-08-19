@@ -1,7 +1,9 @@
 /*
-* src/firestoreTesting/projectId.js
+* src/firestoreTesting/common.js
 *
 * Used by both Jest global setup and tests.
+*
+* NOTE: As long as 'setup.jest' cannot use ES modules, only the tests get the values from here.
 */
 
 // Using separate - but static - Firebase project id.
@@ -15,6 +17,9 @@
 //
 const projectId = "rules-test";
 
+const PRIME_ROUND = !global.afterAll;   // are imported from 'globalSetup', or from the tests
+
 export {
-  projectId
+  projectId,
+  PRIME_ROUND
 }

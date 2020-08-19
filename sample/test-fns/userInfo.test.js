@@ -81,7 +81,7 @@ describe("userInfo shadowing", () => {
       photoURL: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Dalton_Bill-edit.png"
     };
 
-    // Write in 'userInfo' -> causes Cloud Function to update 'projectC/{project-id}/userInfo/{uid}' -> mock gets called
+    // Write in 'userInfo' -> causes Cloud Function to update 'projectC/{project-id}/userInfo/{uid}' -> ’shadow’ changes
     //
     await db.collection("userInfo").doc("abc").set(william);
 

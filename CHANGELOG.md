@@ -1,5 +1,11 @@
 # Changelog
 
+## 19-Aug-20 (0.0.1-alpha.3)
+
+- used with `npm link` with an app project
+- some `export` changes
+- need to publish because Jest might dislike `npm link`
+
 ## 17-Aug-20
 
 - `firebase**.json` and `.firebaserc` brought to the root dir

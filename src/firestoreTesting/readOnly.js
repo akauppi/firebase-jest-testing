@@ -12,13 +12,12 @@
 import { strict as assert } from 'assert'
 
 import firebase from '@firebase/testing'
-//import { firebase } from './firebase.js'  //REMOVE
-import { projectId } from './projectId.js'
+import { projectId } from './common.js'
 import { emul } from './emul.js'
 
 assert(firebase.initializeAdminApp);
 
-const PRIME_ROUND = !global.afterAll;   // check we are imported from a test (not 'globalSetup')
+import { PRIME_ROUND } from "./common"
 assert(!PRIME_ROUND);
 
 /*

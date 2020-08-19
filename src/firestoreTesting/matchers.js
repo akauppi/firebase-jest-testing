@@ -18,7 +18,7 @@ import { expect } from '@jest/globals'
 // Mentally also depends on '@firebase/testing'
 //import firebase from '@firebase/testing'
 
-const PRIME_ROUND = !global.afterAll;   // only for tests
+import { PRIME_ROUND } from "./common"
 assert(!PRIME_ROUND);
 
 // Just importing enables them:

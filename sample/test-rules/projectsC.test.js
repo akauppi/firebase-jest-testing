@@ -44,13 +44,17 @@ describe("'/projects' rules", () => {
   });
 
   test('user who is an author or a collaborator can read a project (that is not \'removed\')', async () => {
-    await expect( abc_projectsC.doc("1").get() ).toAllow();
-    await expect( def_projectsC.doc("1").get() ).toAllow();
+    await Promise.all([
+      expect( abc_projectsC.doc("1").get() ).toAllow(),
+      expect( def_projectsC.doc("1").get() ).toAllow()
+    ]);
   });
 
   test('user needs to be an author, to read a \'removed\' project', async () => {
-    await expect( abc_projectsC.doc("2-removed").get() ).toAllow();
-    await expect( def_projectsC.doc("2-removed").get() ).toDeny();
+    await Promise.all([
+      expect( abc_projectsC.doc("2-removed").get() ).toAllow(),
+      expect( def_projectsC.doc("2-removed").get() ).toDeny()
+    ]);
   });
 
   //--- ProjectsC create rules ---
@@ -72,9 +76,6 @@ describe("'/projects' rules", () => {
     const p3_badTime = {...p3_valid, created: anyDate };
     const p3_alreadyRemoved = {...p3_valid, removed: serverTimestamp };
 
-    // tbd. Left some with 'Promise.all', but CURRENTLY THERE IS NO MUTEX. Then again, this would happen within the
-    //    JavaScript environment, in which the execution is sequential. WIP!!!
-    //
     await Promise.all([
       expect( abc_projectsC.doc("3-fictional").set(p3_valid) ).toAllow(),
       expect( abc_projectsC.doc("3-fictional").set(p3_withoutAuthor) ).toDeny(),

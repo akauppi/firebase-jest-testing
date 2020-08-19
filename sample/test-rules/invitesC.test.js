@@ -28,8 +28,7 @@ describe("'/invites' rules", () => {
       assert(unauth_invitesC && auth_invitesC && abc_invitesC && def_invitesC);
     }
     catch (err) {
-      // tbd. How to cancel the tests if we end up here? #help
-      console.error( "Failed to initialize the Firebase database: ", err );
+      console.error( "Failed to initialize the Firebase database: ", err );   // not seen
       throw err;
     }
   });

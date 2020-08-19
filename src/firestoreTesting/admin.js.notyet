@@ -10,9 +10,8 @@
 *   - '--harmony-top-level-await' node flag needed
 */
 import firebase from '@firebase/testing'
-import { projectId } from './projectId.js'
+import { projectId, PRIME_ROUND } from './common.js'
 
-const PRIME_ROUND = !global.afterAll;   // check we are imported from 'globalSetup'
 assert(PRIME_ROUND);
 
 const dbUnlimited = firebase.initializeAdminApp({

@@ -7,7 +7,6 @@
 *     wanted to not have them clutter 'firestoreTestingReadOnly'.
 */
 import firebase from '@firebase/testing'
-//import { firebase } from "./firebase.js"  //REMOVE
 
 const FieldValue = firebase.firestore.FieldValue;
 
