@@ -1,5 +1,5 @@
 # Todo
 
-## Why do certain Security Rules fail?
+## Why does one test fail?
 
-The ones marked `.skip` in `sample/test-rules/projectsC.test.js`. Why?
+The one marked `.skip` in `sample/test-rules/symbolsC.test.js`. Why?

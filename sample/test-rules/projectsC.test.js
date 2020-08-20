@@ -22,8 +22,7 @@ beforeAll(  () => {
     ghi_projectsC = coll.as({uid:'ghi'});
   }
   catch (err) {
-    // tbd. How to cancel the tests if we end up here? #help
-    console.error( "Failed to initialize the Firebase database: ", err );
+    console.error( "Failed to initialize the Firebase database: ", err );   // not occurred
     throw err;
   }
 });
@@ -107,8 +106,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  // tbd. Cannot figure out why this fails. #help
-  test.skip("An author can mark a project '.removed'", async () => {
+  test("An author can mark a project '.removed'", async () => {
     const p1mod = {
       removed: FieldValue.serverTimestamp()
     };
@@ -118,8 +116,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  // tbd. Cannot figure out why this fails. #help
-  test.skip("An author can remove the '.removed' mark", async () => {
+  test("An author can remove the '.removed' mark", async () => {
     const p2mod = {
       removed: FieldValue.delete()
     };

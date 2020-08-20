@@ -21,7 +21,6 @@ describe("'/visited' rules", () => {
       def_visitedC = coll.as({uid:'def'});
     }
     catch (err) {
-      // tbd. How to cancel the tests if we end up here? #help
       console.error( "Failed to initialize the Firebase database: ", err );   // not occurred
       throw err;
     }

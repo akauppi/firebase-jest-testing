@@ -20,7 +20,6 @@ describe("'/userInfo' rules", () => {
       assert(unauth_userinfoC && abc_userinfoC && def_userinfoC);
     }
     catch (err) {
-      // tbd. How to cancel the tests if we end up here? #help
       console.error( "Failed to initialize the database: ", err );    // not happened
       throw err;
     }
