@@ -1,5 +1,3 @@
-// THIS WOULD NEED TO BE DEFINED AS A MODULE (package). Thus not worth it... A function / source file would have been fine.
-
 /*
 * sample/hack-jest/custom-resolver.cjs
 *
@@ -9,11 +7,6 @@
 *
 * i.e. try to get rid of this; it's a hack.
 *
-* Usage:
-*   <<
-*     ...
-*   <<
-*
 * Based on:
 *   - "Add support for `packageFilter` for custom resolvers"
 *     -> https://github.com/facebook/jest/pull/10393
@@ -22,21 +15,6 @@
 *   - Configuring Jest > resolver (Jest docs)
 *     -> https://jestjs.io/docs/en/configuration#resolver-string [1]
 */
-
-/*
-* options (according to docs [1]):
-*   {
-*     basedir: string
-*     defaultResolver: (request, options) => ...
-*     extensions: [string]
-*     moduleDirectory: [string]
-*     paths: [string],
-*     packageFilter: (pkg, pkgdir) => ...
-*     rootDir: [string]
-*/
-
-// Read the package.json. Prepare a mapping.
-
 const pkg = require("../../package.json");
 const pkgName = pkg.name;   // "firebase-jest-testing"
 
