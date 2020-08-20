@@ -6,5 +6,8 @@ module.exports = {
   transform: {},
 
   // Default is 5000. None of our tests take that long; fail fast.
-  testTimeout: 2000
+  testTimeout: 2000,
+
+  // Without this, wasn't able to get 'exports' to work. See -> TRACK.md
+  resolver: "../hack-jest/custom-resolver.cjs"
 };

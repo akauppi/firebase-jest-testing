@@ -1,10 +1,9 @@
 /*
 * sample/test-fns/callables.test.js
 */
-import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
+import { test, expect, describe } from '@jest/globals'
 
-//import { fns } from 'firebase-jest-testing'
-import { fns } from '../../src/fns.js'
+import { fns } from 'firebase-jest-testing'
 
 describe ('Cloud Function callables', () => {
   test ('returns a greeting', async () => {

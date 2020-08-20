@@ -1,5 +1,41 @@
 # Track
 
+## Jest cannot handle package `exports` ⚠️⚠️⚠️
+
+- <strike>[jest-resolve can't handle "exports"](https://github.com/facebook/jest/issues/10422) (Jest #10422)</strike>
+- [Support package exports in `jest-resolve`](https://github.com/facebook/jest/issues/9771) (Jest #9771)
+- [Support ESM resolution](https://github.com/browserify/resolve/issues/222) (browserify/resolve #222)
+
+This is a **show stopper** for us, since an application project cannot use our features.
+
+The issues state:
+
+>Duplicate of #9771. I haven't had time to work on ESM support in general for the last few months, and the immediate future doesn't look any more promising in that regard, unfortunately... Any help via PRs or research is of course welcome.
+
+&nbsp;
+
+>I chatted with @ljharb about this, and a future version of resolve will support this. So we don't have to implement anything here. Will just hook it up when resolve is released with support for it 🎉
+
+**Direction:**
+
+I'd rather see us (users of this repo) helping SimenB with the native resolver:
+
+>I'm currently working on support for ESM natively in Jest, and while we have a version today that sorta works, it's not a compliant implementation. (author of Jest, 25-Apr-20)
+
+
+
+**Work around:**
+
+In application code (Jest tests):
+
+```
+//import { FieldValue } from 'firebase-jest-testing/firestoreTesting'
+import { FieldValue } from 'firebase-jest-testing/src/firestoreTesting/index'
+```
+
+i.e. import by the filename paths under `node_modules/`. This is of course GROSE 🧟‍♀️.
+
+
 ## Jest allowing `globalSetup` to use `import`
 
 We use this in `sample/test-rules/jest.config.[cm]js`:
@@ -60,5 +96,5 @@ Track:
 
 - [FR: Immutability when testing Firestore Security Rules](https://github.com/firebase/firebase-js-sdk/issues/2895) 
    - let's see what Firebase authors reply
-		- no reply in 3 months #sniff 😢
+		- not a reply in 4 months #sniff 😢
 	

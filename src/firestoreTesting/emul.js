@@ -87,7 +87,7 @@ async function SERIAL_op(opDebug, adminD, realF, restore = true) {   // (string,
       if (err.name === "FirebaseError" && err.code === "permission-denied") {
         // nothing
       } else {
-        console.fatal("UNEXPECTED exception within Firebase operation:", err);
+        console.error("UNEXPECTED exception within Firebase operation:", err);
       }
       throw err;    // pass on; matchers may filter them and Jest reports the rest.
     }
@@ -102,7 +102,7 @@ async function SERIAL_op(opDebug, adminD, realF, restore = true) {   // (string,
           if (DEBUG) console.debug('>> OUT with restored to:', o);
         }
         catch (err) {
-          console.fatal("UNEXPECTED exception within Firebase restore - it may have failed!", err);   // not seen
+          console.error("UNEXPECTED exception within Firebase restore - it may have failed!", err);   // not seen
           throw err;
         }
       }

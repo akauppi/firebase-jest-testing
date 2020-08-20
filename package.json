@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.5",
   "publishConfig": {
     "tag": "alpha"
   },
@@ -21,11 +21,15 @@
   ],
   "exports": {
     ".": "./src/index.js",
-    "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js",
+    "./firestoreTesting": "./src/firestoreTesting/index.js",
     "./firestoreTestingReadOnly": "./src/firestoreTesting/readOnly.js",
-    "./jest": "./src/jest/index.js",
+    "./eventually": "./src/jest/eventually.js",
     "./jest/rulesMatchers": "./src/jest/rulesMatchers.js",
     "./prime": "./src/prime/index.js"
+  },
+  "//exports": {
+    "./package.json": "./package.json    -- not sure if it's needed for Jest consumption",
+    "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js   -- keeping away from 'exports' so a non-existing file would not cause other problems (pending more Jest ES modules support)"
   },
   "scripts": {
     "test": "npm run ci",
@@ -40,12 +44,12 @@
     "ci:rules": "firebase emulators:exec --config firebase.json --only firestore 'npm run _ci_rules'",
     "_ci_rules": "npx --node-arg=--experimental-vm-modules jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles",
     "---  ": "",
-    "start:rest": "concurrently -n emul,init \"firebase emulators:start --config firebase.norules.json --only functions,firestore\" \"npm run _start_rest_2\"",
+    "start:rest": "GCLOUD_PROJECT=$(firebase use) concurrently -n emul,init \"firebase emulators:start --config firebase.norules.json --only functions,firestore\" \"npm run _start_rest_2\"",
     "_start_rest_2": "wait-on http://localhost:4000 && FIREBASE_JSON=firebase.norules.json node --harmony-top-level-await sample/prime-docs.js",
-    "test:monitoring": "FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
-    "test:callables": "FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
-    "test:userInfo": "FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
-    "test:rest:all": "FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
+    "test:monitoring": "GCLOUD_PROJECT=$(firebase use) FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js --detectOpenHandles",
+    "test:callables": "GCLOUD_PROJECT=$(firebase use) FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js --detectOpenHandles",
+    "test:userInfo": "GCLOUD_PROJECT=$(firebase use) FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
+    "test:rest:all": "GCLOUD_PROJECT=$(firebase use) FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",
     "start:rules": "firebase emulators:start --config firebase.json --only firestore",
     "test:rules:invites": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
@@ -65,7 +69,7 @@
   "devDependencies": {
     "concurrently": "^5.3.0",
     "firebase": "^7.18.0",
-    "jest": "^26.4.0",
+    "jest": "^26.4.1",
     "proper-lockfile": "^4.1.1",
     "wait-on": "^5.2.0"
   },
@@ -92,6 +96,12 @@
       "proper-lockfile": [
         "Unfortunately, node (14.8.0) does not provide OS level locking. There are multiple choices for this - this is",
         "just one."
+      ]
+    },
+    "exports": {
+      "./package.json": [
+        "Needed for Jest to be able to use the package, from an application project.",
+        "See -> https://github.com/browserify/resolve/issues/222"
       ]
     },
     "scripts": {

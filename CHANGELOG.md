@@ -1,5 +1,10 @@
 # Changelog
 
+## 20-Aug-20
+
+- using Jest custom resolver to be able to use package `exports`
+- picking active project only from `GCLOUD_PROJECT` (well, fallback to run `firebase use`)
+
 ## 19-Aug-20 (0.0.1-alpha.3)
 
 - used with `npm link` with an app project
