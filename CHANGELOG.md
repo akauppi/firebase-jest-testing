@@ -1,5 +1,9 @@
 # Changelog
 
+## 21-Aug-20
+
+- removed the use of `firebase use`. Replaced with `--project=bunny`, see [#1](https://github.com/akauppi/firebase-jest-testing/issues/1)
+
 ## 20-Aug-20
 
 - using Jest custom resolver to be able to use package `exports`
