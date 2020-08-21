@@ -17,7 +17,7 @@ const anyPastDate = new Date();
 const docs = {
   // Project 1 - active project
   "/projects/1": {
-    members: ["abc", "def"]
+    members: ["abc","def"]
   },
   //"/projects/1/userInfo/{uid}": initially empty
 

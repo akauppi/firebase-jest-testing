@@ -20,6 +20,7 @@
     "src/**"
   ],
   "exports": {
+    "./package.json": "./package.json",
     ".": "./src/index.js",
     "./firestoreTesting": "./src/firestoreTesting/index.js",
     "./firestoreTestingReadOnly": "./src/firestoreTesting/readOnly.js",
@@ -28,7 +29,6 @@
     "./prime": "./src/prime/index.js"
   },
   "//exports": {
-    "./package.json": "./package.json    -- not sure if it's needed for Jest consumption",
     "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js   -- keeping away from 'exports' so a non-existing file would not cause other problems (pending more Jest ES modules support)"
   },
   "scripts": {
@@ -101,7 +101,7 @@
     },
     "exports": {
       "./package.json": [
-        "Needed for Jest to be able to use the package, from an application project.",
+        "Needed *at the application end* for Jest to be able to use the package (with the custom resolver hack).",
         "See -> https://github.com/browserify/resolve/issues/222"
       ]
     },

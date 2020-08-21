@@ -39,17 +39,17 @@ service cloud.firestore {
       //    | /created | no |
       //    | /removed | author may add or remove; no other fields may change; if added, must be the server timestamp |
       //    | /authors | author may change; at least one author must remain |
-      //    | /collaborators | author may change |
+      //    | /members | author may change; must include authors |
       //
       allow update: if isAuthor()
         && validProjectWrite()
         && after().created == prior().created
         && (removedUnaffected() ||
-            onlyRemovedAffected())
+            diff().addedKeys() == ["removed"].toSet() ? true
+            : diff().removedKeys() == ["removed"].toSet() ? true
+            : false   // update not allowed
+          )
 
-      function onlyRemovedAffected() {
-        return diff().affectedKeys() == ["removed"].toSet()
-      }
       function removedUnaffected() {
         // Implementation note: if not using '.diff', you must consider the case when there is no '.removed' (it's optional).
         return !( "removed" in diff().affectedKeys() )
@@ -62,20 +62,17 @@ service cloud.firestore {
       //  - created (timestamp) must exist
       //  - removed (timestamp) is optional; if exists, must be a server time stamp now or in the past
       //  - at least one author must exist
-      //  - collaborators can be empty
-      //  - users are either in 'authors' or in 'collaborators' (but not in both)
+      //  - members must contain all authors (and thus is >= 1)
       //
       function validProjectWrite() {
-        let possibleKeys = ["title", "created", "removed", "authors", "collaborators"].toSet();
+        let possibleKeys = ["title", "created", "removed", "authors", "members"].toSet();
 
         return true
           && after().title is string && after().title != ''
           && after().created is timestamp
           && (!isRemovedAfter() || (after().removed == request.time))
           && after().authors is list && after().authors.size() > 0
-          && after().collaborators is list
-          && after().authors.toSet().intersection( after().collaborators.toSet() ).size() == 0
-            // no common entries (could also omit this; logic would work even if a user is listed in both)
+          && after().members is list && after().members.toSet().hasAll( after().authors.toSet() )
 
           && possibleKeys.hasAll( request.resource.data.keys() )        // no unexpected keys
       }
@@ -105,7 +102,7 @@ service cloud.firestore {
 
       function isCollaborator() {
         return isSignedIn() &&
-          request.auth.uid in prior().collaborators
+          request.auth.uid in prior().members.toSet().difference( prior().authors.toSet() )   // in 'members' but not in 'authors'
       }
 
       function isRemoved() {
@@ -234,22 +231,20 @@ service cloud.firestore {
 
       // Functions for sub-collections
       //
-      // While the 'project' documents can address their 'authors' and 'collaborators' fields directly, sub-collection
+      // While the 'project' documents can address their 'authors' and 'members' fields directly, sub-collection
       // documents must use 'get'. This also implies an added billing cost for processing those security rules.
 
       function EXT_isMember() {
-        let data = isSignedIn() ? get( /databases/$(database)/documents/projects/$(projectId) ).data : {};
-
         return isSignedIn() && (
-          request.auth.uid in data.collaborators ||
-          request.auth.uid in data.authors
+          request.auth.uid in get( /databases/$(database)/documents/projects/$(projectId) ).data.members
         )
       }
     }   // project
 
 //--- Invites ---
 //
-// Writable by authors and collaborators, to invite new members to a project. From there, Cloud Functions should do all.
+// Writable by members, to invite new members to a project (authors can invite either category; members can only invite
+// as members). From there, Cloud Functions should do all.
 
     // Access cost:
     //    read: 2
@@ -301,10 +296,10 @@ service cloud.firestore {
       function _PROJ_isMember_COST1(projectId, mustBeAuthor) {  // (string, bool) => bool
         let data = isSignedIn() ? get( /databases/$(database)/documents/projects/$(projectId) ).data : {};
 
-         return isSignedIn() && (
-           request.auth.uid in data.authors ||
-             ((!mustBeAuthor) && request.auth.uid in data.collaborators)
-         )
+        return isSignedIn() && (
+          mustBeAuthor ? request.auth.uid in data.authors
+            : request.auth.uid in data.members
+        )
       }
       function PROJ_isAuthor_COST1(projectId) { return _PROJ_isMember_COST1(projectId, true); }
       function PROJ_isMember_COST1(projectId) { return _PROJ_isMember_COST1(projectId, false); }

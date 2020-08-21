@@ -46,8 +46,6 @@ const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
   if (request.startsWith(pkgName)) {    // "firebase-jest-testing"
     const hit = lookup.get(request);
-    console.debug("Transfer:", request+" -> "+hit);
-
     if (!hit) throw new Error("No 'exports' lookup for: "+ request);    // better than assert (causes the right module to be mentioned in the error message)
 
     return options.defaultResolver( hit, options );   // turned to requiring the file
