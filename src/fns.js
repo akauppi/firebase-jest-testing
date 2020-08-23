@@ -5,9 +5,6 @@
 */
 import { strict as assert } from 'assert'
 
-// Note: Importing JSON is still experimental (behind '--experimental-json-modules'; Node 14.7).
-import fs from 'fs'
-
 // This gives:
 // <<
 //    Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '.../node_modules/firebase/app' is not supported resolving ES modules imported from ...
@@ -17,17 +14,10 @@ import fs from 'fs'
 //import "firebase/functions"
 
 import firebase from 'firebase/app/dist/index.cjs.js'
-import "firebase/firestore/dist/index.cjs.js"
 import "firebase/functions/dist/index.cjs.js"
 
 import { projectId } from './projectId.js'
-
-const fn = process.env["FIREBASE_JSON"] || './firebase.json';
-const firebaseJson = JSON.parse(
-  fs.readFileSync(fn, 'utf8')
-);
-
-const FUNCTIONS_URL = "http://localhost:5001";    // not available in any Firebase config, to read. :(
+import { FUNCTIONS_URL } from './config.js'
 
 /*
 * Initialize access to Firestore and provide a handle.

@@ -4,9 +4,9 @@
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
 */
-import { test, expect, describe, beforeAll, afterAll, jest } from '@jest/globals'
+import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
 
-import { db } from 'firebase-jest-testing'
+import { dbUnlimited as db } from 'firebase-jest-testing'
 
 import './matchers/toContainObject.js'
 
@@ -43,7 +43,7 @@ async function wipe(collection) {   // CollectionReference => Promise of ()
 * Cleanup
 */
 afterAll( async () => {
-  await db.app.delete();
+  //await db.app.delete();    // tbd. move to 'firebase-admin' made '.app' not be there...
 });
 
 describe("userInfo shadowing", () => {

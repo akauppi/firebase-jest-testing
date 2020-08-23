@@ -1,7 +1,7 @@
 /*
 * Default exports
 */
-import { db } from './db.js'
+import { dbUnlimited } from './dbUnlimited.js'
 import { fns } from './fns.js'
 
-export { db, fns }
+export { dbUnlimited, fns }

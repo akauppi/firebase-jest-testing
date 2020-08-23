@@ -1,5 +1,16 @@
 # Changelog
 
+## 23-Aug-20 (0.0.1-alpha.7)
+
+**API changes**
+
+- `db` renamed `dbUnlimited`
+
+**Internal changes**
+
+- Using `@firebase/rules-unit-testing` 
+- Using `firebase-admin` directly, instead of via `.initializeAdminApp`
+
 ## 21-Aug-20
 
 - removed the use of `firebase use`. Replaced with `--project=bunny`, see [#1](https://github.com/akauppi/firebase-jest-testing/issues/1)

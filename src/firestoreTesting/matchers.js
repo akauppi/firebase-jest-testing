@@ -3,11 +3,11 @@
 *
 * Conveniency functions for testing Firestore security rules.
 *
-* Note: '@firebase/testing' provides 'assertFails' and 'assertSucceeds' but they are only thin wrappers around the
+* Note: '@firebase/rules-unit-testing' provides 'assertFails' and 'assertSucceeds' but they are only thin wrappers around the
 *     promise. We don't use them, and the '.toAllow', '.toDeny' are seen as more developer friendly interface.
 *
 * Note: Used to have 'err instanceof FirebaseError' in the conditions, but that didn't work (maybe Jest interference,
-*     maybe '@firebase/testing' stuff), but testing can as well be done with '.name'.
+*     maybe '@firebase/rules-unit-testing' stuff), but testing can as well be done with '.name'.
 *
 *     References:
 *       - firebase.FirebaseError -> https://firebase.google.com/docs/reference/js/firebase.FirebaseError
@@ -15,8 +15,8 @@
 import { strict as assert } from 'assert'
 import { expect } from '@jest/globals'
 
-// Mentally also depends on '@firebase/testing'
-//import firebase from '@firebase/testing'
+// Mentally also depends on '@firebase/rules-unit-testing'.
+//import firebase from '@firebase/rules-unit-testing'
 
 import { PRIME_ROUND } from "./common"
 assert(!PRIME_ROUND);
