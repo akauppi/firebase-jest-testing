@@ -1,26 +1,29 @@
 /*
 * src/firestoreTesting/readOnly.js
 *
-* Layer above '@firebase/testing' FOR TESTING SECURITY RULES. Access is read-only (as far as the tests are concerned),
-* meaning successful write/delete operations do NOT cause the data seen my other tests change.
+* Layer above '@firebase/rules-unit-testing'. Access is read-only (as far as the tests are concerned),
+* meaning successful write/delete operations do NOT cause the data seen by other tests change.
 *
 * We are ONLY interested in working against an emulated Firestore instance, and only on the tests.
-*
-* Usage:
-*   - '--harmony-top-level-await' node flag needed
 */
 import { strict as assert } from 'assert'
 
 import firebase from '@firebase/rules-unit-testing'
 import admin from 'firebase-admin'
 
-import { projectId } from './common.js'
+import { projectId, PRIME_ROUND } from './common.js'
 import { emul } from './emul.js'
 
-assert(firebase.initializeAdminApp);
+import { FIRESTORE_HOST } from '../config'
 
-import { PRIME_ROUND } from "./common"
 assert(!PRIME_ROUND);
+
+// Set 'FIRESTORE_EMULATOR_HOST' if it isn't set. This side effect steers '@firebase/rules-unit-testing' and avoids
+// cluttering 'package.json'.
+//
+if (!process.env["FIRESTORE_EMULATOR_HOST"]) {
+  process.env["FIRESTORE_EMULATOR_HOST"] = FIRESTORE_HOST;
+}
 
 /*
 * Create an "admin" Firestore instance, for restoring the values.

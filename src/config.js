@@ -25,7 +25,7 @@ const FIRESTORE_HOST = process.env["FIRESTORE_EMULATOR_HOST"] || (() => {
 const FUNCTIONS_URL = "http://localhost:5001";    // not available in any Firebase config, to read. :(
 
 export {
-  firebaseJson,
+  firebaseJson,   // tbd. check who needs it
   FIRESTORE_HOST,
   FUNCTIONS_URL
 }

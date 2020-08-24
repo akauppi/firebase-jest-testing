@@ -15,12 +15,15 @@ const docs = require('./docs.cjs');
 const projectId = "rules-test";
 
 //import { clearAndPrime } from './tools/clearAndPrime.js'
-const clearAndPrime = require('./tools/clearAndPrime.cjs');
+//const cjsTools = require('firebase-jest-testing/cjs');
+const cjsTools = require('../../src/cjs/index.cjs');    // hack - in your app use one of the above
+const { clearFirestoreData, prime } = cjsTools;
 
 const setup = async _ => {
-  // Clean the existing data and prime with ours
+  // Clear the existing data and prime with ours
 
-  await clearAndPrime(projectId, docs);
+  await clearFirestoreData({projectId});
+  await prime(projectId, docs);
 
   console.debug("Docs primed for test-rules.");
 }

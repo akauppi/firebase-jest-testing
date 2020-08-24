@@ -2,14 +2,28 @@
 
 ## 23-Aug-20 (0.0.1-alpha.7)
 
+**Usage changes**
+
+- Runs on only one `firebase.json` per project (good so!!!)
+- only one `npm run start` command
+- `ci` tasks can be run against the same emulator
+
 **API changes**
 
 - `db` renamed `dbUnlimited`
+- tools for `globalSetup` now available as CommonJS code (`cjs`); until Jest supports ES modules there
 
 **Internal changes**
 
 - Using `@firebase/rules-unit-testing` 
-- Using `firebase-admin` directly, instead of via `.initializeAdminApp`
+- Using `firebase-admin` directly, instead of `.initializeAdminApp`
+- Using REST API `DELETE` directly, instead of `@firebase/rules-unit-testing`
+
+**Dependency changes**
+
+- `@firebase/rules-unit-testing` replaces `@firebase/testing` (deprecated)
+- `node-fetch` added
+- `proper-lockfile` added (omitted by mistake)
 
 ## 21-Aug-20
 
