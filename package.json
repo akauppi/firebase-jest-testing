@@ -39,7 +39,7 @@
     "ci:par": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_par_2\"",
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_init && npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
-    "start:sample": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_rest_2\"",
+    "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
     "test:fns:monitoring": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
     "test:fns:callables": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js",

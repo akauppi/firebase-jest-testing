@@ -3,18 +3,10 @@
 *
 * Provide access to an emulator-facing Firebase client (Cloud Functions).
 */
-import { strict as assert } from 'assert'
-
-// This gives:
-// <<
-//    Error [ERR_UNSUPPORTED_DIR_IMPORT]: Directory import '.../node_modules/firebase/app' is not supported resolving ES modules imported from ...
-// <<
+// Note: This should be:
 //import * as firebase from 'firebase/app'
-//import "firebase/firestore"
-//import "firebase/functions"
-
-import firebase from 'firebase/app/dist/index.cjs.js'
-import "firebase/functions/dist/index.cjs.js"
+import firebase from 'firebase/app'
+import "firebase/functions"
 
 import { projectId } from './projectId.js'
 import { FUNCTIONS_URL } from './config.js'

@@ -2,7 +2,11 @@
 
 ## The emulator could expose its configuration
 
-It would be helpful if a running emulator had a config REST API end point, where test setup could check "what's up".
+The Firebase emulator configuration story needs to be more firm. Currently (Firebase 8.8.1) configuration is found in a number of places.
+
+- place it all in `firebase.json`
+- allow command line overrides for `firebase emulator:exec`
+- allow a central place for discovery of such settings
 
 *`GET` `http://localhost:4000/config` ->*
 
@@ -14,7 +18,7 @@ It would be helpful if a running emulator had a config REST API end point, where
 }
 ```
 
-ES6 import allows URLs so reading this from test setup becomes a one-liner.
+ES `import` allows URLs so reading this from test setup becomes a one-liner.
 
 **Benefits**
 
@@ -24,9 +28,14 @@ This would allow detaching launching (and configuring) of emulation from the cod
 
 Tried many; nothing quite suits.
 
-Ended up with a setup where `.firebaserc` is sniffed for the project id (needed, even for pure emulation) and `firebase.json` for the Firestore emulation port.
+Ended up with a combination of reading `firebase.json` contents and `FIRESTORE_EMULATOR_HOST` env.var.
 
-If `firebase.json` is not under its default name, such name must be given by `FIREBASE_JSON` (own convention!) env.var.
+This works, but feels clumsy. Thus the suggestion.
 
-This works, but feels clumsy. Thus this suggestion.
+
+## Command line overrides for most `firebase.json` values
+
+For `firebase.json`, command line overrides for **all** (or most) of the config entries would take away the need to have two config files in one's project[^1]. There'd only be the main file (at root) and commands such as starting an emulator could override the fields they need.
+
+[^1]: We got away from that :)
 

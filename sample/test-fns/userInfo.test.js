@@ -43,7 +43,7 @@ async function wipe(collection) {   // CollectionReference => Promise of ()
 * Cleanup
 */
 afterAll( async () => {
-  //await db.app.delete();    // tbd. move to 'firebase-admin' made '.app' not be there...
+  //await db.app().delete();    // "db.app is not a function" (but tests are fine without this)
 });
 
 describe("userInfo shadowing", () => {

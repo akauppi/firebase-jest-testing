@@ -1,6 +1,6 @@
 # Problems
 
-Some obstacles faced, avoiding implementation in the way that was seen as ideal. Based on Jest 26.2 and Firebase 7.17.x.
+Some obstacles faced, avoiding implementation in the way that was seen as ideal. Based on Jest 26.2 and Firebase 7.17.x, `firebase-tools` 8.8.1.
 
 
 ## Jest: No test timeout hook
@@ -80,19 +80,17 @@ The ESM version is pointed to by the `module` field. This is a convention used i
 
 **Work around:**
 
-Load modules directly from the file system:
-
 ```
 // Instead of:
 //import * as firebase from 'firebase/app'
-//import "firebase/firestore"
 
-import firebase from 'firebase/app/dist/index.cjs.js'
-import "firebase/firestore/dist/index.cjs.js"
+import firebase from 'firebase/app'
 ```
 
+The difference is not big. It's just that the [documented way](https://firebase.google.com/docs/web/setup#add-sdks-initialize) of loading does not succeed.
 
-## Node: self-referencing the package by its name - not working
+
+## Node/Jest: self-referencing the package by its name - not working
 
 [Self-referencing a package using its name](https://nodejs.org/api/esm.html#esm_self_referencing_a_package_using_its_name) (node.js docs) should be possible, but does not work for us.
 
@@ -128,85 +126,7 @@ node.js 14.8.0
 
 **Work around:**
 
-Use relative `../src/..` paths in import.
-
-```
-import { dbAuth, FieldValue } from '../src/firestoreTestingReadOnly.js';
-```
-
-- Doesn't work so well as a sample.
-- Bypasses the `exports` mapping. :(((
-- Dependent on directory structure.
-
-
-## Firebase: where to place project files?
-
-In a normal Firebase project, the `firebase.json` and `.firebaserc` files are in the root.
-
-Here are examples:
-
-**firebase.json**
-
-```
-{
-  "firestore": {
-    "rules": "firestore.rules"
-  },
-  "emulators": {
-    "firestore": {
-      "port": "6768"
-    }
-  }
-}
-```
-
-**.firebaserc**
-
-```
-{
-  "projects": {
-    "abc": "vue-rollup-example"
-  }
-}
-```
-
->Note: It also seems, these must be in the same folder.
-
-If we place them in the root, that limits the number of possible samples to 1, so we've placed them in the subdir.
-
-But ideally, we'd like not to have them. At all. Please...
-
-The short idea the author has is that the launch and configuration of the emulator should be separated from the configuration of the sources. This could be done e.g. by:
-
-- allow command line arguments to steer the emulator. All of it. Now most details (e.g. rules or not) can only be provided via the configuration file. This would make `firebase.json`'s (we have two of them) disappear.
-- expose the running emulator(s) settings in a (new) REST API. This way, code could sniff the settings instead of trying to parse the configuration files that steer Firebase. 
-
-The current situation seems to be "in flux" (`firebase` 8.7.0). An overhaul of how emulation is configured would make this side of the development experience as simple as the API side of the various Firebase products is.
-
-<font size="+7">💐</font>
-
-
-## Jest: using with `npm link`
-
-For development of both this repo and the app, [Groundlevel ♠️ ES6 ♠️ Firebase](https://github.com/akauppi/GroundLevel-es6-firebase-web) uses `npm link`. 
-
-Jest doesn't seem to find a module, used this way:
-
-```
-$ npm run test:fns:callables
-
-> groundlevel-es6-firebase@0.0.0 test:fns:callables /Users/.../GroundLevel-es6-firebase-web
-> FIREBASE_JSON=firebase.norules.json npx --node-arg=--experimental-vm-modules jest --config back-end/test-fns/jest.config.cjs -f callables.test.js --detectOpenHandles
-
- FAIL  back-end/test-fns/callables.test.js
-  ● Test suite failed to run
-
-    Cannot find module 'firebase-jest-testing' from 'callables.test.js'
-
-      at Resolver.resolveModule (../../node_modules/jest-resolve/build/index.js:307:11)
-```
-
-Note: The current folder here is the app project's root folder but config is in `back-end/test-fns`.
+Use a custom resolver in Jest, as explained in [Writing tests](Writing%20tests.md) > Preparations.
 
 
 ## Firebase: testing in a CI
@@ -293,4 +213,77 @@ This works (providing `--project`):
 ```
 $ firebase emulators:exec --project dummy --only firestore,functions true
 ```
+
+>NOTE: Was able to solve this for `firebase-jest-testing` but keeping here, since it seems like a bug in Firebase 8.8.1.
+
+
+## Firebase: what are the App / project id / database for???
+
+Firebase API seems to suffer from abstraction overload. This means there are degrees of freedom that - in the lack of clear roadsigns to the developers - lead to confusion and development friction.
+
+This is likely mostly a documentation problem. The author has not found answers to the following questions in Firebase docs (and is now diving into sources..):
+
+### 1. What is the role of an "app"?
+
+Firebase clients do things like [creating a random app name](https://github.com/firebase/firebase-js-sdk/blob/master/packages/rules-unit-testing/src/api/index.ts#L95).
+
+An `.app` instance's `.firestore.app("other")` [allows one to fetch another app](https://github.com/firebase/firebase-js-sdk/blob/61b4cd31b961c90354be38b18af5fbea9da8d5a3/packages/firebase/index.d.ts#L1027) by its name. That's confusing.
+
+The documentation has lines like:
+
+>When called with no arguments, the default app is returned. When an app name is provided, the app corresponding to that name is returned.
+
+What is a default app?
+
+When would one create multiple?
+
+Firebase sources state:
+
+>A FirebaseApp holds the initialization information for a collection of services.
+
+Essentially it looks to be just that: a collection of options. It would make more sense for **app** developers to call it that, instead of "app".
+
+A `Map` of `string` -> `FirebaseOptions` would do just as well.
+
+Still, the real questions remain:
+
+- **When should one use the "default app"?**
+- **When should one use one with another (static) name?**
+- **When should one use a randomly named one?**
+
+Is this an unnecessary abstraction?
+
+### 2. Project id
+
+This is more familiar. We use it all the time to point a Firebase project to its cloud presence.
+
+The docs state that for emulating other than hosting, a project is not necessary. (thanks! That's how it should be!)
+
+What is not documented is the emulator's behaviour when various project id's are passed to it.
+
+- It shows Firestore data for the **active project** - not others.
+
+   Active project is the one shown by `firebase use` command.
+
+- One can use any other project id's, against emulation, and the data streams work but the emulator UI is out of this loop. This may be by design?
+
+All of this could be documented somewhere?
+
+
+### 3. Database
+
+It seems one can have multiple databases within the one Firebase project, but why and when should one do so??
+
+Since project id already covers the separation of data (e.g. in emulation), and since collections within Firebase are kind of separate entities, what is the use case for having more than the default database?
+
+Don't take me wrong. It's fully okay to be prepared for multiple databases, and never exercising that freedom. But it is not clearly stated within the docs that this is the case.
+
+The docs should clearly state, whether there is a use case for multiple databases, and what it is.
+
+
+### Where could this documentation be?
+
+Firebase could have a "terminology" page (unless it already has). That could cover these.
+
+It looks to the author that the source code is the main culprit, though. Once abstractions are clarified **for the team**, it should eventually rain down to the code, so that things like the `app.firestore().app("other")` are not possible (unless there is a use case). We developers use type hints and looking into source comments a lot, to get a feel of what's available. Those should only provide roads that are worth travelling; not dead ends or obfuscation by the amount of options.
 
