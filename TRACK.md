@@ -113,3 +113,9 @@ The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` fl
 
 If we get that, it's easy to build a REST client around it. We can be the client that allows people to benefit from this. Of course, `@firebase/rules-unit-testing` can also do it, if they see value in the approach.
 
+
+## Jest #10325
+
+- [chore: convert jest-runtime to ESM](https://github.com/facebook/jest/pull/10325)
+
+This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞

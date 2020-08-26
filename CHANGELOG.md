@@ -1,5 +1,16 @@
 # Changelog
 
+## 26-Aug-20 (0.0.1-alpha.9)
+
+**Fixes**
+
+- Fixed bug in `jestResolver.cjs` that caused the package not to load in an app.
+
+## 26-Aug-20 (0.0.1-alpha.8)
+
+- Changes to make use from application work; e.g. `cjs/jestResolver` provided
+- Started publishing to GitHub Packages, as `@akauppi/firebase-jest-testing`
+
 ## 23-Aug-20 (0.0.1-alpha.7)
 
 **Usage changes**

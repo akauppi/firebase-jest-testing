@@ -11,6 +11,12 @@ More about
 - [The design](DESIGN.md)
 - [Writing tests](Writing%20tests.md) (your TL;DR destination ✈️)
 
+<!-- Editor's note:
+Above links won't work in the published page.
+-->
+
+>Note: If the links don't work, try [here](https://github.com/akauppi/firebase-jest-testing).
+
 
 ## Folder structure
 
@@ -171,7 +177,7 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 ## Using in your project
 
 ```
-$ npm install --save-dev firebase-jest-testing@alpha
+$ npm install --save-dev @akauppi/firebase-jest-testing@alpha
 ```
 
 See [Writing tests](Writing%20tests.md) for what then.

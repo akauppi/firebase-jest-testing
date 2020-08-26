@@ -1,12 +1,13 @@
 {
-  "name": "firebase-jest-testing",
-  "version": "0.0.1-alpha.7",
-  "publishConfig": {
-    "tag": "alpha"
-  },
+  "name": "@akauppi/firebase-jest-testing",
+  "version": "0.0.1-alpha.9",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
-  "repository": "github:akauppi/firebase-jest-testing",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git",
+    "directory": "packages/name"
+  },
   "type": "module",
   "keywords": [
     "firebase",
@@ -29,6 +30,31 @@
     "./package.json": "./package.json",
     "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js   -- keeping away from 'exports' so a non-existing file would not cause other problems (pending Jest ES modules support for 'globalSetup')"
   },
+  "peerDependencies": {
+    "firebase": ">= 7.17.1 < 8",
+    "jest": ">= 26.2.2"
+  },
+  "dependencies": {
+    "@firebase/rules-unit-testing": "^1.0.0",
+    "firebase-admin": "^9.1.1",
+    "node-fetch": "^2.6.0",
+    "proper-lockfile": "^4.1.1"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "firebase": "^7.19.0",
+    "jest": "^26.4.2",
+    "jest-circus": "^26.4.2",
+    "wait-on": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=14.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/",
+    "tag": "alpha"
+  },
+  "--": "-- following stuff matters for development, only",
   "scripts": {
     "test": "npm run ci",
     "ci": "npm run ci:seq",
@@ -54,63 +80,32 @@
     "test:rules:visited": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
     "test:rules:all": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
   },
-  "peerDependencies": {
-    "firebase": ">= 7.17.1 < 8",
-    "jest": ">= 26.2.2"
-  },
-  "dependencies": {
-    "@firebase/rules-unit-testing": "^1.0.0",
-    "firebase-admin": "^9.1.1",
-    "node-fetch": "^2.6.0",
-    "proper-lockfile": "^4.1.1"
-  },
-  "devDependencies": {
-    "concurrently": "^5.3.0",
-    "firebase": "^7.19.0",
-    "jest": "^26.4.2",
-    "jest-circus": "^26.4.2",
-    "wait-on": "^5.2.0"
-  },
-  "engines": {
-    "node": ">=14.3"
-  },
   "//": {
     "--experimental-vm-modules": [
       "Needed for now (Aug 2020), to use native ES6 modules with Jest"
     ],
     "--detectOpenHandles speeds up tests": [
-      "This is weird, but consistent. If we keep it in 'npm test', the test execution is ~2x faster (as reported, per test).",
-      "Doing this, since it means our timeouts can be smaller."
+      "This is weird, but consistent (Jest 26). If we keep it in 'npm test', the test execution is ~2x faster (as reported, per test).",
+      "However, chose to keep it only in tests which otherwise give a warning."
     ],
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
     ],
     "peerDependencies": [
-      "Force the downstream project to explicitly depend on 'firebase'. It would be wrong that we bring all that in.",
-      "However, use of '@firebase/rules-unit-testing' is seen as an implementation detail they should not worry about."
+      "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in.",
+      "However, use of '@firebase/rules-unit-testing' and 'firebase-admin' are seen as implementation details we want to hide."
     ],
     "devDependencies": {
       "proper-lockfile": [
-        "Unfortunately, node (14.8.0) does not provide OS level locking. There are multiple choices for this - this is",
-        "just one."
+        "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
+        "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles."
       ]
     },
     "exports": {
       "./package.json": [
-        "Needed *at the application end* for Jest to be able to use the package (with the custom resolver hack).",
-        "See -> https://github.com/browserify/resolve/issues/222"
-      ]
-    },
-    "scripts": {
-      "start": [
-        "Must use 'firebase emulators:start' so that the Emulators UI shows the data. This causes 'concurrently'",
-        "and 'wait-on' to be needed, as dependencies.",
-        "",
-        "Update: Since 'firebase-tools' 8.7.0, the '--ui' parameter is there, but we're already used to this."
-      ],
-      "ci_par": [
-        "Cannot launch two Firebase emulators, in parallel ('firebase' 8.7.0)"
+        "NOT needed to be exposed, since we expose the 'cjs/jestResolver.cjs', instead. Ideally, many of these hacks",
+        "shall fade out (with more ESM support in Jest >26).."
       ]
     }
   }

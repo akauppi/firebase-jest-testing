@@ -23,15 +23,15 @@ const assert = require('assert').strict;
 
 //const fjtPkg = require("firebase-jest-testing/package.json");
 const fjtPkg = require("../../package.json");
-const pkgName = fjtPkg.name;   // "firebase-jest-testing"
+const pkgName = fjtPkg.name;   // "@akauppi/firebase-jest-testing"
 
-assert(pkgName === 'firebase-jest-testing');
+assert( pkgName == '@akauppi/firebase-jest-testing' );
 
 const exps = fjtPkg.exports;
 
 const tmp = Object.entries(exps).map( ([k,v]) => {
   return [
-    k.replace(/^\./, 'firebase-jest-testing' ),
+    k.replace(/^\./, pkgName ),
     v.replace(/^\.\//, `${pkgName}/`)
   ];
 });
