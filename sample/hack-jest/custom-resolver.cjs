@@ -1,15 +1,10 @@
 /*
 * sample/hack-jest/custom-resolver.cjs
 *
-* To be used until:
-*   a) self-referencing with ES native modules works
-*   b) imports in application project with native ES modules work
+* To be used until self-referencing with ES native modules works, within Jest.
 *
-* i.e. try to get rid of this; it's a hack.
-*
-* Based on:
-*   - "Add support for `packageFilter` for custom resolvers"
-*     -> https://github.com/facebook/jest/pull/10393
+* Note: This is for the 'firebase-jest-testing' library only, for running its internal samples.
+*     You'll need a similar approach for your app; see the documentation ('Writing tests').
 *
 * References:
 *   - Configuring Jest > resolver (Jest docs)

@@ -10,7 +10,7 @@ module.exports = {
 
   testRunner: "jest-circus/runner",   // for no reason
 
-  // Without this, wasn't able to get 'exports' to work. See -> TRACK.md
+  // Without this, wasn't able to get self-pointing 'exports' to work.
   resolver: "../hack-jest/custom-resolver.cjs",
 
   // Load docs, once at the beginning of the tests.

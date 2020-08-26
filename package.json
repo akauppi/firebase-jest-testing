@@ -17,8 +17,8 @@
     "src/**"
   ],
   "exports": {
-    "./package.json": "./package.json",
-    "./cjs": "./cjs/index.cjs",
+    "./cjs": "./src/cjs/index.cjs",
+    "./jestResolver": "./src/cjs/jestResolver.cjs",
     ".": "./src/index.js",
     "./firestoreTesting": "./src/firestoreTesting/index.js",
     "./firestoreTestingReadOnly": "./src/firestoreTesting/readOnly.js",
@@ -26,6 +26,7 @@
     "./prime": "./src/prime/index.js"
   },
   "//exports": {
+    "./package.json": "./package.json",
     "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js   -- keeping away from 'exports' so a non-existing file would not cause other problems (pending Jest ES modules support for 'globalSetup')"
   },
   "scripts": {

@@ -187,9 +187,9 @@ If you co-develop this library and a separate application project, use `npm link
 - `npm link` here
 - `npm link firebase-jest-testing` in the application
 
-There are some gotchas regarding this setup. If it seems not to, repeat the above commands.
+These commands seem to need repeating, per each version bump. If `npm install` fails in the application, just rerun them.
 
-See: [How to NPM Link to a local version of your dependency](https://medium.com/@AidThompsin/how-to-npm-link-to-a-local-version-of-your-dependency-84e82126667a) (blog, Jan 2019)
+- [How to NPM Link to a local version of your dependency](https://medium.com/@AidThompsin/how-to-npm-link-to-a-local-version-of-your-dependency-84e82126667a) (blog, Jan 2019)
 
 
 ## References

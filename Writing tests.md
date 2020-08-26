@@ -5,9 +5,17 @@ Please see [sample/test-fns](sample/test-fns) and [sample/test-rules](sample/tes
 
 ## Preparations
 
-- Copy `sample/hack-jest/custom-resolver.cjs` to your project (`back-end/hack-jest/...`) and point to it from the Jest configuration files (`**/jest.config.cjs`).
+Within your project:
 
-See [TRACK](TRACK.md) as to why this file is needed, for now. (TL;DR Jest ES modules resolver does not treat modules with `exports` field appropriately; Aug 2020).
+- have this in `jest.config.cjs`:
+
+   ```
+  // Without this, the 'firebase-jest-testing' modules are not correctly loaded, due to being declared using 'exports'.
+  //
+  resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
+   ```
+
+See [TRACK](TRACK.md) as to why this is needed, for now. (TL;DR Jest ES modules resolver does not treat modules with `exports` field appropriately; Aug 2020).
 
 
 ## Testing Cloud Function callables

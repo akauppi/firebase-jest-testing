@@ -21,7 +21,7 @@ const app = firebase.initializeApp({
   auth: null    // unauth is enough
 }, "fns-testing");
 
-const fns = app.functions(/*"europe-west3"*/);
+const fns = app.functions();    // region does not seem to be needed, when running in emulation
 fns.useFunctionsEmulator(FUNCTIONS_URL);
 
 export {
