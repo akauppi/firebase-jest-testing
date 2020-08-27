@@ -19,17 +19,12 @@
   ],
   "exports": {
     "./cjs": "./src/cjs/index.cjs",
-    "./jestResolver": "./src/cjs/jestResolver.cjs",
-    ".": "./src/index.js",
-    "./firestoreTesting": "./src/firestoreTesting/index.js",
-    "./firestoreTestingReadOnly": "./src/firestoreTesting/readOnly.js",
-    "./eventually": "./src/jest/eventually.js",
-    "./prime": "./src/prime/index.js"
+    "./cloudFunctions": "./src/cloudFunctions/fns.js",
+    "./firestore": "./src/firestore/index.js",
+    "./firestoreReadOnly": "./src/firestoreReadOnly/index.js",
+    "./jest": "./src/jest/eventually.js"
   },
-  "//exports": {
-    "./package.json": "./package.json",
-    "./firestoreTestingAdmin": "./src/firestoreTesting/admin.js   -- keeping away from 'exports' so a non-existing file would not cause other problems (pending Jest ES modules support for 'globalSetup')"
-  },
+  "//exports": {},
   "peerDependencies": {
     "firebase": ">= 7.17.1 < 8",
     "jest": ">= 26.2.2"
@@ -68,8 +63,8 @@
     "---  ": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
-    "test:fns:monitoring": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
     "test:fns:callables": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js",
+    "test:fns:monitoring": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
     "test:fns:userInfo": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
     "test:fns:all": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",

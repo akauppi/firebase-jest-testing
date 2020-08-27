@@ -1,5 +1,5 @@
 /*
-* src/tools/lockable.js
+* src/firestoreReadOnly/tools/lockable.js
 *
 * Execute tasks, one at a time, with OS level locking.
 *
@@ -13,10 +13,7 @@
 *   Did this module so that changing the underlying implementation is easy, if there is a need.
 */
 //import { lock } from 'proper-lockfile'    // "does not provide an export named 'lock'"
-import m from 'proper-lockfile';
-import {strict as assert} from "assert"; const lock = m.lock;
-
-import { writeFileSync, existsSync } from 'fs'
+import m from 'proper-lockfile'; const lock = m.lock;
 
 /*
 * Create a locking wrapper around a promise provided by 'genProm'.

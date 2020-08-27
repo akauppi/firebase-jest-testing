@@ -1,5 +1,5 @@
 /*
-* src/firestoreTesting/readOnly.js
+* src/firestoreReadOnly/readOnly.js
 *
 * Layer above '@firebase/rules-unit-testing'. Access is read-only (as far as the tests are concerned),
 * meaning successful write/delete operations do NOT cause the data seen by other tests change.
@@ -64,9 +64,6 @@ afterAll( async () => {   // () => Promise of ()
 
   await Promise.all( apps.map( app => { return app.delete(); }));
 });
-
-// Enable '.toAllow' and '.toDeny' matchers, as a side effect
-import './matchers.js'
 
 export {
   dbAuth

@@ -1,5 +1,5 @@
 /*
-* src/fns.js
+* src/cloudFunctions/fns.js
 *
 * Provide access to an emulator-facing Firebase client (Cloud Functions).
 */
@@ -8,8 +8,8 @@
 import firebase from 'firebase/app'
 import "firebase/functions"
 
-import { projectId } from './projectId.js'
-import { FUNCTIONS_URL } from './config.js'
+import { projectId } from '../projectId.js'
+import { FUNCTIONS_URL } from '../config.js'
 
 /*
 * Initialize access to Firestore and provide a handle.

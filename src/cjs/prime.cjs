@@ -3,7 +3,7 @@
 *
 * Prime a project's Firestore data, in cjs.
 *
-* NOTE: Once Jest 'globalSetup' can use ES modules, this goes away. Use 'firebase-jest-testing/prime'.
+* NOTE: Once Jest 'globalSetup' can use ES modules, this goes away. Use '@akauppi/firebase-jest-testing/firestore': prime
 */
 const assert = require('assert').strict;
 

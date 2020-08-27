@@ -1,7 +1,8 @@
 /*
 * src/projectId.js
 *
-* Dig the Firebase projectId (needed for showing Firestore data in the Emulator UI).
+* Dig the Firebase projectId (needed for showing Firestore data in the Emulator UI but also for initializing the
+* cloud Functions app - or is it?).  <<-- tbd. advice from Firebase requested, to better understand projects and apps
 *
 * Our means:
 *   - 'GCLOUD_PROJECT' env.var. set by 'firebase emulators:exec', automatically

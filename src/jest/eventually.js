@@ -1,8 +1,6 @@
 /*
 * src/jest/eventually.js
 *
- */
-/*
 * A promise for polling a certain condition. Resolves (with the value of the condition) if the condition becomes
 * other than 'undefined'.
 *

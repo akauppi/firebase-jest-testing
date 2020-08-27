@@ -35,13 +35,13 @@ A custom resolver allows us to use the package *almost* as ES modules. It reflec
 
 ```
 const pkg = require("../../package.json");
-const pkgName = pkg.name;   // "firebase-jest-testing"
+const pkgName = pkg.name;   // "@akauppi/firebase-jest-testing"
 
 const exps = pkg.exports;
 
 const tmp = Object.entries(exps).map( ([k,v]) => {
   return [
-    k.replace(/^\./, 'firebase-jest-testing' ),
+    k.replace(/^\./, pkgName ),
     v.replace(/^\.\//, '../../')
   ];
 });
@@ -51,7 +51,7 @@ const lookup = new Map(tmp);
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
-  if (request.startsWith(pkgName)) {    // "firebase-jest-testing"
+  if (request.startsWith(pkgName)) {
     const hit = lookup.get(request);
     if (!hit) throw new Error("No 'exports' lookup for: "+ request);    // better than assert (causes the right module to be mentioned in the error message)
 

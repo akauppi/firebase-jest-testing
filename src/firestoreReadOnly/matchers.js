@@ -1,5 +1,5 @@
 /*
-* src/firestoreTesting/matchers.js
+* src/firestoreReadOnly/matchers.js
 *
 * Conveniency functions for testing Firestore security rules.
 *

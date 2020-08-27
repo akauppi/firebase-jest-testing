@@ -10,9 +10,9 @@ Within your project:
 - have this in `jest.config.cjs`:
 
    ```
-  // Without this, the 'firebase-jest-testing' modules are not correctly loaded, due to being declared using 'exports'.
+  // Without this, the modules are not correctly loaded, due to being declared using 'exports'.
   //
-  resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
+  resolver: "@akauppi/firebase-jest-testing/src/cjs/jestResolver.cjs"
    ```
 
 See [TRACK](TRACK.md) as to why this is needed, for now. (TL;DR Jest ES modules resolver does not treat modules with `exports` field appropriately; Aug 2020).
@@ -21,7 +21,7 @@ See [TRACK](TRACK.md) as to why this is needed, for now. (TL;DR Jest ES modules 
 ## Testing Cloud Function callables
 
 ```
-import { fns } from 'firebase-jest-testing'
+import { fns } from '@akauppi/firebase-jest-testing/cloudFunctions'
 
 fns.httpsCallable(...);
 ```
@@ -35,8 +35,8 @@ In short, you get straight to the Cloud Functions; no need to initialize Firebas
 In this, a function triggered by one data change causes another, in Cloud Firestore.
 
 ```
-import { dbUnlimited } from 'firebase-jest-testing'
-import { eventually } from 'firebase-jest-testing/eventually'
+import { dbUnlimited } from '@akauppi/firebase-jest-testing/firestore'
+import { eventually } from '@akauppi/firebase-jest-testing/jest'
 ```
 
 >Note: `eventually` is a helper feature that allows Jest to actively wait for a condition to become true. The testing toolkit does not have that capability, built in.
@@ -68,7 +68,8 @@ In our `test:userInfo` sample, writing to one collection causes a change in anot
 Like this:
 
 ```
-import { dbUnlimited, eventually } from 'firebase-jest-testing'
+import { dbUnlimited } from '@akauppi/firebase-jest-testing/firestore'
+import { eventually } from '@akauppi/firebase-jest-testing/jest'
 
 # First, write to the collection. 'db' is the normal Cloud Firestore handle.
 await dbUnlimited.collection("userInfo").doc("abc").set(william);
@@ -107,7 +108,7 @@ The tests can now be written in a simpler way, since you don't have to worry abo
 
 
 ```
-import { dbAuth } from 'firebase-jest-testing/firestoreTestingReadOnly'
+import { dbAuth } from '@akauppi/firebase-jest-testing/firestoreReadOnly'
 ```
 
 This provides a `firebase.firestore.Firestore` -like interface (not the full thing!) that can be used to instantiate multiple access profiles:
@@ -151,7 +152,7 @@ It seems like a good idea to have static data that gets "primed" to the database
 
 ```
 import { docs } from './docs.js'
-import { prime } from 'firebase-jest-testing'
+import { prime } from 'firebase-jest-testing/firestore'
 
 await prime(docs);
 console.info("Primed :)");

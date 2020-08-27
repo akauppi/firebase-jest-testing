@@ -1,7 +1,7 @@
 /*
 * src/cjs/jestResolver.cjs
 *
-* To be used by application projects, to resolve 'firebase-jest-testing' within Jest.
+* To be used by application projects, to resolve '@akauppi/firebase-jest-testing' within Jest.
 *
 * The problem is that Jest 26.x resolver (aka browserify resolver) does not treat a module with 'exports'
 * field correctly. Once it does, we abandon this.
@@ -10,7 +10,8 @@
 *   # 'jest.config.cjs':
 *   <<
 *     module.exports = {
-*       resolver: "firebase-jest-testing/hackResolver"
+*       //resolver: "@akauppi/firebase-jest-testing/cjs/jestResolver"
+*       resolver: "@akauppi/firebase-jest-testing/src/cjs/jestResolver.cjs"
 *       ...
 *     }
 *   <<
@@ -21,7 +22,6 @@
 */
 const assert = require('assert').strict;
 
-//const fjtPkg = require("firebase-jest-testing/package.json");
 const fjtPkg = require("../../package.json");
 const pkgName = fjtPkg.name;   // "@akauppi/firebase-jest-testing"
 
@@ -37,7 +37,7 @@ const tmp = Object.entries(exps).map( ([k,v]) => {
 });
 
 const lookup = new Map(tmp);
-  // e.g. 'firebase-jest-testing' -> 'firebase-jest-testing/src/index.js'
+  // e.g. '@X/firebase-jest-testing' -> '@X/firebase-jest-testing/src/index.js'
 
 /*lookup.forEach((v,k) => {   // DEBUG
   console.debug("MAPPED:", k+" -> "+v);
@@ -45,7 +45,7 @@ const lookup = new Map(tmp);
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
-  if (request.startsWith(pkgName)) {    // "firebase-jest-testing"
+  if (request.startsWith(pkgName)) {
     const hit = lookup.get(request);
     //console.debug("Transfer:", request+" -> "+hit);
 

@@ -1,5 +1,5 @@
 /*
-* src/dbUnlimited.js
+* src/firestore/dbUnlimited.js
 *
 * Provide access to an emulator-facing Firebase client for Firestore, FOR THE DEFAULT "APP", _without_ Security Rules
 * applied.
@@ -14,12 +14,10 @@
 *     dbUnlimited.app().delete();
 *   <<
 */
-import { strict as assert } from 'assert'
-
 import admin from 'firebase-admin'
 
-import { projectId } from './projectId.js'
-import { FIRESTORE_HOST } from './config.js'
+import { projectId } from '../projectId.js'
+import { FIRESTORE_HOST } from '../config.js'
 
 /*
 * Initialize access to Firestore and provide a handle.
@@ -35,10 +33,6 @@ db.settings({         // affects all subsequent use (and can be done only once)
   host: FIRESTORE_HOST,
   ssl: false
 });
-
-/*REMOVE function getRandomAppName() {
-  return 'app-' + new Date().getTime() + '-' + Math.random();
-}*/
 
 export {
   db as dbUnlimited

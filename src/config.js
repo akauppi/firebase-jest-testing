@@ -1,5 +1,5 @@
 /*
-* src/config.js     <-- tbd. rename 'emulationParams.js'???
+* src/config.js
 *
 * Provides access to emulator configuration
 */

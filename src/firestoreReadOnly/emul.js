@@ -1,13 +1,13 @@
 /*
-* Emulation support for 'readOnly.js'
+* src/firestoreReadOnly/emul.js
 *
-* We provide the illusion of a Firestore API that simply doesn't change the underlying contents.
+* Provides the illusion of a Firestore API that simply doesn't change the underlying contents.
 *
 * Note: Jest executes tests in sequence (within a file) but we should be prepared to handle multiple tests running
 *     in parallel. These are in separate JavaScript contexts (courtesy Jest architecture). Thus, any locking needs
 *     to be in the OS level, spanning all Jest contexts (since they use the same data).
 */
-import { lockable } from "../tools/lockable.js"
+import { lockable } from "./tools/lockable.js"
 import { existsSync, writeFileSync } from "fs"
 
 const DEBUG = false;  // switch tracing on/off

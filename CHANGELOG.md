@@ -1,5 +1,11 @@
 # Changelog
 
+## 27-Aug-20
+
+**API changes**
+
+- Full reorganization of the import names, based on Firebase product
+
 ## 26-Aug-20 (0.0.1-alpha.9)
 
 **Fixes**

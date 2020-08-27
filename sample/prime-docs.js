@@ -5,7 +5,7 @@
 */
 import { docs } from './docs.js'
 
-import { prime } from 'firebase-jest-testing/prime'
+import { prime } from '@akauppi/firebase-jest-testing/firestore'
 
 await prime(docs);
 console.info("Primed :)");

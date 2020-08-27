@@ -1,5 +1,5 @@
 /*
-* src/firestoreTesting/common.js
+* src/firestoreReadOnly/common.js
 *
 * Used by both Jest 'globalSetup' and tests.
 *

@@ -3,8 +3,7 @@
 */
 import { strict as assert } from 'assert'
 
-import { dbAuth } from 'firebase-jest-testing/firestoreTestingReadOnly'
-import { FieldValue } from 'firebase-jest-testing/firestoreTesting'
+import { dbAuth, FieldValue } from '@akauppi/firebase-jest-testing/firestoreReadOnly'
 
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
