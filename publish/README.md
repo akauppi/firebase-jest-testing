@@ -1,18 +1,15 @@
 # Publish
 
-The code is published to GitHub Packages. 
-
-This is selected mostly because of familiarity, and the supposed benefit of using one less tool. Let's see how it fairs..
+The code is published to GitHub Packages. This is selected mostly because of familiarity, and the supposed benefit of using one less tool. Let's see how it fairs..
 
 Publishing is done **manually**, by the author. The steps involved are described here.
 
-Note that GitHub Packages "only supports scoped npm packages." i.e. we need to have the owner in the package name.
+>Note: We plan to eventually have an organization for this project. That would imply a name change. In the beginning, it's published with the author's private account, since Github "only supports scoped npm packages".
 
 
 ## Requirements
 
-Study [GitHub Packages docs](https://docs.github.com/en/packages/publishing-and-managing-packages/publishing-a-package) on publishing, authentication etc.
-
+Study [Configuring npm for use with GitHub Packages](https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages) and follow its guidance.
 
 ## Steps
 

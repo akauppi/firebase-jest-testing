@@ -176,11 +176,30 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 
 ## Using in your project
 
+The package is published only to GitHub Packages (not npm registry). In order to use these, your application project must:
+
+Have a `.npmrc` file:
+
+```
+registry=https://npm.pkg.github.com/akauppi
+```
+
 ```
 $ npm install --save-dev @akauppi/firebase-jest-testing@alpha
 ```
 
-See [Writing tests](Writing%20tests.md) for what then.
+GitHub Packages shows through the npm registry packages, so you can still use such as well. We hope this little annoyance is not too much to bare - it's simply more easy for the author to publish to GitHub Packages vs. npm registry.
+
+**Sample projects using the library**
+
+- [GroundLevel](https://github.com/akauppi/GroundLevel-es6-firebase-web) - a Vue.js 3 app template / collaborative graphical tool
+
+<!-- add more here
+-->
+
+**API reference**
+
+- [Writing tests](Writing%20tests.md) has details, supporting the samples
 
 >Note: Though Jest is in the name, you *can* use some parts in any testing framework, but you'd have to dig the necessary bits out and apply to your project. The distribution expects one to use Jest.
 
@@ -201,4 +220,4 @@ These commands seem to need repeating, per each version bump. If `npm install` f
 ## References
 
 - [ES modules in Node today](https://blog.logrocket.com/es-modules-in-node-today/) (blog, Mar 2020)
-
+- Configuring npm for use with GitHub Packages > [Installing a package](https://docs.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages#installing-a-package) (GitHub docs)
