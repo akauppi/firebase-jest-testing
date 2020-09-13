@@ -1,6 +1,7 @@
 {
-  "name": "@akauppi/firebase-jest-testing",
-  "version": "0.0.1-alpha.9",
+  "name": "firebase-jest-testing",
+  "//name": "@akauppi/firebase-jest-testing",
+  "version": "0.0.1-beta.1",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -15,7 +16,9 @@
   ],
   "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
   "files": [
-    "src/**"
+    "src/**",
+    "DESIGN.md",
+    "Writing tests.md"
   ],
   "exports": {
     "./cjs": "./src/cjs/index.cjs",
@@ -24,20 +27,19 @@
     "./firestoreReadOnly": "./src/firestoreReadOnly/index.js",
     "./jest": "./src/jest/eventually.js"
   },
-  "//exports": {},
   "peerDependencies": {
-    "firebase": ">= 7.17.1 < 8",
-    "jest": ">= 26.2.2"
+    "firebase": ">= 7.20.0 < 8",
+    "jest": ">= 26.4.0"
   },
   "dependencies": {
-    "@firebase/rules-unit-testing": "^1.0.0",
+    "@firebase/rules-unit-testing": "^1.0.2",
+    "firebase": "^7.20.0",
     "firebase-admin": "^9.1.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "proper-lockfile": "^4.1.1"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
-    "firebase": "^7.19.0",
     "jest": "^26.4.2",
     "jest-circus": "^26.4.2",
     "wait-on": "^5.2.0"
@@ -46,8 +48,8 @@
     "node": ">=14.3"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/",
-    "tag": "alpha"
+    "//registry": "https://npm.pkg.github.com/",
+    "tag": "beta"
   },
   "--": "-- following stuff matters for development, only",
   "scripts": {

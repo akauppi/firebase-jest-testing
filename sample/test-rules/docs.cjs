@@ -1,9 +1,10 @@
 /*
-* sample/test-rules/docs.js
+* sample/test-rules/docs.cjs
 *
 * Constant data used for the rules test cases
+*
+* Note: Needs to be '.cjs' because loaded from Jest 'globalSetup' (no ES modules support, yet).
 */
-
 const anyPastDate = new Date();
 
 /*

@@ -1,5 +1,12 @@
 # Changelog
 
+## 13-Sep-20 (0.0.1-beta.1)
+
+- Publishing to `npm` (was: GitHub Packages)
+- Documentation revise
+- Dependency updates
+- No API changes
+
 ## 27-Aug-20
 
 **API changes**
