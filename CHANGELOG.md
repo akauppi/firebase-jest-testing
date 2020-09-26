@@ -4,6 +4,7 @@
 
 - Dependency updates
 - Bugfix: Moved `firebase` from `dependency` to `peerDependency`. Was always the intention but somehow 0.0.1-beta.2 had it wrong.
+- Allows Cloud Functions emulator port to be defined in `firebase.json`: `emulators.functions.port`.
 
 ## (0.0.1-beta.2)
 

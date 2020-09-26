@@ -20,12 +20,18 @@ const FIRESTORE_HOST = process.env["FIRESTORE_EMULATOR_HOST"] || (() => {
   return `localhost:${port}`;
 })();
 
-// This is constant - there is no way to either set it, or sniff it out? (firebase 8.8.1)
-//
-const FUNCTIONS_URL = "http://localhost:5001";    // not available in any Firebase config, to read. :(
+const FUNCTIONS_URL = (() => {
+  let port = firebaseJson.emulators.functions?.port;   // "5002"
+  if (!port) {
+    port = 5001;
+    console.warning(`No 'emulators.functions.port' in '${fn}': using default (${port}).`);
+  }
+
+  return `http://localhost:${port}`;
+})();
+
 
 export {
-  firebaseJson,   // tbd. check who needs it
   FIRESTORE_HOST,
   FUNCTIONS_URL
 }
