@@ -1,5 +1,10 @@
 # Changelog
 
+## 26-Sep-20 (0.0.1-beta.3)
+
+- Dependency updates
+- Bugfix: Moved `firebase` from `dependency` to `peerDependency`. Was always the intention but somehow 0.0.1-beta.2 had it wrong.
+
 ## (0.0.1-beta.2)
 
 - BUGFIX: changed references from scoped package.
