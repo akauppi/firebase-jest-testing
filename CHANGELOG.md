@@ -1,5 +1,10 @@
 # Changelog
 
+## (0.0.1-beta.2)
+
+- BUGFIX: changed references from scoped package.
+- Changed to `node-fetch` `3.0.0-beta`
+
 ## 13-Sep-20 (0.0.1-beta.1)
 
 - Publishing to `npm` (was: GitHub Packages)

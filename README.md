@@ -183,7 +183,7 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 In your application project:
 
 ```
-$ npm install --save-dev @akauppi/firebase-jest-testing@beta
+$ npm install --save-dev firebase-jest-testing@beta
 ```
 
 <!-- bygones: was using GitHub Packages
@@ -197,7 +197,7 @@ registry=https://npm.pkg.github.com/akauppi
 ```
 
 ```
-$ npm install --save-dev @akauppi/firebase-jest-testing@beta
+$ npm install --save-dev firebase-jest-testing@beta
 ```
 
 GitHub Packages shows through the npm registry packages, so you can still use such as well. We hope this little annoyance is not too much to bare - it's simply more easy for the author to publish to GitHub Packages vs. npm registry.

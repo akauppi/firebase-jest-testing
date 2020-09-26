@@ -11,7 +11,7 @@
 *     -> https://jestjs.io/docs/en/configuration#resolver-string [1]
 */
 const pkg = require("../../package.json");
-const pkgName = pkg.name;   // "@akauppi/firebase-jest-testing"
+const pkgName = pkg.name;   // "firebase-jest-testing"
 
 const exps = pkg.exports;
   //
@@ -31,15 +31,11 @@ const tmp = Object.entries(exps).map( ([k,v]) => {
 });
 
 const lookup = new Map(tmp);
-  // e.g. '@akauppi/firebase-jest-testing/cloudFunctions' -> '../../src/cloudFunctions/fns.js'
-
-/*lookup.forEach((v,k) => {   // DEBUG
-  console.debug("MAPPED:", k+" -> "+v);
-});*/
+  // e.g. 'firebase-jest-testing/cloudFunctions' -> '../../src/cloudFunctions/fns.js'
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
-  if (request.startsWith(pkgName)) {    // "@akauppi/firebase-jest-testing"
+  if (request.startsWith(pkgName)) {    // "firebase-jest-testing"
     const hit = lookup.get(request);
     if (!hit) throw new Error("No 'exports' lookup for: "+ request);    // better than assert (causes the right module to be mentioned in the error message)
 

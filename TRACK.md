@@ -35,7 +35,7 @@ A custom resolver allows us to use the package *almost* as ES modules. It reflec
 
 ```
 const pkg = require("../../package.json");
-const pkgName = pkg.name;   // "@akauppi/firebase-jest-testing"
+const pkgName = pkg.name;   // "firebase-jest-testing"
 
 const exps = pkg.exports;
 
