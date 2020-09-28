@@ -1,6 +1,5 @@
 {
   "name": "firebase-jest-testing",
-  "//name": "@akauppi/firebase-jest-testing",
   "version": "0.0.1-beta.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
@@ -48,7 +47,6 @@
     "node": ">=14.3"
   },
   "publishConfig": {
-    "//registry": "https://npm.pkg.github.com/",
     "tag": "beta"
   },
   "--": "-- following stuff matters for development, only",

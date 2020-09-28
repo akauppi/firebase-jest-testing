@@ -49,9 +49,11 @@ The `firebase.json` project file is at the root, as one would have it in their a
 
 ## Requirements
 
-- npm
+- npm >= 14.3 [^1]
 - `firebase` CLI:
    `npm install -g firebase-tools`
+
+[^1]: We [need `--experimental-vm-modules`](https://stackoverflow.com/questions/60372790/node-v13-jest-es6-native-support-for-modules-without-babel-or-esm#answer-61653104) (SO answer), which seems to be available for `node@^12.16.0`. In order to support node.js 12, though, top-level-awaits should be abandoned. This *may* be doable, once we set up CI (Dockerimage) for the project.
 
 <!-- tbd. is this strictly necessary?
 Set up the Firestore emulator:
