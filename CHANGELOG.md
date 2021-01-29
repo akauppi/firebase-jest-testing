@@ -1,5 +1,9 @@
 # Changelog
 
+## 29-Jan-21 (0.0.2-beta.0)
+
+- Changed to Jest v27 (next.2)
+
 ## 29-Jan-21 (0.0.2-alpha.0)
 
 - Updated to be compatible with Node.js 15 (15.5.0)
