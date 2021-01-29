@@ -1,12 +1,11 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.4",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git",
-    "directory": "packages/name"
+    "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git"
   },
   "type": "module",
   "keywords": [
@@ -27,8 +26,8 @@
     "./jest": "./src/jest/eventually.js"
   },
   "peerDependencies": {
-    "firebase": ">= 7.20.0 < 8",
-    "jest": ">= 26.4.0"
+    "firebase": "^7.20.0",
+    "jest": "^26.6.3"
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "^1.0.4",
@@ -56,24 +55,24 @@
     "---": "",
     "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_init && npm run _ci_fns && npm run _ci_rules\"",
     "_ci_init": "node --harmony-top-level-await sample/prime-docs.js",
-    "_ci_fns": "npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
-    "_ci_rules": "npx --node-arg=--experimental-vm-modules jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles",
+    "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
+    "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles",
     "ci:par": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_par_2\"",
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_init && npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
-    "test:fns:callables": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f callables.test.js",
-    "test:fns:monitoring": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
-    "test:fns:userInfo": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
-    "test:fns:all": "GCLOUD_PROJECT=bunny npx --node-arg=--experimental-vm-modules jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
+    "test:fns:callables":   "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f callables.test.js",
+    "test:fns:monitoring":  "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
+    "test:fns:userInfo":    "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
+    "test:fns:all":         "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",
-    "test:rules:invites": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
-    "test:rules:projects": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f projectsC.test.js --verbose --detectOpenHandles",
-    "test:rules:symbols": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles",
-    "test:rules:userInfo": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
-    "test:rules:visited": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
-    "test:rules:all": "npx --node-arg=--experimental-vm-modules --node-arg=--harmony-top-level-await jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
+    "test:rules:invites":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
+    "test:rules:projects":  "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f projectsC.test.js --verbose --detectOpenHandles",
+    "test:rules:symbols":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles",
+    "test:rules:userInfo":  "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
+    "test:rules:visited":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
+    "test:rules:all":       "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
   },
   "//": {
     "--experimental-vm-modules": [

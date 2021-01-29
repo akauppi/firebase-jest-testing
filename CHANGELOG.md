@@ -1,5 +1,9 @@
 # Changelog
 
+## 29-Jan-21 (0.0.1-beta.4)
+
+- Updated to be compatible with Node.js 15 (15.5.0)
+
 ## 26-Sep-20 (0.0.1-beta.3)
 
 - Dependency updates
