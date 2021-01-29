@@ -119,3 +119,10 @@ If we get that, it's easy to build a REST client around it. We can be the client
 - [chore: convert jest-runtime to ESM](https://github.com/facebook/jest/pull/10325)
 
 This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
+
+## `node-fetch` v3
+
+[v3 Roadmap](https://github.com/node-fetch/node-fetch/issues/668)
+
+
+

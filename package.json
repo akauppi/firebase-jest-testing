@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.1-beta.4",
+  "version": "0.0.2-alpha.0",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -26,21 +26,22 @@
     "./jest": "./src/jest/eventually.js"
   },
   "peerDependencies": {
-    "firebase": "^7.20.0",
+    "firebase": "^7.20.0 || ^8.0.0",
     "jest": "^26.6.3"
   },
   "dependencies": {
-    "@firebase/rules-unit-testing": "^1.0.4",
-    "firebase-admin": "^9.2.0",
+    "@firebase/rules-unit-testing": "^1.1.9",
+    "firebase-admin": "^9.4.2",
     "node-fetch": "^3.0.0-beta.9",
     "proper-lockfile": "^4.1.1"
   },
   "devDependencies": {
+    "@local/functions": "file:functions",
     "concurrently": "^5.3.0",
-    "firebase": "^7.21.1",
-    "jest": "^26.4.2",
-    "jest-circus": "^26.4.2",
-    "wait-on": "^5.2.0"
+    "firebase": "^8.2.4",
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
+    "wait-on": "^5.2.1"
   },
   "engines": {
     "node": ">=14.3"
@@ -53,7 +54,7 @@
     "test": "npm run ci",
     "ci": "npm run ci:seq",
     "---": "",
-    "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_init && npm run _ci_fns && npm run _ci_rules\"",
+    "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_init && npm run --silent _ci_fns && npm run --silent _ci_rules\"",
     "_ci_init": "node --harmony-top-level-await sample/prime-docs.js",
     "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles",
@@ -62,17 +63,17 @@
     "---  ": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
-    "test:fns:callables":   "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f callables.test.js",
-    "test:fns:monitoring":  "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
-    "test:fns:userInfo":    "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
-    "test:fns:all":         "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
+    "test:fns:callables": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f callables.test.js",
+    "test:fns:monitoring": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js",
+    "test:fns:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --detectOpenHandles",
+    "test:fns:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "---   ": "",
-    "test:rules:invites":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
-    "test:rules:projects":  "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f projectsC.test.js --verbose --detectOpenHandles",
-    "test:rules:symbols":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles",
-    "test:rules:userInfo":  "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
-    "test:rules:visited":   "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
-    "test:rules:all":       "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
+    "test:rules:invites": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles",
+    "test:rules:projects": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f projectsC.test.js --verbose --detectOpenHandles",
+    "test:rules:symbols": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await ' npx jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles",
+    "test:rules:userInfo": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles",
+    "test:rules:visited": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles",
+    "test:rules:all": "NODE_OPTIONS='--experimental-vm-modules --harmony-top-level-await' npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -86,20 +87,25 @@
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
     ],
-    "peerDependencies": [
-      "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in.",
-      "However, use of '@firebase/rules-unit-testing' and 'firebase-admin' are seen as implementation details we want to hide."
-    ],
+    "peerDependencies": {
+      "": [
+        "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in.",
+        "However, use of '@firebase/rules-unit-testing' and 'firebase-admin' are seen as implementation details we want to hide."
+      ],
+      "firebase": [
+        "We should be able to support two latest main versions (eg. 7.x and 8.x). Variate the actual depenendency to do testing",
+        "(set to specific version, eg. '7.2.0' and do 'npm install'. Double check with 'npm list firebase')."
+      ]
+    },
     "devDependencies": {
+      "@local/functions": [
+        "This file system dependency brings the dependencies ('firebase-functions' in particular) to the main level,",
+        "with the versions provided in 'sample/functions/package.json'. This makes the Firebase similator work, and",
+        "avoids the need to go install node modules within the 'sample/functions' directory."
+      ],
       "proper-lockfile": [
         "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
         "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles."
-      ]
-    },
-    "exports": {
-      "./package.json": [
-        "NOT needed to be exposed, since we expose the 'cjs/jestResolver.cjs', instead. Ideally, many of these hacks",
-        "shall fade out (with more ESM support in Jest >26).."
       ]
     }
   }

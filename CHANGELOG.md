@@ -1,8 +1,10 @@
 # Changelog
 
-## 29-Jan-21 (0.0.1-beta.4)
+## 29-Jan-21 (0.0.2-alpha.0)
 
 - Updated to be compatible with Node.js 15 (15.5.0)
+- Updated dependencies
+- Reduced noise in `npm run ci` console output
 
 ## 26-Sep-20 (0.0.1-beta.3)
 

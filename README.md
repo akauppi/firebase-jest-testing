@@ -82,11 +82,7 @@ Fetch dependencies:
 $ npm install
 ```
 
-You need to do this also for `sample/functions` (runs its own Node version):
-
-```
-$ (cd sample/functions && npm install)
-```
+>Developer note: `functions` has its own `package.json`. We use it via a file system `devDependency`, so those versions should get loaded automatically. However, to update its versions you need to visit the `functions` folder.
 
 Now, you're ready to start the emulation and run tests against it.
 

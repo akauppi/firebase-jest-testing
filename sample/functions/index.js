@@ -3,10 +3,10 @@
 *
 * Cloud Functions so we have something to test against.
 *
-* Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, Aug 2020).
+* Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, ~Aug 2020~ Jan 2021).
 */
 const functions = require('firebase-functions');
-//import * as functions from 'firebase-functions'   // tried with firebase 8.6.0
+//import * as functions from 'firebase-functions';
 
 const admin = require('firebase-admin');
 //import * as admin from 'firebase-admin';
