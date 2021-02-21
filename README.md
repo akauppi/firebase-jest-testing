@@ -49,11 +49,12 @@ The `firebase.json` project file is at the root, as one would have it in their a
 
 ## Requirements
 
-- npm >= 14.3 [^1]
+- npm
+- node >= 14.3 [^1]
 - `firebase` CLI:
    `npm install -g firebase-tools`
 
-[^1]: We [need `--experimental-vm-modules`](https://stackoverflow.com/questions/60372790/node-v13-jest-es6-native-support-for-modules-without-babel-or-esm#answer-61653104) (SO answer), which seems to be available for `node@^12.16.0`. In order to support node.js 12, though, top-level-awaits should be abandoned. This *may* be doable, once we set up CI (Dockerimage) for the project.
+[^1]: We [need `--experimental-vm-modules`](https://stackoverflow.com/questions/60372790/node-v13-jest-es6-native-support-for-modules-without-babel-or-esm#answer-61653104) (SO answer), which seems to be available for `node@^12.16.0`. In order to support node.js 12, though, top-level-awaits should be abandoned.
 
 <!-- tbd. is this strictly necessary?
 Set up the Firestore emulator:
@@ -66,13 +67,12 @@ $ firebase setup:emulators:firestore
 You *don't* need a Firebase project for running this code. In fact, it's best to make sure you don't have one active:
 
 ```
-$ firebase use --clear
-Cleared active project.
+$ firebase use 
+No project is currently active.
 
 Run firebase use --add to define a new project alias.
 ```
 
->*The library is developed with `firebase-tools` 8.10.0, on Node 14.8.0 and macOS 10.15.6.*
 
 ## Getting started
 

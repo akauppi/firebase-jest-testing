@@ -1,5 +1,11 @@
 # Changelog
 
+## latest (0.0.2-beta.1)
+
+- Dependency updates
+- Having a problem with `npm run test:fns:userInfo` - may be connected to this: https://github.com/facebook/jest/issues/11093
+  - <font color=red>[ ] settle that before release</font>
+
 ## 29-Jan-21 (0.0.2-beta.0)
 
 - Changed to Jest v27 (next.2)

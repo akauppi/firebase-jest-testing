@@ -1,5 +1,5 @@
 /*
-* sample/hack-jest/custom-resolver.cjs
+* sample/hack-jest/self-resolver.cjs
 *
 * To be used until self-referencing with ES native modules works, within Jest.
 *

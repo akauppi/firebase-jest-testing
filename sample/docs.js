@@ -23,7 +23,7 @@ const docs = {
 
   // UserInfo (initially empty)
   //"/userInfo/abc": {
-  //  name: "...",
+  //  displayName: "...",
   //  photoURL: "..."
   //}
 };

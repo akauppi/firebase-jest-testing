@@ -124,5 +124,52 @@ This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
 
 [v3 Roadmap](https://github.com/node-fetch/node-fetch/issues/668)
 
+## Jest #11093
 
+- [ESM regression on Node.js 15.9](https://github.com/facebook/jest/issues/11093)
+
+Not sure if this concerns us, but looks like so.
+
+One test has gotten broken by some update (maybe node):
+
+```
+$ npm run test:fns:userInfo 
+
+> firebase-jest-testing@0.0.2-beta.1 test:fns:userInfo
+> GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --verbose --detectOpenHandles --all
+
+(node:25640) ExperimentalWarning: VM Modules is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ FAIL  sample/test-fns/userInfo.test.js
+  ● Test suite failed to run
+
+    linking error, not in local cache
+
+
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.807 s
+Ran all test suites matching /userInfo.test.js/i.
+npm ERR! code 1
+npm ERR! path /Users/asko/Git/firebase-jest-testing
+npm ERR! command failed
+npm ERR! command sh -c jest "--config" "sample/test-fns/jest.config.cjs" "-f" "userInfo.test.js" "--verbose" "--detectOpenHandles" "--all"
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/asko/.npm/_logs/2021-02-21T19_00_51_076Z-debug.log
+npm ERR! code 1
+npm ERR! path /Users/asko/Git/firebase-jest-testing
+npm ERR! command failed
+npm ERR! command sh -c GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --verbose --detectOpenHandles --all
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/asko/.npm/_logs/2021-02-21T19_00_51_117Z-debug.log
+
+$ node --version
+v15.9.0
+```
+
+The "complete log" doesn't really help..
 

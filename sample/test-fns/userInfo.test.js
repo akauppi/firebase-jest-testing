@@ -9,7 +9,7 @@ import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
 import { dbUnlimited as db } from 'firebase-jest-testing/firestore'
 import { eventually } from 'firebase-jest-testing/jest'
 
-import './matchers/toContainObject.js'
+import './matchers/toContainObject'
 
 // Clear '/projects/1/userInfo/abc'
 //
@@ -45,7 +45,12 @@ afterAll( async () => {
   //await db.app().delete();    // "db.app is not a function" (but tests are fine without this)
 });
 
-describe("userInfo shadowing", () => {
+// Skipping, since gives (not sure when this started):
+//  <<
+//     linking error, not in local cache
+//  <<
+//
+describe.skip("userInfo shadowing", () => {
 
   // During execution of the tests, collect changes to 'projects/1/userInfo/{uid}' here:
   //
@@ -74,7 +79,7 @@ describe("userInfo shadowing", () => {
   //
   test('Central user information is distributed to a project where the user is a member', async () => {
     const william = {
-      name: "William D.",
+      displayName: "William D.",
       photoURL: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Dalton_Bill-edit.png"
     };
 
@@ -89,7 +94,7 @@ describe("userInfo shadowing", () => {
 
     // Write in central -> should NOT turn up
     //
-    await db.collection("userInfo").doc("xyz").set({ name: "blah", photoURL: "https://no-such.png" });
+    await db.collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
     await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );    // should pass
 
