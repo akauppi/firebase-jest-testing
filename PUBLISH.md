@@ -7,6 +7,8 @@
 
 ## Steps
 
+Check that `CHANGELOG.md` contains mention of what the release contains.
+
 ```
 $ npm publish --tag beta [--dry-run]
 ...
