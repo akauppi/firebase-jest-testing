@@ -127,8 +127,11 @@ This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
 ## Jest #11093
 
 - [ESM regression on Node.js 15.9](https://github.com/facebook/jest/issues/11093)
+- [Node.js 15.9 regression with Jest ESM](https://github.com/nodejs/node/issues/37426)
 
-Not sure if this concerns us, but looks like so.
+<strike>Not sure if this concerns us, but looks like so.</strike>
+
+This seems to concern us.
 
 One test has gotten broken by some update (maybe node):
 
@@ -173,3 +176,13 @@ v15.9.0
 
 The "complete log" doesn't really help..
 
+
+## jsdom: uses a deprecated `request-promise-native`
+
+- [Replace request with something better](https://github.com/jsdom/jsdom/issues/2792)
+
+Would remove this warning we get at (fresh) `npm install`:
+
+```
+npm WARN deprecated request-promise-native@1.0.9: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
+```

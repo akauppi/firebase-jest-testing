@@ -1,6 +1,11 @@
 # Changelog
 
-## latest (0.0.2-beta.1)
+## 10-Mar-21 (0.0.2-beta.2)
+
+- Dependency updates
+  - especially Jest `27.0.0.next4` fixes an earlier bug
+
+## 21-Feb-21 (0.0.2-beta.1)
 
 - Dependency updates
 - Having a problem with `npm run test:fns:userInfo` - may be connected to this: https://github.com/facebook/jest/issues/11093
