@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.2-beta.2",
+  "version": "0.0.2-beta.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -26,7 +26,8 @@
     "./jest": "./src/jest/eventually.js"
   },
   "engines": {
-    "node": "^14.3 || ^15"
+    "node": "^14.3 || ^15",
+    "npm": "^6 || >= 7.7.0"
   },
   "publishConfig": {
     "tag": "beta"
@@ -36,17 +37,17 @@
     "jest": "^26.6.3 || ^27.0.0-next.4"
   },
   "dependencies": {
-    "@firebase/rules-unit-testing": "^1.2.3",
+    "@firebase/rules-unit-testing": "^1.2.5",
     "firebase-admin": "^9.5.0",
     "node-fetch": "^3.0.0-beta.9",
-    "proper-lockfile": "^4.1.1"
+    "proper-lockfile": "4.1.1"
   },
   "devDependencies": {
     "concurrently": "^6.0.0",
-    "firebase": "^8.2.10",
-    "jest": "^27.0.0-next.4",
-    "jest-circus": "^27.0.0-next.4",
-    "wait-on": "^5.2.1"
+    "firebase": "^8.3.1",
+    "jest": "^27.0.0-next.6",
+    "jest-circus": "^27.0.0-next.6",
+    "wait-on": "^5.3.0"
   },
   "--": "-- following stuff matters for development, only",
   "scripts": {
@@ -88,6 +89,9 @@
       "",
       "15.9.0..15.11 (maybe more) and Jest 27.0.0-next.3 have a love bug: https://github.com/nodejs/node/issues/37426"
     ],
+    "engines.npm": [
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+    ],
     "peerDependencies": {
       "": [
         "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in.",
@@ -96,6 +100,11 @@
       "firebase": [
         "We should be able to support two latest main versions (eg. 7.x and 8.x). Variate the actual depenendency to do testing",
         "(set to specific version, eg. '7.2.0' and do 'npm install'. Double check with 'npm list firebase')."
+      ]
+    },
+    "dependencies": {
+      "proper-lockfile": [
+        "Intentionally sticking with '4.1.1'. Its implementation is simple."
       ]
     },
     "devDependencies": {

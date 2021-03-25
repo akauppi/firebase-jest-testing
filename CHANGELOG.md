@@ -1,5 +1,10 @@
 # Changelog
 
+## 25-Mar-21 (0.0.2-beta.3)
+
+- Dependency updates
+- Needing `npm` >= 7.7.0 (or likely works with `npm` 6)
+
 ## 10-Mar-21 (0.0.2-beta.2)
 
 - Dependency updates
