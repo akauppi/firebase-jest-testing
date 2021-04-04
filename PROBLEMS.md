@@ -60,6 +60,10 @@ This is clear and simple, but brings its own timeout parameter. We *can* improve
 
 ## Firebase: ES module packaging not compatible with node.js
 
+<!-- whisper
+This will no longer be an issue with 9.x API that is designed with ESM in mind.
+-->
+
 Firebase 7.18.0 packaging:
 
 ```
@@ -88,6 +92,16 @@ import firebase from 'firebase/app'
 ```
 
 The difference is not big. It's just that the [documented way](https://firebase.google.com/docs/web/setup#add-sdks-initialize) of loading does not succeed.
+
+**Work around 2 (better):**
+
+```
+import firebase from 'firebase/@app'
+```
+
+The `firebase` npm package is just a delivery package, providing a common version number for all the underlying `@firebase/...` packages. They can be used, directly.
+
+Obviously, the above packaging feedback applies to them all.
 
 
 ## Node/Jest: self-referencing the package by its name - not working
@@ -129,94 +143,6 @@ node.js 14.8.0
 Use a custom resolver in Jest, as explained in [Writing tests](Writing%20tests.md) > Preparations.
 
 
-## Firebase: testing in a CI
-
-Testing both back-end and front-end features in a CI is part of the developer experience - and as such should be made easy.
-
-Currently (8.7.0; 21-Aug-20) this is not so.
-
-- there is no documentation about setting up a CI pipeline
-- there are various Docker images, but nothing provided by Firebase itself (or "blessed")
-- needing to tie to an online project (`firebase use`), and maybe authenticate(?) makes CI more burdensome than it needs to be
-
-If the emulators ran without needing to "touch the sky", CI becomes a lot simpler.
-
-<font size="+7">💨</font>
-
----
-
-Well... [this blog](https://medium.com/firebase-developers/run-continuous-integration-tests-using-the-firebase-emulator-suite-9090cefefd69) (Dec 2019) states:
-
->Note that if your tests rely on Firebase Hosting, then you will need to provide an access token in order to run firebase emulators:exec. The other emulators do not require this token. If you have enabled Hosting but you do not need it in your integration tests, feel free to use the --only flag to include only the emulators that you need.
-
-Is that truly so??
-
-My `firebase.json` is:
-
-```
-{
-  "firestore": {
-    "rules": "sample/firestore.rules"
-  },
-  "emulators": {
-    "firestore": {
-      "port": "6767"
-    }
-  },
-  "//": {
-    "": [
-      "The normal Firebase config. Used for deployments and testing of Security Rules"
-    ]
-  }
-}
-```
-
-No hosting, anywhere...
-
-For `firestore`, emulation can indeed be done without authentication:
-
-```
-$ firebase emulators:exec --config firebase.json --only firestore true
-⚠  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI.
-i  emulators: Starting emulators: firestore
-i  firestore: Firestore Emulator logging to firestore-debug.log
-i  Running script: true
-✔  Script exited successfully (code 0)
-i  emulators: Shutting down emulators.
-i  firestore: Stopping Firestore Emulator
-```
-
-For `functions`, however:
-
-```
-$ firebase emulators:exec --config firebase.json --only firestore,functions true
-⚠  emulators: You are not currently authenticated so some features may not work correctly. Please run firebase login to authenticate the CLI.
-i  emulators: Starting emulators: functions, firestore
-i  emulators: Shutting down emulators.
-
-Error: No currently active project.
-To run this command, you need to specify a project. You have two options:
-- Run this command with --project <alias_or_project_id>.
-- Set an active project by running firebase use --add, then rerun this command.
-To list all the Firebase projects to which you have access, run firebase projects:list.
-To learn about active projects for the CLI, visit https://firebase.google.com/docs/cli#project_aliases
-```
-
-Hopefully, this is a bug.
-
-I'd be really pleased if CI of services other than hosting - as stated - can use the emulator unauthenticated.
-
----
-
-This works (providing `--project`):
-
-```
-$ firebase emulators:exec --project dummy --only firestore,functions true
-```
-
->NOTE: Was able to solve this for `firebase-jest-testing` but keeping here, since it seems like a bug in Firebase 8.8.1.
-
-
 ## Firebase: what are the App / project id / database for???
 
 Firebase API seems to suffer from abstraction overload. This means there are degrees of freedom that - in the lack of clear roadsigns to the developers - lead to confusion and development friction.
@@ -243,9 +169,7 @@ Firebase sources state:
 
 Essentially it looks to be just that: a collection of options. It would make more sense for **app** developers to call it that, instead of "app".
 
-A `Map` of `string` -> `FirebaseOptions` would do just as well.
-
-Still, the real questions remain:
+The real questions remain:
 
 - **When should one use the "default app"?**
 - **When should one use one with another (static) name?**
@@ -257,7 +181,7 @@ Is this an unnecessary abstraction?
 
 This is more familiar. We use it all the time to point a Firebase project to its cloud presence.
 
-The docs state that for emulating other than hosting, a project is not necessary. (thanks! That's how it should be!)
+The docs state that for emulating other than hosting, a project is not necessary.[^1-emul-callables] (thanks! That's how it should be!)
 
 What is not documented is the emulator's behaviour when various project id's are passed to it.
 
@@ -269,6 +193,7 @@ What is not documented is the emulator's behaviour when various project id's are
 
 All of this could be documented somewhere?
 
+[^1-emul-callables]: That's not quite true. It's needed when Cloud Functions emulate `httpsCallable`s, as well.
 
 ### 3. Database
 
@@ -283,7 +208,7 @@ The docs should clearly state, whether there is a use case for multiple database
 
 ### Where could this documentation be?
 
-Firebase could have a "terminology" page (unless it already has). That could cover these.
+Firebase could have a "terminology" page. That could cover these.
 
 It looks to the author that the source code is the main culprit, though. Once abstractions are clarified **for the team**, it should eventually rain down to the code, so that things like the `app.firestore().app("other")` are not possible (unless there is a use case). We developers use type hints and looking into source comments a lot, to get a feel of what's available. Those should only provide roads that are worth travelling; not dead ends or obfuscation by the amount of options.
 

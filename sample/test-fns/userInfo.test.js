@@ -40,6 +40,10 @@ async function wipe(collection) {   // CollectionReference => Promise of ()
 
 /*
 * Cleanup
+*
+* Seems that this is not really required. A bit weird, and deserves a deeper look, #oneday.
+*
+* tbd. Maybe the 'dbUnlimited.js' can take care of the cleanup.
 */
 afterAll( async () => {
   //await db.app().delete();    // "db.app is not a function" (but tests are fine without this)
@@ -50,7 +54,7 @@ afterAll( async () => {
 //     linking error, not in local cache
 //  <<
 //
-describe.skip("userInfo shadowing", () => {
+describe("userInfo shadowing", () => {
 
   // During execution of the tests, collect changes to 'projects/1/userInfo/{uid}' here:
   //

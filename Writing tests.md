@@ -18,94 +18,13 @@ Within your project:
 See [TRACK](TRACK.md) as to why this is needed, for now. (TL;DR Jest ES modules resolver does not treat modules with `exports` field appropriately; Aug 2020).
 
 
-## Testing Cloud Function callables
-
-```
-import { fns } from 'firebase-jest-testing/cloudFunctions'
-
-fns.httpsCallable(...);
-```
-
-In short, you get straight to the Cloud Functions; no need to initialize Firebase application and/or set it up for emulation.
-
-
-<!-- disabled; older text is better
-## Testing Cloud Functions events 
-
-In this, a function triggered by one data change causes another, in Cloud Firestore.
-
-```
-import { dbUnlimited } from 'firebase-jest-testing/firestore'
-import { eventually } from 'firebase-jest-testing/jest'
-```
-
->Note: `eventually` is a helper feature that allows Jest to actively wait for a condition to become true. The testing toolkit does not have that capability, built in.
-
-`dbUnlimited` is a Cloud Firestore handle where Security Rules are not applied (`admin.firestore.Firestore`).
-
-`eventually` creates a Promise that occasionally (every 100ms) polls the condition given to it, and if other than `undefined`, resolves with that value.
-
-Type: `(() => any) => Promise of any`
-
-Usage:
-
-```
-await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
-```
-
-In that test, we've set up a `shadow` map that reflects the database collection we wish to observe.
-
-Note that though we test Cloud Functions in this tests, there's nothing about them in the `import`s. It's just testing that if we poke Firestore this way, does the other place jiggle.
--->
-
-
-## Testing Cloud Function events
-
-Your Cloud Firestore tests may also test Cloud Functions, indirectly.
-
-In our `test:userInfo` sample, writing to one collection causes a change in another, via the Cloud Functions. This normally takes ~150ms, even when locally emulated. Jest does not natively support such "wait-until" tests, but we made it do it, anyways.
-
-Like this:
-
-```
-import { dbUnlimited } from 'firebase-jest-testing/firestore'
-import { eventually } from 'firebase-jest-testing/jest'
-
-# First, write to the collection. 'db' is the normal Cloud Firestore handle.
-await dbUnlimited.collection("userInfo").doc("abc").set(william);
-
-# Wait for the other collection to change
-await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
-```
-
-The approach we've taken in `sample/test-fns/userInfo.test.js` is that there's a `shadow` object that tracks changes to the target collection, and the test tracks changes to the object.
-
-This is just one way. You can code your tests like this, or differently, but `eventually` should still be useful.
-
-### No `never`
-
-We tried to make a `never` to compliment `eventually`, but this turned out difficult, with Jest.
-
-Instead, the approach for now is this:
-
-```
-await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );
-```
-
-`sleep` is a Promise that resolves after some milliseconds and then runs your expectation.
-
-This is error prone, and we'd rather use the test's own timeout than an arbitrary sleep. Let us know if you know a way to do it! :)
-
-
-
 ## Testing Security Rules
 
-Testing security rules can be done on static (immutable) data. The tests are not concerned of changing the data - just knowing whether changes *would* get through.
+Security rule tests are not concerned of changing the data - just knowing whether changes *would* get through.
 
-We enable this approach, by making a layer above the Cloud Firestore access functions that quickly turns data back if it happened to change. This works as long as all access to the data is via the `dbReadOnly` objects.
+To implement this, we've created a layer above the Cloud Firestore access functions that quickly turns data back if it happened to change. This works as long as all access to the data is via the `dbReadOnly` objects.
 
 The tests can now be written in a simpler way, since you don't have to worry about state.
-
 
 ```
 import { dbAuth } from 'firebase-jest-testing/firestoreReadOnly'
@@ -146,6 +65,91 @@ However, in practise it does not seem to matter much whether one runs 4 tests in
 When your tests fail, it may in fact be easier to debug when the execution is happening one-by-one. All of this is **on you** and not enforced by the testing library.
 
 
+## Testing Cloud Function events
+
+Your Cloud Firestore tests may also test Cloud Functions, indirectly.
+
+In our `test:userInfo` sample, writing to one collection causes a change in another, via the Cloud Functions. This normally takes ~150ms, even when locally emulated. Jest does not natively support such "wait-until" tests, but we made it do it, anyways.
+
+Like this:
+
+```
+import { dbUnlimited } from 'firebase-jest-testing/firestore'
+import { eventually } from 'firebase-jest-testing/jest'
+
+// First, write to the collection
+await dbUnlimited.collection("userInfo").doc("abc").set(william);
+
+// Wait for the other collection to change
+await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
+```
+
+The approach we've taken in `sample/test-fns/userInfo.test.js` is that there's a `shadow` object that tracks changes to the target collection, and the test tracks changes to the object.
+
+This is just one way. You can code your tests like this, or differently, but `eventually` should still be useful.
+
+### No `never`
+
+We tried to make a `never` to complement `eventually`, but this turned out difficult, with Jest.
+
+Instead, the approach for now is this:
+
+```
+await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );
+```
+
+`sleep` is a Promise that resolves after some milliseconds and then runs your expectation.
+
+This is error prone, and we'd rather use the test's own timeout than an arbitrary sleep. Please share if you know a way to do it! :)
+
+
+## Testing Cloud Function callables
+
+Whereas the other tests are run with `firebase-admin`, here you'll need to use a [Firebase client SDK](https://github.com/firebase/firebase-js-sdk), instead. 
+
+Originally (before `0.0.2-beta.4`), this library had a `peerDependency` on the client Firebase library, but this is tedious since if you don't need to test callables, you are not required to have such a client. Also, `npm` doesn't seem to have a way to state that a peer dependency is *optional* (see [here](https://github.com/npm/npm/issues/3066)). 
+
+All in all, please copy-paste the below code to your liking.
+
+---
+
+>❗️Warning! At the time of writing (Apr 2021), using the below sample code makes the tests *never* to return to the command line. Using the earlier 8.x API approach works. Check the `sample/test-fns/greet.8x.test.js` code. We'll report the problem to Firebase and hopefully it'll be soon over also on the `@exp` (modular) API.
+
+---
+
+Snippet from [sample/test-fns/greet.test.js](sample/test-fns/greet.test.js):
+
+```
+function fail(msg) { throw new Error(msg); }
+
+// Client SDK (not 'firebase-admin')
+//
+import { initializeApp, deleteApp } from '@firebase/app'
+import { getFunctions, useFunctionsEmulator, httpsCallable } from '@firebase/functions'
+
+let myApp;
+let fns;
+
+const FUNCTIONS_EMULATOR_PORT= 5002;
+const projectId = process.env["GCLOUD_PROJECT"] || fail("No 'GCLOUD_PROJECT' env.var.");
+
+beforeAll( () => {
+  myApp = initializeApp({
+    projectId,
+  }, "testing");
+
+  fns = getFunctions(myApp);
+  useFunctionsEmulator(fns, "localhost", FUNCTIONS_EMULATOR_PORT );
+});
+
+afterAll( () => {
+  deleteApp(myApp);
+} );
+```
+
+*If the code snippet above doesn't work, check the sources.*
+
+
 ## Priming with data
 
 It seems like a good idea to have static data that gets "primed" to the database, before exercising tests on it. We make this easy by:
@@ -161,7 +165,7 @@ console.info("Primed :)");
 The data is stored as JSON (here as an ES module). This allows one to craft such data by hand, in an editor. In comparison, the Firebase import/exports are binary snapshots. Of course, you can use that approach in your tests just as well - we just provide the JSON alternative.
 
 
-## WARNING: Use of dates in `docs.js`
+### WARNING: Use of dates in `docs.js`
 
 Firebase clients take JavaScript `Date` objects and convert them to Cloud Firestore's `Timestamp`, automatically.
 

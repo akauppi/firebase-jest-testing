@@ -15,56 +15,7 @@ admin.initializeApp();
 
 // Sad that the default region needs to be in the code. There is no configuration for it. 😢
 //
-const regionalFunctions = functions.region('europe-west3');   // Frankfurt
-
-// Logs, as "callable function"
-//
-// {
-//    level: "debug"|"info"|"warn"|"error"
-//    msg: string
-//    payload: object   //optional
-// }
-exports.logs_v190720 = regionalFunctions
-//const logs_v190720 = regionalFunctions
-  .https.onCall(({ level, msg, payload }, context) => {
-
-    const { debug, info, warn, error } = functions.logger;
-
-    switch (level) {
-      case "debug":
-        debug(msg, payload);
-        break;
-      case "info":
-        info(msg, payload);
-        break;
-      case "warn":
-        warn(msg, payload);
-        break;
-      case "error":
-        error(msg, payload);
-        break;
-      default:
-        throw new functions.https.HttpsError('invalid-argument', `Unknown level: ${level}`);
-    }
-  });
-
-// Something went awfully wrong.
-//
-// A central place to catch unexpected circumstances in already deployed code.
-//
-// Consider this a relay. We can change where to inform, e.g. devops monitoring tools directly with their APIs.
-//
-// {
-//    msg: string
-//    ex: exception object
-// }
-//
-exports.fatal_v210720 = regionalFunctions.https
-  .onCall(({ msg, ex }, context) => {
-
-    functions.logger.error(`FATAL: ${msg}`, ex);    // keep an eye - is that good?
-  });
-
+const regionalFunctions = functions;    // if you do production based on this code, change to 'functions.region("...")'
 
 /*
 * { msg: string } -> string

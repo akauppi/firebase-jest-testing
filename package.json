@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.2-beta.3",
+  "version": "0.0.2-beta.4",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -20,7 +20,6 @@
   ],
   "exports": {
     "./cjs": "./src/cjs/index.cjs",
-    "./cloudFunctions": "./src/cloudFunctions/fns.js",
     "./firestore": "./src/firestore/index.js",
     "./firestoreReadOnly": "./src/firestoreReadOnly/index.js",
     "./jest": "./src/jest/eventually.js"
@@ -33,20 +32,19 @@
     "tag": "beta"
   },
   "peerDependencies": {
-    "firebase": "^8.0.0",
-    "jest": "^26.6.3 || ^27.0.0-next.4"
+    "jest": "^27.0.0-next.7"
   },
   "dependencies": {
-    "@firebase/rules-unit-testing": "^1.2.5",
-    "firebase-admin": "^9.5.0",
+    "@firebase/rules-unit-testing": "^1.2.6",
+    "firebase-admin": "^9.6.0",
     "node-fetch": "^3.0.0-beta.9",
     "proper-lockfile": "4.1.1"
   },
   "devDependencies": {
     "concurrently": "^6.0.0",
-    "firebase": "^8.3.1",
-    "jest": "^27.0.0-next.6",
-    "jest-circus": "^27.0.0-next.6",
+    "firebase": "^8.3.2",
+    "jest": "27.0.0-next.6",
+    "jest-circus": "27.0.0-next.6",
     "wait-on": "^5.3.0"
   },
   "--": "-- following stuff matters for development, only",
@@ -56,16 +54,15 @@
     "---": "",
     "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_init && npm run --silent _ci_fns && npm run --silent _ci_rules\"",
     "_ci_init": "node --harmony-top-level-await sample/prime-docs.js",
-    "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
+    "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles",
     "ci:par": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_par_2\"",
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_init && npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
     "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
     "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
-    "test:fns:callables": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f callables.test.js --verbose --detectOpenHandles --all",
-    "test:fns:monitoring": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f monitoring.test.js --verbose --detectOpenHandles --all",
-    "test:fns:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --verbose --detectOpenHandles --all",
+    "test:fns:callables": "GCLOUD_PROJECT=bunny NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" npx jest --config sample/test-fns/jest.config.cjs -f greet.8x.test.js --verbose --detectOpenHandles --all",
+    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-fns/jest.config.cjs --verbose --detectOpenHandles --all",
     "---   ": "",
     "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs -f invitesC.test.js --verbose --detectOpenHandles --all",
@@ -73,7 +70,9 @@
     "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs -f symbolsC.test.js --verbose --detectOpenHandles --all",
     "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs -f userInfoC.test.js --verbose --detectOpenHandles --all",
     "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs -f visitedC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles --all"
+    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules npx jest --config sample/test-rules/jest.config.cjs --verbose --detectOpenHandles --all",
+    "--- -": "",
+    "postinstall": "(cd sample/functions && npm install)"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -82,6 +81,10 @@
     "--detectOpenHandles speeds up tests": [
       "This is weird, but consistent (Jest 26). If we keep it in 'npm test', the test execution is ~2x faster (as reported, per test).",
       "However, chose to keep it only in tests which otherwise give a warning."
+    ],
+    "bunny": [
+      "If httpsCallables are among the emulated features, Cloud Functions needs a dummy project id. The value is used in",
+      "construction of the URL for the callable."
     ],
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
@@ -96,26 +99,19 @@
       "": [
         "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in.",
         "However, use of '@firebase/rules-unit-testing' and 'firebase-admin' are seen as implementation details we want to hide."
-      ],
-      "firebase": [
-        "We should be able to support two latest main versions (eg. 7.x and 8.x). Variate the actual depenendency to do testing",
-        "(set to specific version, eg. '7.2.0' and do 'npm install'. Double check with 'npm list firebase')."
       ]
     },
     "dependencies": {
       "proper-lockfile": [
+        "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
+        "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles.",
         "Intentionally sticking with '4.1.1'. Its implementation is simple."
       ]
     },
     "devDependencies": {
-      "@local/functions": [
-        "This file system dependency brings the dependencies ('firebase-functions' in particular) to the main level,",
-        "with the versions provided in 'sample/functions/package.json'. This makes the Firebase similator work, and",
-        "avoids the need to go install node modules within the 'sample/functions' directory."
-      ],
-      "proper-lockfile": [
-        "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
-        "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles."
+      "firebase": [
+        "Needed for testing the 'httpsCallable's. Otherwise, we are a server-side library and the caller is not",
+        "burdened by this; nor do we care what client side platform or versions they use!"
       ]
     }
   }

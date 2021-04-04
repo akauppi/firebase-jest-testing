@@ -1,5 +1,10 @@
 # Changelog
 
+## 3-Apr-21 (0.0.2-beta.4)
+
+- **CHANGE**: Removed `cloudFunctions` from the exported features; keeping this server-side only. Sample code is provided in the `README` in case the downstream wants to test callables (only case where one needs a client side library in addition to `firebase-admin`).
+- Updated dependencies
+
 ## 25-Mar-21 (0.0.2-beta.3)
 
 - Dependency updates

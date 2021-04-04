@@ -37,16 +37,14 @@ These are both tools for unit testing. The first one tests Cloud Functions and t
 The approach taken by this repo differs from that provided by Firebase. We...
 
 1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to their app
-2. take a more integration testing approach than Firebase's libraries
+2. take a more integration testing approach than Firebase's libraries 
 3. prefer normal clients over test specific APIs
 4. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
 
-For testing Security Rules, we use `@firebase/rules-unit-testing` internally, but provide what we think is a better API for it.
-
 For testing Cloud Functions, we use integration testing and normal JavaScript client instead of the `firebase-functions-test` library. This should provide less things to learn to the application developer.
 
-For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase does not provide easy-to-use means for this.
+For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase approach leans on snapshot-like binary files, instead.
 
 As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^2]
 
-[^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable. :)
+[^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.

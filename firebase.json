@@ -2,6 +2,9 @@
   "firestore": {
     "rules": "sample/firestore.rules"
   },
+  "functions": {
+    "source": "sample/functions"
+  },
   "emulators": {
     "firestore": {
       "port": "6767"

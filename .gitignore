@@ -11,5 +11,4 @@ firestore-debug.log
 ui-debug.log
 
 # npm pack output
-# akauppi-firebase-jest-testing-0.0.1-alpha.tgz
 /*.tgz
