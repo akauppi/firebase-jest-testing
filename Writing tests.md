@@ -1,36 +1,18 @@
-# Writing tests
-
-Please see [sample/test-fns](sample/test-fns) and [sample/test-rules](sample/test-rules) tests for practical examples. This document serves as an API reference.
-
-
-## Preparations
-
-Within your project:
-
-- have this in `jest.config.cjs`:
-
-   ```
-  // Without this, the modules are not correctly loaded, due to being declared using 'exports'.
-  //
-  resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
-   ```
-
-See [TRACK](TRACK.md) as to why this is needed, for now. (TL;DR Jest ES modules resolver does not treat modules with `exports` field appropriately; Aug 2020).
-
+# Writing Tests
 
 ## Testing Security Rules
 
-Security rule tests are not concerned of changing the data - just knowing whether changes *would* get through.
+For testing security rules, the library provides an *immutable* way of testing Firestore operations. This means your test data is not modified - you merely get the information whether it *would* be modified, by such operation and authentication. 
 
-To implement this, we've created a layer above the Cloud Firestore access functions that quickly turns data back if it happened to change. This works as long as all access to the data is via the `dbReadOnly` objects.
-
-The tests can now be written in a simpler way, since you don't have to worry about state.
+Because of this, the tests can now be written in a simpler way, since you don't have to worry about state.
 
 ```
 import { dbAuth } from 'firebase-jest-testing/firestoreReadOnly'
 ```
 
-This provides a `firebase.firestore.Firestore` -like interface (not the full thing!) that can be used to instantiate multiple access profiles:
+>Note: The operations are not *really* read-only because the Firestore interface doesn't support it. What we do is revert the operations if they succeed, and serialize the access so that they become atomic. This allows one to run Jest rules tests in parallel, if needed.
+
+`dbAuth` provides a `firebase.firestore.Firestore` -like interface (not the full thing!) that can be used to get a collection handle:
 
 ```
 {
@@ -40,9 +22,37 @@ This provides a `firebase.firestore.Firestore` -like interface (not the full thi
 }
 ```
 
-Check the samples for how this can be used.
+Authentication (or setting the access role) happens at the *collection* level. An example:
 
-You can now use the provided `CollectionReference`-like handle in the normal Firebase API fashion (`.get`, `.where`, `.set`, `.delete`, ...):
+```
+describe("'/invites' rules", () => {
+  let unauth_invitesC, auth_invitesC, abc_invitesC, def_invitesC;
+
+  beforeAll( async () => {
+    try {
+      const coll = dbAuth.collection('invites');   // root collection
+
+      unauth_invitesC = coll.as(null);
+      auth_invitesC = coll.as({uid:'_'});
+      abc_invitesC = coll.as({uid:'abc'});
+      def_invitesC = coll.as({uid:'def'});
+
+      assert(unauth_invitesC && auth_invitesC && abc_invitesC && def_invitesC);
+    }
+    catch (err) {
+      console.error( "Failed to initialize the Firebase database: ", err );   // not seen
+      throw err;
+    }
+  });
+
+  ...
+```
+
+The `coll.as({uid:...})` allow you to get multiple handles where *both* the collection and the role using it are defined.
+
+Note that the now taken order of *collection first* is simply an API decision. This style seems to match practical use cases (like above) better than the reverse - or setting both at once.
+
+You can now use the provided `CollectionReference`-like handles in the normal `firebase-admin` fashion (`.get`, `.where`, `.set`, `.delete`, ...):
 
 ```
 expect( unauth_invitesC.get() ).toDeny()
@@ -56,20 +66,18 @@ Their use is self-explanatory. You have a Promise that should pass the security 
 
 The implementation checks for exceptions unrelated to Security Rules and throws those as normal exceptions.
 
-### Parallelism - `Promise.all` or not?
+### `Promise.all` - or not?
 
-Since the underlying data is immutable in nature, you can parallelize any and all of your Security Rules tests.
+You can parallelize any and all of your Security Rules tests.
 
-However, in practise it does not seem to matter much whether one runs 4 tests in parallel (`Promise.all`), or as subsequent `await`s. 
-
-When your tests fail, it may in fact be easier to debug when the execution is happening one-by-one. All of this is **on you** and not enforced by the testing library.
+However, in practise it does not seem to matter much whether one runs 4 `expect`s in parallel (`await Promise.all(...)`), or as sequential `await`s. Theoretically the first one is cooler, but when your tests fail, it may in fact be easier to debug when the execution is happening one-by-one. The choice is yours.
 
 
 ## Testing Cloud Function events
 
 Your Cloud Firestore tests may also test Cloud Functions, indirectly.
 
-In our `test:userInfo` sample, writing to one collection causes a change in another, via the Cloud Functions. This normally takes ~150ms, even when locally emulated. Jest does not natively support such "wait-until" tests, but we made it do it, anyways.
+In the `test:userInfo` [sample](sample/test-fns/userInfo.test.js), writing to one collection causes a change in another, via the Cloud Functions. This normally takes ~150ms, even when locally emulated. Jest does not natively support such "wait-until" tests, but we made it do it, anyways.
 
 Like this:
 
@@ -84,15 +92,17 @@ await dbUnlimited.collection("userInfo").doc("abc").set(william);
 await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
 ```
 
-The approach we've taken in `sample/test-fns/userInfo.test.js` is that there's a `shadow` object that tracks changes to the target collection, and the test tracks changes to the object.
+The approach taken in `sample/test-fns/userInfo.test.js` is that there's a `shadow` object that tracks changes to the target collection, and the test tracks changes to the object.
 
 This is just one way. You can code your tests like this, or differently, but `eventually` should still be useful.
 
+>Note: The `dbUnlimited` is the same as a `firebase-admin` Firestore handle.
+
 ### No `never`
 
-We tried to make a `never` to complement `eventually`, but this turned out difficult, with Jest.
+We tried to make a `never` to complement `eventually`, but this turned out difficult, with Jest 26.
 
-Instead, the approach for now is this:
+Instead, the recommended approach (for now) is:
 
 ```
 await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );
@@ -105,11 +115,9 @@ This is error prone, and we'd rather use the test's own timeout than an arbitrar
 
 ## Testing Cloud Function callables
 
-Whereas the other tests are run with `firebase-admin`, here you'll need to use a [Firebase client SDK](https://github.com/firebase/firebase-js-sdk), instead. 
+Whereas the other tests are run with `firebase-admin`, here you'll need to use a [Firebase client SDK](https://github.com/firebase/firebase-js-sdk) since `firebase-admin` does not support "callables".
 
-Originally (before `0.0.2-beta.4`), this library had a `peerDependency` on the client Firebase library, but this is tedious since if you don't need to test callables, you are not required to have such a client. Also, `npm` doesn't seem to have a way to state that a peer dependency is *optional* (see [here](https://github.com/npm/npm/issues/3066)). 
-
-All in all, please copy-paste the below code to your liking.
+>Note: We *might* bring back the client support as an <u>optional</u> dependency at some point, but at the moment (Apr 2021) Firebase is transitioning from a JS 8.x client API to `@exp` (ES modules based) API. We'll likely let this transitioning pass before taking a stand. Until then, please copy-paste the below code to your liking.
 
 ---
 
@@ -162,7 +170,9 @@ await prime(docs);
 console.info("Primed :)");
 ```
 
-The data is stored as JSON (here as an ES module). This allows one to craft such data by hand, in an editor. In comparison, the Firebase import/exports are binary snapshots. Of course, you can use that approach in your tests just as well - we just provide the JSON alternative.
+The data is stored as JSON (here as an ES module). This allows one to craft such data by hand, in an editor.
+
+>Note: Firebase provides means to import/export the Firestore contents as a binary file. If you prefer that methods, you can naturally keep using it.
 
 
 ### WARNING: Use of dates in `docs.js`
@@ -179,3 +189,5 @@ HOWEVER, `Date.now()` and `Date.parse` do <u>not</u> produce Date objects but Un
 ||<strike>`Date.parse('27 Mar 2020 14:17:00 GMT+0300')`</strike>|1585307820000|
 
 >Note: One could detect such inconsistencies automatically, with Security Rules. But the priming happens bypassing them, so that would not really work. Just be cautious, and check this out if you experience problems in the tests with some date field.
+
+

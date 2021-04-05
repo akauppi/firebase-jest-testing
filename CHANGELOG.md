@@ -1,5 +1,10 @@
 # Changelog
 
+## 5-Apr-21 (0.0.2-beta.5)
+
+- Separated publishable part to `package` - better separation of core code vs. build and sample/tests.
+- Changed Jest configuration files to use `export`.
+
 ## 3-Apr-21 (0.0.2-beta.4)
 
 - **CHANGE**: Removed `cloudFunctions` from the exported features; keeping this server-side only. Sample code is provided in the `README` in case the downstream wants to test callables (only case where one needs a client side library in addition to `firebase-admin`).

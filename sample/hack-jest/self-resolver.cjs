@@ -1,17 +1,23 @@
 /*
 * sample/hack-jest/self-resolver.cjs
 *
-* To be used until self-referencing with ES native modules works, within Jest.
+* To be used until referencing with ES native modules works, within Jest.
 *
-* Note: This is for the 'firebase-jest-testing' library only, for running its internal samples.
-*     You'll need a similar approach for your app; see the documentation ('Writing tests').
+* Note: This is for the 'firebase-jest-testing' library sample. You'll need a similar approach for your app (see
+*     documentation -> 'Writing tests.md').
 *
 * References:
 *   - Configuring Jest > resolver (Jest docs)
 *     -> https://jestjs.io/docs/en/configuration#resolver-string [1]
 */
-const pkg = require("../../package.json");
+const PATH = "../../package";
+
+const pkg = require(`${PATH}/package.json`);    // path to 'firebase-jest-testing's 'package.json' (EDIT THIS)
 const pkgName = pkg.name;   // "firebase-jest-testing"
+
+if (pkgName !== 'firebase-jest-testing') {
+  throw new Error(`Resolver needs tuning. Instead of 'firebase-jest-testing', reached: ${pkgName}`);
+}
 
 const exps = pkg.exports;
   //
@@ -26,7 +32,7 @@ const exps = pkg.exports;
 const tmp = Object.entries(exps).map( ([k,v]) => {
   return [
     k.replace(/^\./, pkgName),
-    v.replace(/^\.\//, '../../')
+    v.replace(/^\.\//, `${PATH}/`)
   ];
 });
 

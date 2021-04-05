@@ -1,8 +1,8 @@
-// sample/jest.config.default.cjs
+// sample/jest.config.default.js
 //
 // Common values to 'test-fns' and 'test-rules'
 
-module.exports = {
+export default {
   // Recommended for native ES6 use (Aug-20):
   testEnvironment: 'jest-environment-node',
   transform: {},
@@ -13,4 +13,4 @@ module.exports = {
   testTimeout: 2000,
 
   resolver: "../hack-jest/self-resolver.cjs"
-};
+}

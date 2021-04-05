@@ -8,7 +8,7 @@ import fs from "fs"
 const fn = process.env["FIREBASE_JSON"] || './firebase.json';
 
 const firebaseJson = JSON.parse(
-    fs.readFileSync(fn, 'utf8')
+  fs.readFileSync(fn, 'utf8')
 );
 
 const FIRESTORE_HOST = process.env["FIRESTORE_EMULATOR_HOST"] || (() => {

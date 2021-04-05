@@ -15,8 +15,7 @@ const docs = require('./docs.cjs');
 const projectId = "rules-test";
 
 //import { clearAndPrime } from './tools/clearAndPrime.js'
-//const cjsTools = require('firebase-jest-testing/cjs');
-const cjsTools = require('../../src/cjs/index.cjs');    // hack - in your app use one of the above
+const cjsTools = require('firebase-jest-testing/cjs');    // until Jest 27 allows us to use ES modules, for setup
 const { clearFirestoreData, prime } = cjsTools;
 
 const setup = async _ => {

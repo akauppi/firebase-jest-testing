@@ -1,0 +1,69 @@
+{
+  "name": "firebase-jest-testing",
+  "version": "0.0.2-beta.5",
+  "description": "Tools for testing Firebase back-end features, using Jest.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git"
+  },
+  "author": "<akauppi@gmail.com>",
+  "type": "module",
+  "keywords": [
+    "firebase",
+    "jest"
+  ],
+  "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
+  "files": [
+    "src/**"
+  ],
+  "exports": {
+    "./cjs": "./src/cjs/index.cjs",
+    "./firestore": "./src/firestore/index.js",
+    "./firestoreReadOnly": "./src/firestoreReadOnly/index.js",
+    "./jest": "./src/jest/eventually.js"
+  },
+  "engines": {
+    "node": "^14.3 || ^15",
+    "npm": "^6 || >= 7.7.0"
+  },
+  "publishConfig": {
+    "tag": "beta"
+  },
+  "peerDependencies": {
+    "jest": "^27.0.0-next.7"
+  },
+  "dependencies": {
+    "@firebase/rules-unit-testing": "^1.2.6",
+    "firebase-admin": "^9.6.0",
+    "node-fetch": "^3.0.0-beta.9",
+    "proper-lockfile": "4.1.1"
+  },
+  "scripts": {},
+  "//": {
+    "engines.node": [
+      ">=14.3: has --harmony-top-level-await",
+      ">=13.2: native ES module support",
+      "",
+      "15.9.0..15.11 (maybe more) and Jest 27.0.0-next.3 have a love bug: https://github.com/nodejs/node/issues/37426"
+    ],
+    "engines.npm": [
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+    ],
+    "peerDependencies": {
+      "": [
+        "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in."
+      ]
+    },
+    "dependencies": {
+      "firebase-admin": [
+        "Seen as an implementation detail - thus in 'dependencies' and not in 'peerDependencies'."
+      ],
+      "proper-lockfile": [
+        "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
+        "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles.",
+        "Intentionally sticking with '4.1.1'. Its implementation is simple."
+      ]
+    }
+  }
+}
