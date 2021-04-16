@@ -25,16 +25,16 @@
   },
   "engines": {
     "node": "^14.3 || ^15",
-    "npm": "^6 || >= 7.7.0"
+    "npm": ">= 7.7.0"
   },
   "publishConfig": {
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^27.0.0-next.7"
+    "jest": "^27.0.0-next.8"
   },
   "dependencies": {
-    "@firebase/rules-unit-testing": "^1.2.6",
+    "@firebase/rules-unit-testing": "^1.2.9",
     "firebase-admin": "^9.6.0",
     "node-fetch": "^3.0.0-beta.9",
     "proper-lockfile": "4.1.1"

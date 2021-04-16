@@ -1,5 +1,11 @@
 # Changelog
 
+## 16-Apr-21 ()
+
+- Not requiring `firebase-tools` to be globally installed.
+- Launching Jest without `npx`.
+- Dependency updates
+
 ## 5-Apr-21 (0.0.2-beta.5)
 
 - Separated publishable part to `package` - better separation of core code vs. build and sample/tests.

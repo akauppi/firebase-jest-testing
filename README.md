@@ -34,29 +34,6 @@ The files used for managing the Firebase project and running tests are at the ro
 
 - npm
 - node >= 14.3
-- `firebase` CLI:
-   `npm install -g firebase-tools`
-
-<!-- disabled; does someone need node 12?
-[^1]: We [need `--experimental-vm-modules`](https://stackoverflow.com/questions/60372790/node-v13-jest-es6-native-support-for-modules-without-babel-or-esm#answer-61653104) (SO answer), which seems to be available for `node@^12.16.0`. In order to support node.js 12, though, top-level-awaits should be abandoned.
--->
-
-<!-- tbd. is this strictly necessary?
-Set up the Firestore emulator:
-
-```
-$ firebase setup:emulators:firestore
-```
--->
-
-You *don't* need a Firebase project for running this code. In fact, it's best to make sure you don't have one:
-
-```
-$ firebase use
-No project is currently active.
-
-Run firebase use --add to define a new project alias.
-```
 
 
 ## Getting started
