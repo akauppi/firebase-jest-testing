@@ -1,8 +1,7 @@
 /*
 * src/firestore/dbUnlimited.js
 *
-* Provide access to an emulator-facing Firebase client for Firestore, FOR THE DEFAULT "APP", _without_ Security Rules
-* applied.
+* Provide access to an emulator-facing Firebase client for Firestore, FOR THE DEFAULT "APP", bypassing Security Rules.
 *
 * Sniffs the Firestore emulator port from:
 *   1. 'FIRESTORE_EMULATOR_HOST' env.var. ('firebase emulator:exec' sets this)
@@ -26,10 +25,10 @@ import { FIRESTORE_HOST } from '../config.js'
 */
 const appAdmin = admin.initializeApp({
   projectId
-});   // prepare for default app (unlike '.initializeAdminApp' which uses a random app name)
+});
 
 const db = appAdmin.firestore();
-db.settings({         // affects all subsequent use (and can be done only once)
+db.settings({
   host: FIRESTORE_HOST,
   ssl: false
 });

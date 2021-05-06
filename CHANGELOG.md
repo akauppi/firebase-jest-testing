@@ -1,5 +1,10 @@
 # Changelog
 
+## 6-May-21 (0.0.3-alpha.0)
+
+- Upgraded to Jest 27.0.0-beta.9
+  - allowing making the Global setup scripts with ES modules! 🎉🥳
+
 ## 16-Apr-21 ()
 
 - Not requiring `firebase-tools` to be globally installed.

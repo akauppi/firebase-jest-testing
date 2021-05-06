@@ -1,6 +1,10 @@
-# Design
+# Approach
 
 We manage to test both Cloud Functions and Security Rules, separately, but with the same emulator instance.
+
+Only admin-side dependencies are used. This is important for clarity, but also helps keep clear of client side SDK version conflicts.
+
+>As an example, using `@firebase/rules-unit-testing` (which we don't) would bring in `8.x` SDK (May 2021) and therefore not work for projects using the `9.x.beta` SDK. The problem is transitional, but can be completely avoided.
 
 
 ## Testing Cloud Functions

@@ -12,9 +12,9 @@ This repo provides a "one stop", opinionated approach to testing Firebase projec
 
 Also, the tools handle configuring emulation for you (except for testing of "callables"). In all, this tries to give a simpler development experience than the current (<strike>Aug 2020</strike> Apr 2021) Firebase tooling does.
 
-More about:
+Only admin-side JS SDKs are used.
 
-- [The design](DESIGN.md)
+More about the [approach](APPROACH.md).
 
 
 ## Folder structure
@@ -32,9 +32,14 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- npm
+- npm; >= 7.7.0 is recommended
 - node >= 14.3
 
+<!--
+Developed with:
+- node 16.0
+- npm 7.11
+-->
 
 ## Getting started
 
@@ -44,7 +49,7 @@ Fetch dependencies:
 $ npm install
 ```
 
-The `package.json` is prepared so that this installs dependencies also for `package` and `sample/functions`. 
+>The `package.json` is prepared so that this installs dependencies also for `package` and `sample/functions`. 
 
 Now, you're ready to start the emulation and run tests against it.
 

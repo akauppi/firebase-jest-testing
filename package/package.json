@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.2-beta.5",
+  "version": "0.0.3-alpha.0",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -24,14 +24,14 @@
     "./jest": "./src/jest/eventually.js"
   },
   "engines": {
-    "node": "^14.3 || ^15",
+    "node": "^14.3 || ^15 || ^16",
     "npm": ">= 7.7.0"
   },
   "publishConfig": {
-    "tag": "beta"
+    "tag": "alpha"
   },
   "peerDependencies": {
-    "jest": "^27.0.0-next.8"
+    "jest": "^27.0.0-next.9"
   },
   "dependencies": {
     "@firebase/rules-unit-testing": "^1.2.9",
@@ -43,9 +43,7 @@
   "//": {
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
-      ">=13.2: native ES module support",
-      "",
-      "15.9.0..15.11 (maybe more) and Jest 27.0.0-next.3 have a love bug: https://github.com/nodejs/node/issues/37426"
+      ">=13.2: native ES module support"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"

@@ -10,7 +10,7 @@
   "type": "module",
   "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
   "engines": {
-    "node": "^14.3 || ^15",
+    "node": "^14.3 || ^15 || ^16",
     "npm": ">= 7.7.0"
   },
   "scripts": {
@@ -30,12 +30,12 @@
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
     "---   ": "",
-    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
+    "test:rules:invites": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:projects": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:symbols": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:visited": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
     "--- -": "",
     "postinstall": "npm --prefix sample/functions install",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
@@ -44,9 +44,9 @@
     "concurrently": "^6.0.2",
     "firebase": "^8.3.2",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.10.0",
-    "jest": "^27.0.0-next.8",
-    "jest-circus": "^27.0.0-next.8",
+    "firebase-tools": "^9.10.1",
+    "jest": "^27.0.0-next.9",
+    "jest-circus": "^27.0.0-next.9",
     "wait-on": "^5.3.0"
   },
   "//": {
