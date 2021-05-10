@@ -2,8 +2,6 @@
 * sample/test-rules/docs.js
 *
 * Constant data used for the rules test cases
-*
-* REMOVE Note: Needs to be '.cjs' because loaded from Jest 'globalSetup' (no ES modules support, yet).
 */
 const anyPastDate = new Date();
 
@@ -87,4 +85,3 @@ const docs = {
 };
 
 export { docs }
-//module.exports = docs;

@@ -15,17 +15,19 @@ const PATH = "../../package";
 const pkg = require(`${PATH}/package.json`);    // path to 'firebase-jest-testing's 'package.json' (EDIT THIS)
 const pkgName = pkg.name;   // "firebase-jest-testing"
 
+function fail(msg) { throw new Error(msg); }
+
 if (pkgName !== 'firebase-jest-testing') {
-  throw new Error(`Resolver needs tuning. Instead of 'firebase-jest-testing', reached: ${pkgName}`);
+  fail(`Resolver needs tuning. Instead of 'firebase-jest-testing', reached: ${pkgName}`);
 }
 
 const exps = pkg.exports;
   //
   // {
-  //   "./cjs": "./src/cjs/index.cjs",
-  //   "./cloudFunctions": "./src/cloudFunctions/fns.js",
-  //   "./firestore": "./src/firestore/index.js",
-  //   "./firestoreReadOnly": "./src/firestoreReadOnly/index.js",
+  //   "./cjs": "./src/cjs/index.cjs",    # This doesn't really matter; CJS does not use 'exports'
+  //   "./firestoreAdmin": "./src/firestoreAdmin/index.js",
+  //   "./firestoreRules": "./src/firestoreRules/index.js",
+  //   "./firestoreRules/setup": "./src/firestoreRules/setup/index.js",
   //   "./jest": "./src/jest/eventually.js"
   // }
 
@@ -37,13 +39,12 @@ const tmp = Object.entries(exps).map( ([k,v]) => {
 });
 
 const lookup = new Map(tmp);
-  // e.g. 'firebase-jest-testing/cloudFunctions' -> '../../src/cloudFunctions/fns.js'
+  // e.g. 'firebase-jest-testing/firestoreAdmin' -> '../../src/firestoreAdmin/index.js'
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
   if (request.startsWith(pkgName)) {    // "firebase-jest-testing"
-    const hit = lookup.get(request);
-    if (!hit) throw new Error("No 'exports' lookup for: "+ request);    // better than assert (causes the right module to be mentioned in the error message)
+    const hit = lookup.get(request) || fail("No 'exports' lookup for: "+ request);
 
     return options.defaultResolver( hit, options );   // turned to requiring the file
   } else {

@@ -1,6 +1,9 @@
 /*
 * src/firestoreReadOnly/readOnly.js
 *
+* Accessing an emulated
+*
+*
 * Layer above '@firebase/rules-unit-testing'. Access is read-only (as far as the tests are concerned),
 * meaning successful write/delete operations do NOT cause the data seen by other tests change.
 *
@@ -14,16 +17,7 @@ import admin from 'firebase-admin'
 import { projectId, PRIME_ROUND } from './common.js'
 import { emul } from './emul.js'
 
-import { FIRESTORE_HOST } from '../config'
-
 assert(!PRIME_ROUND);
-
-// Set 'FIRESTORE_EMULATOR_HOST' if it isn't set. This side effect steers '@firebase/rules-unit-testing' and avoids
-// cluttering 'package.json'.
-//
-if (!process.env["FIRESTORE_EMULATOR_HOST"]) {
-  process.env["FIRESTORE_EMULATOR_HOST"] = FIRESTORE_HOST;
-}
 
 /*
 * Create an "admin" Firestore instance, for restoring the values.

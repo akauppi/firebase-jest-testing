@@ -52,3 +52,15 @@ For priming data, we use `firebase-admin` internally, and take data from human-e
 As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^2]
 
 [^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.
+
+
+## Priming data at JEST (no env.var. to point to the data)
+
+For the Security Rules testing, an `init` call is needed to prime the data. 
+
+This cannot be done implicitly, as part of the tests importing our code, because JEST runs multiple Node.js contexts. Implicit initialization would lead to each module testing security rules to run its own data priming.
+
+Therefore, the approach that needs Global Setup seems like the only (right) way to go.
+
+Note that with other tests the case may be different. You may well prime data within tests, if the data involves those tests only.
+

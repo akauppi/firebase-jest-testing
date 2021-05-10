@@ -1,0 +1,55 @@
+/*
+* src/firestoreRules/setup/index.js
+*
+* Prime docs used for rules testing.
+*
+* Imported by the JEST global setup (not tests).
+*
+* Note: There is similar code in 'firestoreAdmin' for priming the data visible in Firebase Emulator UI. This one uses
+*     a fixed project id and is not shown there.
+*/
+import admin from 'firebase-admin'
+
+import { projectId } from '../common.js'
+
+import { FIRESTORE_HOST } from '../../config.js'
+
+import { PRIME_ROUND } from "../common.js"
+if (!PRIME_ROUND) throw new Error("Do not import this module from tests; only from JEST Global Setup.");
+
+/*
+* Get the database handle. Must call 'destroy' when done.
+*/
+function getDb() {    // () => [Firestore, () => Promise of ()]
+  const myApp = admin.initializeApp({
+    projectId
+  }, "rules-testing");    // any private name will do
+
+  const db = myApp.firestore();
+  db.settings({
+    host: FIRESTORE_HOST,
+    ssl: false
+  });
+
+  const destroy = () => myApp.delete();
+
+  return [db,destroy];
+}
+
+/*
+* Priming the data that for the rules tests.
+*/
+async function init(data) {    // ({ <docPath>: { <field>: <value> } }) => Promise of ()
+  const [db,destroy] = getDb();
+
+  const batch = db.batch();
+
+  for (const [docPath,value] of Object.entries(data)) {
+    batch.set( db.doc(docPath), value );
+  }
+  await batch.commit();
+
+  await destroy();    // tbd. does this take long?
+}
+
+export { init }

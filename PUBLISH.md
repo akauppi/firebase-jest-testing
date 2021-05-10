@@ -8,7 +8,7 @@
 ## Steps
 
 ```
-$ pushd package
+$ cd package
 ```
 
 Check that `CHANGELOG.md` contains mention of what the release contains.

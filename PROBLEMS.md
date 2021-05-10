@@ -1,6 +1,6 @@
 # Problems
 
-Some obstacles faced, avoiding implementation in the way that was seen as ideal. Based on Jest 26.2 and Firebase 7.17.x, `firebase-tools` 8.8.1.
+Some obstacles faced, avoiding implementation in the way that was seen as ideal. Based on Jest 27.0.0-next.9.
 
 
 ## Jest: No test timeout hook
@@ -58,30 +58,51 @@ test("Some"), () => {
 This is clear and simple, but brings its own timeout parameter. We *can* improve the developer experience if an `onTimeout` hook were provided by Jest.
 
 
-## Firebase: ES module packaging not compatible with node.js
+## 🔥🔥Firebase: ES module packaging not compatible with node.js
 
 <!-- whisper
 This will no longer be an issue with 9.x API that is designed with ESM in mind.
 -->
 
-Firebase 7.18.0 packaging:
+>This is *still* an issue with 9.0.0-beta.1!!!
+
+Firebase `9.0.0-beta.1` packaging:
 
 ```
-$ cat node_modules/firebase/app/package.json 
+$ cat node_modules/@firebase/app/package.json 
 {
-  "name": "firebase/app",
-    "main": "dist/index.cjs.js",
-    "browser": "dist/index.cjs.js",
-    "module": "dist/index.esm.js",
-    "typings": "../index.d.ts"
+  "name": "@firebase/app",
+  "version": "0.6.20",
+  ...
+  "main": "dist/index.node.cjs.js",
+  "browser": "dist/index.esm.js",
+  "module": "dist/index.esm.js",
+  "esm2017": "dist/index.esm2017.js",
+  "lite": "dist/index.lite.js",
+  "lite-esm2017": "dist/index.lite.esm2017.js",
+  "files": [
+    "dist"
+  ],
+  ...
 }
 ```
 
-The ESM version is pointed to by the `module` field. This is a convention used in bundlers but seems to be going away. E.g. node.js ignores the `module` field.
+Firebase should use the `exports` field, as instructed by Node.js, but don't.
 
-[Dual CommonJS/ES modules packages](https://nodejs.org/api/esm.html#esm_dual_commonjs_es_module_packages) (Node.js docs; v.14.8) tells, how dual packaging should be done.
+- [Node.js `package.json` field definitions](https://nodejs.org/api/packages.html#packages_node_js_package_json_field_definitions) (Node.js docs)
+
+   >"main" - The default module when loading the package, if exports is not specified, and in versions of Node.js prior to the introduction of exports.
+
+   Firebase can leave it as-is. It serves Node.js not using ESM.
+   
+   >"exports" - Package exports and conditional exports. When present, limits which submodules can be loaded from within the package.
+
+   This is missing. Note that Node.js **makes no reference** to the `module` etc. fields. In particular, `esm2017` is fully of Firebase's own invention.
+
+[Dual CommonJS/ES modules packages](https://nodejs.org/api/esm.html#esm_dual_commonjs_es_module_packages) (Node.js docs) tells, how dual packaging should be done.
 
 
+<!-- disabled (not sure these apply, any more..)
 **Work around:**
 
 ```
@@ -102,6 +123,7 @@ import firebase from 'firebase/@app'
 The `firebase` npm package is just a delivery package, providing a common version number for all the underlying `@firebase/...` packages. They can be used, directly.
 
 Obviously, the above packaging feedback applies to them all.
+-->
 
 
 ## Node/Jest: self-referencing the package by its name - not working

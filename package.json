@@ -3,11 +3,11 @@
   "description": "Root - running 'firebase-jest-testing' against a sample project.",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git"
   },
-  "type": "module",
   "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
   "engines": {
     "node": "^14.3 || ^15 || ^16",
@@ -17,37 +17,34 @@
     "test": "npm run ci",
     "ci": "npm run ci:seq",
     "---": "",
-    "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_init && npm run --silent _ci_fns && npm run --silent _ci_rules\"",
-    "_ci_init": "node --harmony-top-level-await sample/prime-docs.js",
+    "ci:seq": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run --silent _ci_fns && npm run --silent _ci_rules\"",
     "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
     "ci:par": "firebase emulators:exec --project=bunny --config firebase.json --only firestore,functions \"npm run _ci_par_2\"",
-    "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_init && npm run _ci_fns\" \"npm run _ci_rules\"",
+    "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
-    "start": "concurrently -n emul,init \"firebase emulators:start --project=bunny --config firebase.json --only functions,firestore\" \"GCLOUD_PROJECT=bunny npm run _start_2\"",
-    "_start_2": "wait-on http://localhost:4000 && node --harmony-top-level-await sample/prime-docs.js",
+    "start": "firebase emulators:start --project=bunny --config firebase.json --only functions,firestore",
     "test:fns:callables": "GCLOUD_PROJECT=bunny NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.8x.test.js --verbose --detectOpenHandles --all",
-    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
+    "test:fns:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
     "---   ": "",
-    "test:rules:invites": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:projects": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:symbols": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:visited": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
-    "test:rules:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
+    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
+    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
+    "test:rules:temp": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f temp.test.js --verbose --detectOpenHandles --all",
     "--- -": "",
     "postinstall": "npm --prefix sample/functions install",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
     "concurrently": "^6.0.2",
-    "firebase": "^8.3.2",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.10.1",
+    "firebase-tools": "^9.10.2",
     "jest": "^27.0.0-next.9",
-    "jest-circus": "^27.0.0-next.9",
-    "wait-on": "^5.3.0"
+    "jest-circus": "^27.0.0-next.9"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -73,6 +70,11 @@
     "dependencies": {
       "firebase": [
         "Needed for testing the 'httpsCallable's. (hopefully able to use 9.x beta soon)"
+      ]
+    },
+    "devDependencies": {
+      "REMOVE @firebase/{app|firestore}": [
+        "Not sure why these are needed - just refering to 'file:package' and having it installed isn't enough. :S"
       ]
     }
   }

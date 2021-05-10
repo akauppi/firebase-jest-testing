@@ -3,16 +3,16 @@
   "private": true,
   "//type": "module",
   "engines": {
-    "node": "14 || >=15"
+    "node": "14 || ^15 || ^16"
   },
   "dependencies": {
-    "firebase-admin": "^9.6.0",
+    "firebase-admin": "^9.7.0",
     "firebase-functions": "^3.13.2"
   },
   "//": {
     "engines.node": [
       "Firebase Cloud Functions only supports LTS versions (12,14,...) and the string must be '12','14', ...",
-      "We get away with '14 || >= 15' since this is not being deployed. '14' gives warnings",
+      "We get away with '14 || ...' since this is not being deployed. Plain '14' would give warnings in development.",
       ">= 13.2 provides native ES module support"
     ]
   }
