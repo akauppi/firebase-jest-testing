@@ -4,13 +4,12 @@
 import { strict as assert } from 'assert'
 
 //import { initializeApp } from 'firebase-admin'
-import admin  from 'firebase-admin'
-const { initializeApp } = admin;
+import { default as admin } from 'firebase-admin'
 
 let dbAdmin;
 
 function init(projectId) {    // (string) => (() => Promise of ())
-  const adminApp = initializeApp({
+  const adminApp = admin.initializeApp({
     projectId
   }, `rest-${ Date.now() }`);   // unique; keep away from other "apps" (configurations, really); btw. would be nice if Firebase APIs had nameless "apps" easier.
 

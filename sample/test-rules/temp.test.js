@@ -1,31 +1,53 @@
 /*
-* sample/test-rules/visitedC.test.js
+* TEMP
+*
+* Test if we can use the REST API, at all...
+*
+* Known data:
+*   projectId: "bunny"
+*   docPath:    abc/
 */
 import { describe, expect, beforeAll } from '@jest/globals'
 
-import { dbAuth, FieldValue } from 'firebase-jest-testing/firestoreReadOnly'
+import { dbAuth, serverTimestamp } from 'firebase-jest-testing/firestoreRules'
+
+const SERVER_TIMESTAMP = serverTimestamp();
 
 const anyDate = new Date();   // a non-server date
 
-describe("'/visited' rules", () => {
+describe("TEMP", () => {
   let unauth_visitedC, auth_visitedC, abc_visitedC, def_visitedC;
 
   beforeAll(  () => {         // note: applies only to tests in this 'describe' block
-    try {
-      const coll = dbAuth.collection('projects/1/visited');
+    const coll = dbAuth.collection('projects/1/visited');
 
-      unauth_visitedC = coll.as(null);
-      auth_visitedC = coll.as({uid:'_'});
-      abc_visitedC = coll.as({uid:'abc'});
-      def_visitedC = coll.as({uid:'def'});
-    }
-    catch (err) {
-      console.error( "Failed to initialize the Firebase database: ", err );   // not occurred
-      throw err;
-    }
+    unauth_visitedC = coll.as(null);
+    auth_visitedC = coll.as({uid:'_'});
+    abc_visitedC = coll.as({uid:'abc'});
+    def_visitedC = coll.as({uid:'def'});
   });
 
   //--- VisitedC read rules ---
+
+  test.only ('temp #1 - should be able to read Jolly Jumper, as \'abc\'', async () => {
+    const coll = dbAuth.collection('projects');
+
+    await expect( coll.as({uid:'abc'}).doc("1").get() ).toAllow();
+  });
+
+  test.only ('temp #2 - should NOT be able to read a non-existing doc', async () => {
+    const coll = dbAuth.collection('projects');
+
+    await expect( coll.as({uid:'abc'}).doc("7").get() ).toDeny();
+  });
+
+  test.only ('temp #3 - should NOT be able to read Jolly Jumper, as a visitor', async () => {
+    const coll = dbAuth.collection('projects');
+
+    await expect( coll.as({uid:'abc__'}).doc("1").get() ).toDeny();
+  });
+
+
 
   test('unauthenticated access should fail', async () => {
     await expect( unauth_visitedC.get() ).toDeny();
@@ -46,7 +68,7 @@ describe("'/visited' rules", () => {
   //--- VisitedC write rules ---
 
   test('only the user themselves can set their value (to server timestamp)', async () => {
-    const d_serverTime = { at: FieldValue.serverTimestamp() };
+    const d_serverTime = { at: SERVER_TIMESTAMP };
     const d_otherTime = { at: anyDate };
 
     await expect( abc_visitedC.doc("abc").set( d_serverTime )).toAllow();
@@ -54,10 +76,6 @@ describe("'/visited' rules", () => {
 
     await expect( abc_visitedC.doc("abc").set( d_otherTime )).toDeny();
     await expect( def_visitedC.doc("abc").set( d_otherTime )).toDeny();   // other user
-
-    // Also 'update' should work but actual code is expected to use 'set'
-    await expect( abc_visitedC.doc("abc").update( d_serverTime )).toAllow();
-    await expect( def_visitedC.doc("abc").update( d_serverTime )).toDeny();   // other user
   });
 
   //--- VisitedC delete rules ---

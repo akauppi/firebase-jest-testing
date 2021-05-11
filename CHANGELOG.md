@@ -1,5 +1,9 @@
 # Changelog
 
+## 11-May-21 (0.0.3-alpha.0)
+
+- Replaced `@firebase/rules-unit-test` with REST API calls.
+
 ## 6-May-21 (0.0.3-alpha.0)
 
 - Upgraded to Jest 27.0.0-beta.9

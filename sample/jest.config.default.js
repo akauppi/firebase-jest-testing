@@ -12,6 +12,6 @@ export default {
   // Default is 5000. None of our tests take that long; fail fast.
   testTimeout: 2000,
 
-  // Resolves the subpackage paths using the package's 'exports' (until Jest does; 27.0.0-next.9 not).
-  //resolver: "../hack-jest/self-resolver.cjs"
+  // Resolves the subpackage paths using the package's 'exports' (until Jest does...).
+  resolver: "../hack-jest/self-resolver.cjs"
 }

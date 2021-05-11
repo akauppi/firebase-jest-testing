@@ -9,13 +9,11 @@
 *     fixed project id).
 */
 import { init as initUnlimited } from './getUnlimited.js'
-//import { init as initToken } from './token.js'
 import { init as initAction } from './action!.js'
 
 import { action_v1 } from './action!.js'
-//import { getToken } from './token.js'
 
-import { createUnsecuredJwt } from '../rules-unit-testing/index.js'
+import { createUnsecuredJwt } from '../rules-unit-testing/createUnsecuredJwt.js'
 
 let createToken;    // uid => token; fixed for the project id
 
@@ -29,7 +27,6 @@ function init(projectId) {    // (string) => (() => Promise of ())
   // Pass the initialization to minions.
   //
   const release = initUnlimited(projectId);
-  //initToken(projectId);
   initAction(projectId);
 
   createToken = (uid) => {
@@ -52,30 +49,39 @@ function getToken(uid) {   // (string) => string
 }
 
 /*
-* Reference:
-*   https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/get
+* Check getting a single document
+*
+* https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/get
 */
-async function getAs(uid, docPath) {    // (string, string) => Promise of ()
+function getAs(uid, docPath) {    // (string, string) => Promise of true|string
   const token = getToken(uid);
 
-  await action_v1(token, 'GET', docPath);
+  return action_v1(token, 'GET', docPath);
 }
 
-async function setAs(uid, docPath, v) {   // (string, string, any) => Promise of ()
+// https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/patch
+//
+function patchAs(uid, docPath, v) {   // (string, string, any) => Promise of true|string
   const token = getToken(uid);
 
-  throw new Error("not implemented!");
+  throw new Error("tbd. transaction!!")
+  // tbd. transaction!!
+  return action_v1(token, 'PATCH', docPath);
 }
 
-async function deleteAs(uid, docPath) {   // (string, string) => Promise of ()
+// https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete
+//
+function deleteAs(uid, docPath) {   // (string, string) => Promise of true|string
   const token = getToken(uid);
 
-  throw new Error("not implemented!");
+  throw new Error("tbd. transaction!!")
+  // tbd. transaction!!
+  return action_v1(token, 'DELETE', docPath);
 }
 
 export {
   init,
   getAs,
-  setAs,
+  patchAs,
   deleteAs
 }

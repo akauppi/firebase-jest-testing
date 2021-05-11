@@ -37,7 +37,7 @@ async function prime(data) {    // ({ <docPath>: { <field>: <value> } }) => Prom
 
   await wipe(myProjectId);    // clear the old remains
 
-  await withDbAdmin( async dbAdmin => {
+  await withDbAdmin(myProjectId, async dbAdmin => {
     const batch = dbAdmin.batch();
 
     for (const [docPath,value] of Object.entries(data)) {
@@ -50,9 +50,9 @@ async function prime(data) {    // ({ <docPath>: { <field>: <value> } }) => Prom
 /*
 * Do something, using a temporary admin access to Firestore.
 */
-async function withDbAdmin(f) {  // ( (Firestore) => Promise of () ) => Promise of ()
+async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
   const appAdmin = admin.initializeApp({
-    myProjectId
+    projectId
   }, `prime-${Date.now()}`);    // unique from other "apps"
 
   const dbAdmin = appAdmin.firestore();
