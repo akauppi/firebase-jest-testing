@@ -30,23 +30,19 @@ async function action_v1(token, method, tail) {   // (string, 'GET'|..., string)
       throw err;
     });
 
-  // Success:
-  //    200 with a JSON body
+  // Access:
+  //    200 with a JSON body if 'get' and the doc exists
+  //    404 (Not Found) if 'get' and the doc does not exist
   //
   // No access:
   //    403 (Forbidden) with body (white space added for clarity):
   //      { "error": { "code": 403, "message": "\nfalse for 'get' @ L21", "status": "PERMISSION_DENIED" } }
-  //
+
   const status = res.status;
 
-  if (status !== 200 && status !== 403) {
-    const body = await res.text();
-    const msg = `Unexpected response from '${uri}' (${res.status}): ${body}`;
-    console.error(msg);
-    throw new Error(msg);
-  }
-
-  if (is2xx(status)) {
+  // Emulator only provides 200 result (all 2xx would be success).
+  //
+  if (status === 200 || status === 404) {
     return true;
 
   } else if (status === 403) {   // access denied
@@ -54,10 +50,14 @@ async function action_v1(token, method, tail) {   // (string, 'GET'|..., string)
     const json = await res.json();
     const s = json.error.message || fail("No 'error.message' in denied response from emulator.");
     return s;
+
+  } else {    // other status codes
+    const body = await res.text();
+    const msg = `Unexpected response from '${uri}' (${status}): ${body}`;
+    console.error(msg);
+    throw new Error(msg);
   }
 }
-
-function is2xx(v) { return v >= 200 && v <= 299; }
 
 export {
   init,

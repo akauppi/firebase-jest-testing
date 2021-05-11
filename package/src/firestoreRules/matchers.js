@@ -36,7 +36,9 @@ function myFmt(expectedAllowed,reason) {   // (boolean, string | undefined) => s
   const a = lookup[expectedAllowed];
   const b = lookup[!expectedAllowed];
 
-  return `Expected ${a} but the Firebase operation was ${b.toUpperCase()}.` + reason ? ` [${reason}]`:'';
+  // 'reason' from the emulator seems to start with '\n' ('firebase-tools' 9.10.2). Strip any preceding white space.
+
+  return `Expected ${a} but the Firebase operation was ${b.toUpperCase()}.` + reason ? ` [${reason.trimStart()}]`:'';
 }
 
 export { }

@@ -39,17 +39,33 @@ function collection(collectionPath) {   // string => { as: ... }
 function documentAs(uid, documentPath) {   // (string, string) => { get, set, delete }
 
   return {
-    get: () => {
+    get: () => {    // () => Promise of true|string
       return getAs(uid, documentPath);
     },
 
-    // REST API has separate "patch" and "create". We just map "set" to the patching - is that ok?
+    // Firestore 8.x client API has separate 'set' and 'update'.
     //
-    set: (data) => {
+    // '.set' overwrites the doc if it exists, and creates a new one if it doesn't.
+    // '.update' _merges_ fields with the existing document ("updates fields in the document"). It fails if the doc does
+    //    not already exist.
+    //
+    // From the point of view of Security Rules testing:
+    //  - '.set' may need either 'create' or 'update' rule, depending on the state of the data
+    //  - '.update' always needs just 'update' rule
+    //
+    // Note that the '.set' here only tests either being able to create a doc (if one doesn't exist, already) or being
+    //    able to update one (if it does). In order to test both, the _test_ must include two sets: one to an existing
+    //    doc ref and another to a clear one. (Naturally, no such doc gets created, because of our immutability cover).
+    //
+    set: (data) => {    // (object) => Promise of true|string
+      // tbd. for now, the same as 'update' (could use 'createDocument' REST API)
+      return patchAs(uid, documentPath, data);
+    },
+    update: (data) => {    // (object) => Promise of true|string
       return patchAs(uid, documentPath, data);
     },
 
-    delete: () => {
+    delete: () => {     // () => Promise of true|string
       return deleteAs(uid, documentPath)
     }
   };

@@ -10,8 +10,10 @@
 */
 import { init as initUnlimited } from './getUnlimited.js'
 import { init as initAction } from './action!.js'
+import { init as initTransactions } from './transactions.js'
 
 import { action_v1 } from './action!.js'
+import { beginTransaction_v1 } from './transactions.js'
 
 import { createUnsecuredJwt } from '../rules-unit-testing/createUnsecuredJwt.js'
 
@@ -28,6 +30,7 @@ function init(projectId) {    // (string) => (() => Promise of ())
   //
   const release = initUnlimited(projectId);
   initAction(projectId);
+  initTransactions(projectId);
 
   createToken = (uid) => {
     return createUnsecuredJwt(uid, projectId);
@@ -61,12 +64,27 @@ function getAs(uid, docPath) {    // (string, string) => Promise of true|string
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/patch
 //
-function patchAs(uid, docPath, v) {   // (string, string, any) => Promise of true|string
+async function patchAs(uid, docPath, dataObj) {   // (string, string, object) => Promise of true|string
   const token = getToken(uid);
 
-  throw new Error("tbd. transaction!!")
-  // tbd. transaction!!
-  return action_v1(token, 'PATCH', docPath);
+  // Get existing value
+  //tbd. const was = getUnlimited(docPath);
+
+  // Patch and set back, as a transaction. #later
+  //
+  /***const o2 = await beginTransaction_v1(token);
+  const transactionId = o2.transaction;    // eg. "EXoAAAAAAAAA"
+  ***/
+
+  // 🚧🚧🚧 WARNING: trying our luck, no locking
+
+  const ret = await action_v1(token, 'PATCH', docPath, dataObj);
+
+  if (ret === true) {   // it passed
+    //tbd. setUnlimited(docPath);
+  }
+
+  return ret;
 }
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete
@@ -76,7 +94,7 @@ function deleteAs(uid, docPath) {   // (string, string) => Promise of true|strin
 
   throw new Error("tbd. transaction!!")
   // tbd. transaction!!
-  return action_v1(token, 'DELETE', docPath);
+  //return action_v1(token, 'DELETE', docPath);
 }
 
 export {
