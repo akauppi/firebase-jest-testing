@@ -9,13 +9,13 @@
 *     fixed project id).
 */
 import { init as initUnlimited } from './getUnlimited.js'
-import { init as initAction } from './action!.js'
-import { init as initTransactions } from './transactions.js'
 
 import { action_v1 } from './action!.js'
 import { beginTransaction_v1 } from './transactions.js'
 
 import { createUnsecuredJwt } from '../rules-unit-testing/createUnsecuredJwt.js'
+
+import { projectId } from '../config.js'
 
 let createToken;    // uid => token; fixed for the project id
 
@@ -24,13 +24,11 @@ let createToken;    // uid => token; fixed for the project id
 *
 * Returns a 'destroy' function that must be called - and waited for - at the end of tests.
 */
-function init(projectId) {    // (string) => (() => Promise of ())
+function init() {    // () => (() => Promise of ())
 
   // Pass the initialization to minions.
   //
-  const release = initUnlimited(projectId);
-  initAction(projectId);
-  initTransactions(projectId);
+  const release = initUnlimited();
 
   createToken = (uid) => {
     return createUnsecuredJwt(uid, projectId);

@@ -19,13 +19,7 @@ import { default as admin } from 'firebase-admin'
 
 import { wipe } from '../rules-unit-testing/wipe.js'
 
-import { FIRESTORE_HOST } from '../config.js'
-
-let myProjectId;    // undefined|string
-
-function init(projectId) {
-  myProjectId = projectId;
-}
+import { FIRESTORE_HOST, projectId } from '../config.js'
 
 /*
 * Prime a database with data
@@ -35,9 +29,9 @@ function init(projectId) {
 */
 async function prime(data) {    // ({ <docPath>: { <field>: <value> } }) => Promise of ()
 
-  await wipe(myProjectId);    // clear the old remains
+  await wipe(projectId);    // clear the old remains
 
-  await withDbAdmin(myProjectId, async dbAdmin => {
+  await withDbAdmin(async dbAdmin => {
     const batch = dbAdmin.batch();
 
     for (const [docPath,value] of Object.entries(data)) {
@@ -50,7 +44,7 @@ async function prime(data) {    // ({ <docPath>: { <field>: <value> } }) => Prom
 /*
 * Do something, using a temporary admin access to Firestore.
 */
-async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
+async function withDbAdmin(f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
   const appAdmin = admin.initializeApp({
     projectId
   }, `prime-${Date.now()}`);    // unique from other "apps"
@@ -67,6 +61,5 @@ async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise 
 }
 
 export {
-  init,
   prime
 }

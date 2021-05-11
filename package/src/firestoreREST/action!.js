@@ -5,13 +5,9 @@
 */
 import fetch from 'node-fetch'
 
-import { FIRESTORE_HOST } from '../config.js'
+import { FIRESTORE_HOST, projectId } from '../config.js'
 
-let path_v1;
-
-function init(projectId) {  // (string) => ()
-  path_v1 = `http://${FIRESTORE_HOST}/v1/projects/${projectId}/databases/(default)/documents`;
-}
+const path_v1 = `http://${FIRESTORE_HOST}/v1/projects/${projectId}/databases/(default)/documents`;
 
 /*
 * Checks whether we have access.
@@ -60,6 +56,5 @@ async function action_v1(token, method, tail) {   // (string, 'GET'|..., string)
 }
 
 export {
-  init,
   action_v1
 }

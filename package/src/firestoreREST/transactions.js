@@ -1,16 +1,12 @@
 /*
 * src/firestoreREST/transactions.js
 */
-import {FIRESTORE_HOST} from "../config";
+import { FIRESTORE_HOST, projectId } from "../config";
 import fetch from "node-fetch";
 
 function fail(msg) { throw new Error(msg); }
 
-let path_v1;
-
-function init(projectId) {  // (string) => ()
-  path_v1 = `http://${FIRESTORE_HOST}/v1/projects/${projectId}/databases/(default)/documents`;
-}
+const path_v1 = `http://${FIRESTORE_HOST}/v1/projects/${projectId}/databases/(default)/documents`;
 
 /*
 * Begins a transaction and returns the id provided for it, by the Firestore service.
@@ -41,6 +37,5 @@ async function beginTransaction_v1(token) {    // (string) => Promise of string
 }
 
 export {
-  init,
   beginTransaction_v1
 }

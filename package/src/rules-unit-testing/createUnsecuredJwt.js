@@ -10,6 +10,8 @@
 * restricts the users to either 8.x or 9.x API.
 */
 
+// Note: Since we're kind of in third party code area here, 'projectId' is provided, not imported from '../config.js'.
+
 /*
 * Changes from 'rules-unit-testing':
 *   - Typescript types commented out
@@ -46,29 +48,19 @@ function createUnsecuredJwt(uid, projectId) {   // (string, string) => string
   };
 
   return [
-    //base64.encodeString(JSON.stringify(header), /*webSafe=*/ false),
-    //base64.encodeString(JSON.stringify(payload), /*webSafe=*/ false),
-
-    encodeString( JSON.stringify(header) ),
-    encodeString( JSON.stringify(payload) ),
+    encode( JSON.stringify(header) ),
+    encode( JSON.stringify(payload) ),
     ''    // Unsecured JWTs use the empty string as a signature.
   ].join('.');
 }
 
 /*
-* 'btoa' is a browser function that the '@firebase/util' library falls to with 'webSafe=false', which is what our use
-* case would have.
-*
 * Note: Node >= 16.0 has 'buffer.btoa' for "compatibility with legacy web platform APIs", but it's just a wrapper around
 *   '<Buffer>.toString('base64')', which the documentation suggests to use.
 */
-function btoa(str) {
-  const buffer = Buffer.from(str.toString(), 'binary');
+function encode(str) {
+  const buffer = Buffer.from(str, 'binary');
   return buffer.toString('base64');
-}
-
-function encodeString(str) {
-  return btoa(str);
 }
 
 export {

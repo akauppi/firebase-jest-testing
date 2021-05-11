@@ -29,22 +29,34 @@ describe("TEMP", () => {
 
   //--- VisitedC read rules ---
 
-  test.only ('temp #1 - should be able to read Jolly Jumper, as \'abc\'', async () => {
+  test ('temp #1 - should be able to read Jolly Jumper, as \'abc\'', async () => {
     const coll = dbAuth.collection('projects');
 
     await expect( coll.as({uid:'abc'}).doc("1").get() ).toAllow();
   });
 
-  test.only ('temp #2 - should NOT be able to read a non-existing doc', async () => {
+  test ('temp #2 - should NOT be able to read a non-existing doc', async () => {
     const coll = dbAuth.collection('projects');
 
     await expect( coll.as({uid:'abc'}).doc("7").get() ).toDeny();
   });
 
-  test.only ('temp #3 - should NOT be able to read Jolly Jumper, as a visitor', async () => {
+  test ('temp #3 - should NOT be able to read Jolly Jumper, as a visitor', async () => {
     const coll = dbAuth.collection('projects');
 
     await expect( coll.as({uid:'abc__'}).doc("1").get() ).toDeny();
+  });
+
+  // Access to a doc that doesn't exist (but access would be allowed)
+  //
+  test.only ('temp #4 - reading existing and missing docs should be treated the same', async () => {
+    const coll = dbAuth.collection('projects');
+
+    await expect( coll.as({uid:'def'}).doc("1/visited/abc").get() ).toAllow();
+    await expect( coll.as({uid:'def'}).doc("1/visited/no-such").get() ).toAllow();
+
+    // We should _not_ have access to these (403 over 404, right?):
+    await expect( coll.as({uid:'boo'}).doc("1/visited/no-such").get() ).toDeny();
   });
 
 

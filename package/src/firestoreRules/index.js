@@ -6,7 +6,7 @@
 * Note: Each JEST test has its own Node.js environment. Thus, this code gets imported N times, once per each test.
 *   Only "global setup" allows one-time initializations.
 */
-import { PRIME_ROUND, projectId } from './common.js'
+import { PRIME_ROUND } from './common.js'
 if (PRIME_ROUND) throw new Error("This module is for tests only");
 
 import { init } from '../firestoreREST/index.js'
@@ -19,15 +19,16 @@ import { serverTimestampSentinel } from './sentinels'
 //
 import './matchers.js';
 
-// This initializes 'firestoreREST' so that inner entries can use it without passing any context info (project id or
-// Firebase/Firestore handled).
+// This initializes 'firestoreREST' (we may get rid of even this, eventually)
 //
-const release = init(projectId);
+const release = init();
 
 const dbAuth = {
   collection
 }
 
+// Firestore client API has the '()' but they always are given the same value.
+//
 const serverTimestamp = () => serverTimestampSentinel;
 
 /*
@@ -39,6 +40,5 @@ afterAll( async () => {   // () => Promise of ()
 
 export {
   dbAuth,
-  projectId,
   serverTimestamp
 }

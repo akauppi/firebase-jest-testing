@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.3-alpha.0",
+  "version": "0.0.3-alpha.1",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -21,10 +21,8 @@
     "Writing tests.md"
   ],
   "exports": {
-    "./cjs": "./src/cjs/index.cjs",
     "./firestoreAdmin": "./src/firestoreAdmin/index.js",
     "./firestoreRules": "./src/firestoreRules/index.js",
-    "./firestoreRules/setup": "./src/firestoreRules/setup/index.js",
     "./jest": "./src/jest/eventually.js"
   },
   "engines": {
@@ -43,6 +41,9 @@
   },
   "scripts": {},
   "//": {
+    "exports": [
+      "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."
+    ],
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
