@@ -8,7 +8,7 @@
 import { strict as assert } from 'assert'
 import { expect } from '@jest/globals'
 
-import { PRIME_ROUND } from "./common.js"
+import { PRIME_ROUND } from "../config.js"
 assert(!PRIME_ROUND);
 
 expect.extend( {
@@ -38,7 +38,7 @@ function myFmt(expectedAllowed,reason) {   // (boolean, string | undefined) => s
 
   // 'reason' from the emulator seems to start with '\n' ('firebase-tools' 9.10.2). Strip any preceding white space.
 
-  return `Expected ${a} but the Firebase operation was ${b.toUpperCase()}.` + reason ? ` [${reason.trimStart()}]`:'';
+  return `Expected ${a} but the Firebase operation was ${b.toUpperCase()}.` + (reason ? ` [${reason.trimStart()}]`:'');
 }
 
 export { }

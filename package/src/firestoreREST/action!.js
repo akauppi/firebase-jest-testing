@@ -5,9 +5,7 @@
 */
 import fetch from 'node-fetch'
 
-import { FIRESTORE_HOST, projectId } from '../config.js'
-
-const path_v1 = `http://${FIRESTORE_HOST}/v1/projects/${projectId}/databases/(default)/documents`;
+import { path_v1 } from './common'
 
 /*
 * Checks whether we have access.

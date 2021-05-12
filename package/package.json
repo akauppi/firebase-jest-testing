@@ -36,7 +36,7 @@
     "jest": "^27.0.0-next.9"
   },
   "dependencies": {
-    "firebase-admin": "^9.7.0",
+    "firebase-admin": "^9.8.0",
     "node-fetch": "^3.0.0-beta.9"
   },
   "scripts": {},

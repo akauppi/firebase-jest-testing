@@ -24,6 +24,7 @@
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
     "start": "firebase emulators:start --project=bunny --config firebase.json --only functions,firestore",
+    "//start2": "firebase emulators:start --project=rules-test --config firebase.json --only functions,firestore",
     "test:fns:callables": "GCLOUD_PROJECT=bunny NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.8x.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "GCLOUD_PROJECT=bunny NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -34,7 +35,7 @@
     "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
     "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
     "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
-    "test:rules:temp": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f temp.test.js --verbose --detectOpenHandles --all",
+    "//test:rules:temp": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f temp.test.js --verbose --detectOpenHandles --all",
     "--- -": "",
     "postinstall": "npm --prefix sample/functions install",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"

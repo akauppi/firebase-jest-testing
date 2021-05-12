@@ -1,7 +1,13 @@
 /*
 * src/config.js
 *
-* Provides access to emulator and project configuration.
+* Provides access to emulator and project configuration, plus execution context (JEST Global Setup or part of test suite).
+*
+* Context:
+*   Imported both under Global Setup and tests.
+*
+* Note:
+*   Must have NO side effects; imported for reading an immutable context.
 *
 * On project id:
 *   Each individual JEST Node.js universe is only ever involved with one project ID. It's provided either by
@@ -44,8 +50,11 @@ if (projectId !== projectId.toLowerCase()) {    // (could do it for the user, an
   fail("Please provide 'GCLOUD_PROJECT' with only lower case characters.");
 }
 
+const PRIME_ROUND = !global.afterAll;   // are we imported from 'globalSetup', or from the tests?
+
 export {
   FIRESTORE_HOST,
   FUNCTIONS_URL,
-  projectId
+  projectId,
+  PRIME_ROUND
 }

@@ -2,18 +2,28 @@
 * src/firestoreAdmin/prime.js
 *
 * Write data to the emulated Firestore.
+*
+* Context:
+*   JEST Global Setup
 */
-//import { initializeApp } from 'firebase-admin'    // for "modular API" (9.100.x had problems with this; 10-May-2021)
+import { strict as assert } from 'assert'
+import { PRIME_ROUND } from '../config.js'
+assert(PRIME_ROUND);
 
-// To successfully load 'firebase-admin' (9.7.0 era; pre-ESM), you MUST DO THIS:
+//import { initializeApp } from 'firebase-admin'    // for "modular API" #later
+
+// To successfully load 'firebase-admin' (9.x), you DO IT PRECISELY LIKE HERE!
 //
-//  <<
 //    import { default as admin } from 'firebase-admin'
-//    // DON'T TRY to spread the 'admin' open (not in the root; not within the functions):
-//    //const { initializeApp } = admin;    // WON'T WORK: "Cannot read property 'INTERNAL' of undefined"
-//  <<
+//    ...later:   admin.initializeApp()
 //
-// Note that the official "ES2015" way of "import * as admin from ..." does not work, either.
+// DO NOT:
+//    - spread the 'admin' open (not in module root; not within functions):
+//      <<
+//        const { initializeApp } = admin   // DOES NOT WORK. Gives "Cannot read property 'INTERNAL' of undefined"
+//      <<
+//
+// The official "ES2015" way of "import * as admin from ..." does not work with native ES modules (likely only for bundlers).
 //
 import { default as admin } from 'firebase-admin'
 
@@ -43,6 +53,8 @@ async function prime(data) {    // ({ <docPath>: { <field>: <value> } }) => Prom
 
 /*
 * Do something, using a temporary admin access to Firestore.
+*
+* Note: Do not merge this code with 'getUnlimited'. This one works in the Global
 */
 async function withDbAdmin(f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
   const appAdmin = admin.initializeApp({

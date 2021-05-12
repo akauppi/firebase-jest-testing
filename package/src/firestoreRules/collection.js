@@ -4,7 +4,7 @@
 * The pseudo-API (similar to Firebase or Firebase-admin APIs, though those are currently in flux).
 */
 
-import { getAs, patchAs, deleteAs } from '../firestoreREST/index.js'
+import { getAs, setAs, updateAs, deleteAs } from '../firestoreREST/index.js'
 
 function fail(msg) { throw new Error(msg); }
 
@@ -46,8 +46,8 @@ function documentAs(uid, documentPath) {   // (string, string) => { get, set, de
     // Firestore 8.x client API has separate 'set' and 'update'.
     //
     // '.set' overwrites the doc if it exists, and creates a new one if it doesn't.
-    // '.update' _merges_ fields with the existing document ("updates fields in the document"). It fails if the doc does
-    //    not already exist.
+    // '.update' merges the fields with the existing document ("updates fields in the document"). It fails if the doc
+    //    does not already exist.
     //
     // From the point of view of Security Rules testing:
     //  - '.set' may need either 'create' or 'update' rule, depending on the state of the data
@@ -58,11 +58,10 @@ function documentAs(uid, documentPath) {   // (string, string) => { get, set, de
     //    doc ref and another to a clear one. (Naturally, no such doc gets created, because of our immutability cover).
     //
     set: (data) => {    // (object) => Promise of true|string
-      // tbd. for now, the same as 'update' (could use 'createDocument' REST API)
-      return patchAs(uid, documentPath, data);
+      return setAs(uid, documentPath, data);
     },
     update: (data) => {    // (object) => Promise of true|string
-      return patchAs(uid, documentPath, data);
+      return updateAs(uid, documentPath, data);
     },
 
     delete: () => {     // () => Promise of true|string

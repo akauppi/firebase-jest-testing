@@ -8,34 +8,13 @@
 * Note: We let the caller initialize the project ID, but in practise this is only use from 'firestoreRules' (with a
 *     fixed project id).
 */
-import { init as initUnlimited } from './getUnlimited.js'
-
 import { action_v1 } from './action!.js'
-import { beginTransaction_v1 } from './transactions.js'
+import { commit_v1, writeGen, writeDeleteGen } from './commit'
 
+import { getUnlimited } from '../firestoreAdmin/getUnlimited'
 import { createUnsecuredJwt } from '../rules-unit-testing/createUnsecuredJwt.js'
 
 import { projectId } from '../config.js'
-
-let createToken;    // uid => token; fixed for the project id
-
-/*
-* Provide the project id to be used. Same for all tests (Jest runs test suites in isolated Node.js universes).
-*
-* Returns a 'destroy' function that must be called - and waited for - at the end of tests.
-*/
-function init() {    // () => (() => Promise of ())
-
-  // Pass the initialization to minions.
-  //
-  const release = initUnlimited();
-
-  createToken = (uid) => {
-    return createUnsecuredJwt(uid, projectId);
-  }
-
-  return release;
-}
 
 const tokenMap = new Map();
 
@@ -44,7 +23,7 @@ const tokenMap = new Map();
 */
 function getToken(uid) {   // (string) => string
   if (!tokenMap.has(uid)) {
-    tokenMap.set(uid, createToken(uid));
+    tokenMap.set(uid, createUnsecuredJwt(uid, projectId));
   }
   return tokenMap.get(uid);
 }
@@ -60,29 +39,41 @@ function getAs(uid, docPath) {    // (string, string) => Promise of true|string
   return action_v1(token, 'GET', docPath);
 }
 
-// https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/patch
-//
-async function patchAs(uid, docPath, dataObj) {   // (string, string, object) => Promise of true|string
+/*
+* Check (over)writing a document
+*/
+async function setAs(uid, docPath, data) {    // (string, string, object) => Promise of true|string
   const token = getToken(uid);
 
-  // Get existing value
-  //tbd. const was = getUnlimited(docPath);
+  const writes = [
+    writeGen(data, false),    // set
+    await restoreGen(docPath)
+  ];
 
-  // Patch and set back, as a transaction. #later
-  //
-  /***const o2 = await beginTransaction_v1(token);
-  const transactionId = o2.transaction;    // eg. "EXoAAAAAAAAA"
-  ***/
+  return commit_v1(token, writes);
+}
 
-  // 🚧🚧🚧 WARNING: trying our luck, no locking
+/*
+* Check merging to an existing document
+*/
+async function updateAs(uid, docPath, data) {    // (string, string, object) => Promise of true|string
+  const token = getToken(uid);
 
-  const ret = await action_v1(token, 'PATCH', docPath, dataObj);
+  const writes = [
+    writeGen(data, true),   // update
+    await restoreGen(docPath)
+  ];
 
-  if (ret === true) {   // it passed
-    //tbd. setUnlimited(docPath);
-  }
+  return commit_v1(token, writes);
+}
 
-  return ret;
+/*
+* Fetches the current document at 'docPath' (if it exists), and prepares a 'Write' entry that restores to that state.
+*/
+async function restoreGen(docPath) {  // (string) => Write
+  const data = await getUnlimited(docPath);
+
+  return data ? writeGen(was, false) : writeDeleteGen(docPath);
 }
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete
@@ -96,8 +87,8 @@ function deleteAs(uid, docPath) {   // (string, string) => Promise of true|strin
 }
 
 export {
-  init,
   getAs,
-  patchAs,
+  setAs,
+  updateAs,
   deleteAs
 }
