@@ -16,6 +16,9 @@
 *     -> https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/commit
 *     -> https://firebase.google.com/docs/firestore/reference/rest/v1/Write
 */
+import util from 'util'   // for JSON logging
+
+import { strict as assert } from 'assert'
 import fetch from 'node-fetch'
 
 import { path_v1 } from './common'
@@ -41,7 +44,7 @@ async function commit_v1(token, writes) {   // (string, Array of Write) => Promi
   const [method, uri] = ['POST', `${path_v1}:commit`];
 
   const body = JSON.stringify({
-    writes,
+    writes
     // 'transaction' not needed - doing all at once
   });
 
@@ -52,14 +55,16 @@ async function commit_v1(token, writes) {   // (string, Array of Write) => Promi
       throw err;
     });
 
+  const status = res.status;
+
+  console.debug(`!!! Commit resp (status ${status}):`, await res.text() );
+
   // Access:
-  //    200 with a JSON body if writes succeeded
+  //    200 with an empty JSON body ({\n}) if writes succeeded
   //
   // No access:
   //    403 (Forbidden) with body (white space added for clarity):
   //      { ...tbd... }
-
-  const status = res.status;
 
   // Emulator only provides 200 result (all 2xx would be success).
   //
@@ -98,7 +103,7 @@ async function commit_v1(token, writes) {   // (string, Array of Write) => Promi
 *
 * [1]: https://firebase.google.com/docs/firestore/reference/rest/v1/Write
 */
-function writeGen(o, merge) {    // (object, boolean) => Write
+function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
 
   debugger;
   // Process 'o', removing keys that carry the 'serverTimestamp_Sentinel'. Create a separate transforms object from them.
@@ -119,8 +124,15 @@ function writeGen(o, merge) {    // (object, boolean) => Write
     // For 'merge', require that the document pre-exist.
     ...(merge ? { currentDocument: { "exists": true } } : {}),
 
-    update: oRemains
+    update: {
+      name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
+      ...mapValue(oRemains)   // 'Document' is kind of extended 'MapValue' (merge in the 'fields' field)
+    }
   };
+
+  console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
+  //console.debug("!!! Write:", JSON.stringify(write,null,2) );   // DEBUG
+
   return write;
 }
 
@@ -134,6 +146,7 @@ function writeDeleteGen(docPath) {    // (string) => Write
 
   // Note: We don't set a precondition for the document to exist (one could, using 'currentDocument').
 
+  console.debug("DELETE WRITE:", docPath);
   return {
     delete: `projects/${projectId}/databases/(default)/documents/${docPath}`
   }
@@ -161,6 +174,63 @@ function splitSentinels(o) {    // (object) => [object, Array of FieldTransform]
 
   const o2 = Object.fromEntries(pairs);
   return [o2,transforms];
+}
+
+/*
+* Convert a JSON object (where sentinel values have been removed) into a 'MapValue':
+*
+*   {
+*     fields: {
+*       "some-key": {  // Value:
+*         nullValue: null
+*         | booleanValue: boolean
+*         | integerValue: string        // not used by us (shipping numbers always as double)
+*         | doubleValue: number
+*         | timestampValue: string      // RFC3339 format
+*         | stringValue: string         // UTF-8
+*         | bytesValue: string          // base64 encoded; not used by us
+*         | referenceValue: string      // not used by us
+*         | geoPointValue: LatLng       // not used by us (not important for Security Rules testing)
+*         | arrayValue: { values: Array of Value }    // except no support for array of arrays
+*         | mapValue: { fields: { <key>: Value } }
+*       }
+*       , ...
+*     }
+*   }
+*
+* See:
+*   https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents#Document
+*   https://firebase.google.com/docs/firestore/reference/rest/v1/Value
+*/
+function mapValue(o) {    // (object) => { fields: ... }
+  assert(typeof o === 'object');
+
+  const pairs = Object.entries(o).map(([k, v]) => {
+    return [k, value(v)]
+  });
+  const fields = Object.fromEntries(pairs);
+
+  return { fields };
+}
+
+function value(v) {   // (any) => { nullValue: null | ... }
+
+  switch( typeof v ) {
+    case 'boolean': return { booleanValue: v }
+    case 'number': return { doubleValue: v }
+    case 'string': return { stringValue: v }
+
+    case 'object':    // null,Date,
+      if (v === null) return { nullValue: null }
+      if (Array.isArray(v)) return arrayValue(v);
+      if (v instanceof Date) return { timestampValue: v.toISOString() }   // tbd. is the format correct (RFC3339 with UTC "Zulu")?
+
+      return mapValue(v);
+  }
+}
+
+function arrayValue(a) {  // (Array of any /*except Array*/) => { arrayValue: { values: Array of Value }}
+  return { arrayValue: { values: a.map(value) }};
 }
 
 export {

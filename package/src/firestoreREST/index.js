@@ -46,7 +46,7 @@ async function setAs(uid, docPath, data) {    // (string, string, object) => Pro
   const token = getToken(uid);
 
   const writes = [
-    writeGen(data, false),    // set
+    writeGen(docPath, data, false),    // set
     await restoreGen(docPath)
   ];
 
@@ -60,7 +60,7 @@ async function updateAs(uid, docPath, data) {    // (string, string, object) => 
   const token = getToken(uid);
 
   const writes = [
-    writeGen(data, true),   // update
+    writeGen(docPath, data, true),   // update
     await restoreGen(docPath)
   ];
 
@@ -73,7 +73,7 @@ async function updateAs(uid, docPath, data) {    // (string, string, object) => 
 async function restoreGen(docPath) {  // (string) => Write
   const data = await getUnlimited(docPath);
 
-  return data ? writeGen(was, false) : writeDeleteGen(docPath);
+  return data ? writeGen(docPath, data, false) : writeDeleteGen(docPath);
 }
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete

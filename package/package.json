@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.3-alpha.1",
+  "version": "0.0.3-alpha.2",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -33,10 +33,10 @@
     "tag": "alpha"
   },
   "peerDependencies": {
-    "jest": "^27.0.0-next.9"
+    "jest": "^27.0.0-next.9",
+    "firebase-admin": "^9.8.0"
   },
   "dependencies": {
-    "firebase-admin": "^9.8.0",
     "node-fetch": "^3.0.0-beta.9"
   },
   "scripts": {},
@@ -57,16 +57,10 @@
       ]
     },
     "dependencies": {
-      "firebase": [
-        "Try 9.0 (beta) once 'FieldValue.serverTimestamp' (or similar sentinel) is expected to be there. #15"
-      ],
       "firebase-admin": [
-        "Seen as an implementation detail - thus in 'dependencies' and not in 'peerDependencies'."
-      ],
-      "//REMOVE proper-lockfile": [
-        "Unless Firebase provides read-only access to the Firestore emulator, or there is a better locking approach,",
-        "we are stuck with needing an OS level locking library. This one seemed simple, and does not need native compiles.",
-        "Intentionally sticking with '4.1.1'. Its implementation is simple."
+        "//NOT TRUE any more (remove?):",
+        "Seen as an implementation detail - thus in 'dependencies' and not in 'peerDependencies'. The idea is that the",
+        "application project would not need to use 'firebase-admin' directly (and therefore would not care about its very existence)."
       ]
     }
   }
