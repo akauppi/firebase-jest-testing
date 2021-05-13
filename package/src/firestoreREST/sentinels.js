@@ -1,5 +1,5 @@
 /*
-* src/firestoreRules/sentinels.js
+* src/firestoreREST/sentinels.js
 *
 * Collection of sentinels for Firestore.
 *

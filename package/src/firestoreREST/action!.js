@@ -13,26 +13,22 @@ import { path_v1 } from './common'
 * Resolves to 'true' if access is granted, or an error message, describing why the access failed (as received from
 * the emulator's response; may be useful for debugging the tests).
 */
-async function action_v1(token, method, tail) {   // (string, 'GET'|..., string) => Promise of true|string
+async function action_v1(token, method, tail) {   // (string|null, 'GET'|..., string) => Promise of true|string
 
   const uri = `${path_v1}/${tail}`;
 
-  const res = await fetch(uri, {method, headers: { ["Authorization"]: `Bearer ${token}` }})
-    .catch( err => {
-      const msg = `Failed to talk with Firestore emulator REST API: ${uri}`;
-      console.error(msg, err);
-      throw err;
-    });
+  const res = await fetch(uri, {method, headers: token ? { ["Authorization"]: `Bearer ${token}` } : {} });
+    // fine with the default error
+
+  const status = res.status;
 
   // Access:
-  //    200 with a JSON body if 'get' and the doc exists
+  //    200 with a JSON body ('Document' Firestore data type) if 'get' and the doc exists
   //    404 (Not Found) if 'get' and the doc does not exist
   //
   // No access:
   //    403 (Forbidden) with body (white space added for clarity):
   //      { "error": { "code": 403, "message": "\nfalse for 'get' @ L21", "status": "PERMISSION_DENIED" } }
-
-  const status = res.status;
 
   // Emulator only provides 200 result (all 2xx would be success).
   //
@@ -47,7 +43,7 @@ async function action_v1(token, method, tail) {   // (string, 'GET'|..., string)
 
   } else {    // other status codes
     const body = await res.text();
-    const msg = `Unexpected response from '${uri}' (${status}): ${body}`;
+    const msg = `Unexpected response from ${method} ${uri} (${status}): ${body}`;
     console.error(msg);
     throw new Error(msg);
   }

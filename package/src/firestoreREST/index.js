@@ -8,11 +8,13 @@
 * Note: We let the caller initialize the project ID, but in practise this is only use from 'firestoreRules' (with a
 *     fixed project id).
 */
+//import { strict as assert } from 'assert'
+
 import { action_v1 } from './action!.js'
 import { commit_v1, writeGen, writeDeleteGen } from './commit'
 
 import { getUnlimited } from '../firestoreAdmin/getUnlimited'
-import { createUnsecuredJwt } from '../rules-unit-testing/createUnsecuredJwt.js'
+import { createUnsecuredJwt } from '../rules-unit-testing/createJwt.js'
 
 import { projectId } from '../config.js'
 
@@ -21,7 +23,9 @@ const tokenMap = new Map();
 /*
 * Fabricate a JWT.
 */
-function getToken(uid) {   // (string) => string
+function getToken(uid) {   // (string|null) => string|null
+  if (uid === null) return null;    // guests should not even add an auth header
+
   if (!tokenMap.has(uid)) {
     tokenMap.set(uid, createUnsecuredJwt(uid, projectId));
   }
@@ -33,7 +37,7 @@ function getToken(uid) {   // (string) => string
 *
 * https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/get
 */
-function getAs(uid, docPath) {    // (string, string) => Promise of true|string
+function getAs(uid, docPath) {    // (string|null, string) => Promise of true|string
   const token = getToken(uid);
 
   return action_v1(token, 'GET', docPath);
@@ -42,12 +46,12 @@ function getAs(uid, docPath) {    // (string, string) => Promise of true|string
 /*
 * Check (over)writing a document
 */
-async function setAs(uid, docPath, data) {    // (string, string, object) => Promise of true|string
+async function setAs(uid, docPath, data) {    // (string|null, string, object) => Promise of true|string
   const token = getToken(uid);
 
   const writes = [
     writeGen(docPath, data, false),    // set
-    await restoreGen(docPath)
+    await restoreGen(docPath)   // tbd.!!!
   ];
 
   return commit_v1(token, writes);
@@ -56,7 +60,7 @@ async function setAs(uid, docPath, data) {    // (string, string, object) => Pro
 /*
 * Check merging to an existing document
 */
-async function updateAs(uid, docPath, data) {    // (string, string, object) => Promise of true|string
+async function updateAs(uid, docPath, data) {    // (string|null, string, object) => Promise of true|string
   const token = getToken(uid);
 
   const writes = [
@@ -78,7 +82,7 @@ async function restoreGen(docPath) {  // (string) => Write
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete
 //
-function deleteAs(uid, docPath) {   // (string, string) => Promise of true|string
+function deleteAs(uid, docPath) {   // (string|null, string) => Promise of true|string
   const token = getToken(uid);
 
   throw new Error("tbd. transaction!!")

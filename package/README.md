@@ -6,16 +6,24 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-- Writing Security Rules tests *immutably* (so that a passing write or delete operation does not change one's primed data, and affect other tests) - less surprises!
-- Emulator detection. The library *automatically picks up the configuration* when running the tests - less boilerplate!
+- Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate.
+
+- Compatible. You may use *either* 8.x or 9.x (beta) client JS SDK in your application project. More freedom.
+
+- Testing Security Rules *immutably* (a passing write or delete operation does not change one's primed data, and affect other tests). No flaky tests.
+
 - Testing *indirect (cloud based) Firestore changes*, by adding `.eventually` to the Jest arsenal.
+
 - Help functions for *priming* Firestore with JSON data.
 
+<!-- fade out..
 Cloud Function callables can also be tested, but you need to provide a Firebase JS client SDK for that, and copy-paste some boilerplate.
+-->
 
 This library does not bring a client side Firebase JS SDK transitive `npm` dependency to your project, and should therefore be *usable on both `8.x` and `9.x` Firebase JS SDKs*.
 
->Note: Though Jest is in the name, you *can* use some parts in any testing framework, but you'd have to dig the necessary bits out and apply to your project. The distribution expects one to use Jest.
+Only to be used with Jest 27.
+
 
 ## Requires
 
@@ -39,15 +47,16 @@ Add this to the `jest.config.js`:
 resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
 ```
 
->Note: This is needed because (as of 27.0.0-next.8), Jest resolver does not treat modules with `exports` appropriately. This is likely going to be fixed before Jest 27 is out.
+>Note: This is needed because (as of 27.0.0-next.9), Jest resolver does not treat modules with `exports` appropriately. This is likely going to be fixed before Jest 27 is out.
 
 
-## Writing tests
+### Sample project
 
-We should bring an API Reference here, later. For now, please check out:
+See the [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package.json` and `sample` folder for practical examples.
 
-- [Sample](https://github.com/akauppi/firebase-jest-testing/tree/master/sample) project
-- [Writing Tests](./Writing%20tests.md) - documentation
+### Reference documentation
+ 
+The available tools are described in [Writing tests](./Writing%20tests.md).
 
 
 ## Support

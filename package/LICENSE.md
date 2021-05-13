@@ -1,10 +1,3 @@
----
-
-The project code is below MIT license (below), except for the contents of `package/src/rules-unit-testing` 
-which are under Apache 2.0.
-
----
-
 # MIT License
 
 Copyright (c) 2020-21, Asko Kauppi

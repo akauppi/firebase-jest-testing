@@ -10,11 +10,11 @@ Tools for testing Firebase back-end features, using Jest.
 
 This repo provides a "one stop", opinionated approach to testing Firebase projects. Using it may save you from reading countless pages of documentation and evaluating different testing strategies and libraries.
 
-Also, the tools handle configuring emulation for you (except for testing of "callables"). In all, this tries to give a simpler development experience than the current (<strike>Aug 2020</strike> Apr 2021) Firebase tooling does.
+Also, the tools handle configuring emulation for you. In all, this tries to give a simpler development experience than the current (May 2021) Firebase tooling does.
 
-Only admin-side JS SDKs are used.
+Only admin-side JS SDKs are used. For client interaction, this uses REST API.
 
-More about the [approach](APPROACH.md).
+The idea is that you don't have to pull in either `firebase-admin` nor `firebase` in your own project, but get all the tools through here.
 
 
 ## Folder structure
@@ -32,13 +32,13 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- npm; >= 7.7.0 is recommended
+- npm >= 7.7.0
 - node >= 14.3
 
 <!--
 Developed with:
-- node 16.0
-- npm 7.11
+- node 16.1
+- npm 7.12
 -->
 
 ## Getting started
@@ -94,9 +94,9 @@ Time:        7.165 s
 
 Note that the results for Cloud Functions tests and Security Rules tests are provided separately. It could be possible to merge these but the author currently thinks it's not carrying real benefits.
 
-The downside of "CI mode" is that each test run launches a new emulator. This takes ~5s that we can spare, by using the "dev" mode.
+The downside of "CI mode" is that each run launches a new emulator. This takes ~5s that we can spare, by using the "dev" mode.
 
->All the tests should pass (or be skipped). If you find some that don't, please file an Issue.
+>All the tests should pass (or be skipped). If you find some that don't, please file an issue.
 
 
 ### Dev mode
@@ -141,6 +141,11 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 
 >Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm run ci` while the emulator is running. Shut it down by Ctrl-C.
 
+
+## Other docs
+
+- [Approach](APPROACH.md)
+- [Developer notes](DEVS.md)
 
 ## References
 

@@ -24,7 +24,7 @@ import fetch from 'node-fetch'
 import { path_v1 } from './common'
 import { projectId } from '../config'
 
-import { serverTimestampSentinel } from '../firestoreRules/sentinels'
+import { serverTimestampSentinel } from './sentinels'
 
 /*
 * Carry out writes to Firestore.
@@ -40,7 +40,7 @@ import { serverTimestampSentinel } from '../firestoreRules/sentinels'
 * Resolves to 'true' if (all) access is granted, or an error message, describing why the access failed (as received from
 * the emulator's response; may be useful for debugging the tests).
 */
-async function commit_v1(token, writes) {   // (string, Array of Write) => Promise of true|string
+async function commit_v1(token, writes) {   // (string|null, Array of Write) => Promise of true|string
   const [method, uri] = ['POST', `${path_v1}:commit`];
 
   const body = JSON.stringify({
@@ -48,23 +48,17 @@ async function commit_v1(token, writes) {   // (string, Array of Write) => Promi
     // 'transaction' not needed - doing all at once
   });
 
-  const res = await fetch(uri, {method, headers: { ["Authorization"]: `Bearer ${token}`, body }})
-    .catch( err => {
-      const msg = `Failed to talk with Firestore emulator REST API: ${method} ${uri}`;
-      console.error(msg, err);
-      throw err;
-    });
+  console.log("!!! Fetch", { token, uri, method, body } );  // DEBUG
 
+  const res = await fetch(uri, {method, headers: token ? { ["Authorization"]: `Bearer ${token}` } : {}, body })
   const status = res.status;
-
-  console.debug(`!!! Commit resp (status ${status}):`, await res.text() );
 
   // Access:
   //    200 with an empty JSON body ({\n}) if writes succeeded
   //
   // No access:
   //    403 (Forbidden) with body (white space added for clarity):
-  //      { ...tbd... }
+  //      { "error": { "code": 403, "message": "\nfalse for 'create' @ L262", "status":"PERMISSION_DENIED" } }
 
   // Emulator only provides 200 result (all 2xx would be success).
   //
@@ -72,12 +66,9 @@ async function commit_v1(token, writes) {   // (string, Array of Write) => Promi
     return true;
 
   } else if (status === 403) {   // access denied
-    console.log("!!!", await res.text())
-
-    throw new Error("unfinished!");
-    //const json = await res.json();
-    //const s = json.error.message || fail("No 'error.message' in denied response from emulator.");
-    //return s;
+    const json = await res.json();
+    const s = json.error.message || fail("No 'error.message' in denied response from emulator.");
+    return s;
 
   } else {    // other status codes
     const body = await res.text();

@@ -1,30 +1,58 @@
 # Approach
 
-We manage to test both Cloud Functions and Security Rules, separately, but with the same emulator instance.
+## One-stop shop
 
-Only admin-side dependencies are used. This is important for clarity, but also helps keep clear of client side SDK version conflicts.
+The user of the library is not expected to know about `firebase-admin` or Firebase JS SDK details. We do follow those programming models as closely as it makes sense, but don't expose either one directly to the tests.
 
->As an example, using `@firebase/rules-unit-testing` (which we don't) would bring in `8.x` SDK (May 2021) and therefore not work for projects using the `9.x.beta` SDK. The problem is transitional, but can be completely avoided.
+If the test developer wants, they can use `firebase-admin` or `firebase` JS SDK in their tests, for sure.
 
-
-## Testing Cloud Functions
-
-Using a specific project name (`--project=bunny`) and priming the data at the launch of the emulator. 
-
-The data is also visible in the Emulator UI: [http://localhost:4000/firestore/projects/1](http://localhost:4000/firestore/projects/1)
-
-Changes to the data are allowed.
+>The version of `firebase-admin` is constrained by our peer dependency. The client JS SDK is free to choose, since we don't use one (especially handy during the transition from 8.x to 9.x or later such incompatibile version bumps).
 
 
-## Testing Security Rules
+## Where to prime the data
 
-Unlike with Cloud Functions, we prime the data at the beginning of the tests. The data set is completely separate from the one used for cloud functions, and since we use a separate project id (`rules-test`), these will co-exist.
+There are two ways that both work. Kind of. 
 
-The data is guarded against changes by the `firestoreTesting/readOnly.js` code, so that it seems immutable.
+In the development, we used both for a while, then settled for B. Let's see, why.
 
->Note: There is no real benefit in priming the data per suite. We could do it at the launch of the service, as well. It's just trying two approaches and a code base legacy. It works. ;)
->
->Maybe it has a slight benefit in that if you change the data set, changes will be applied without needing to restart the emulator.
+|||
+|---|---|
+|A. Prime at service launch|In this case, priming the data is done immediately after launching the Firebase emulators, from `package.json`.
+|B. Prime as part of the tests|Tests are in charge of priming the database (clean & re-populate) before executing tests.|
+
+B is better, because of two things:
+
+- The dataset may be changed. In such a case, in case A one would need to restart the emulators, whereas in B, things just work. Less surprises is good.
+- No left-overs. If tests make changes to the dataset, such would accumulate and may cause tests to unexpectedly fail. 
+
+It's best to prime again, each time tests are run.
+
+>Note: This aspect is self-evident when claimed, still not necessarily noticed since we change the primed data rather infrequently.
+
+
+## The project id
+
+><font color=red>This gets redone! We'll drop the `GCLOUD_PROJECT` and set an internal env.var. in `prime`, instead! #17</font>
+
+This was an important bit to help keep the code simple.
+
+JEST provides additional complexity (for a reason!) by running different test suites in separate Node contexts. Also the Global Setup stage is separate from these contexts, and thus communication between the setup and tests must happen either via:
+
+- a database (priming)
+- file system
+- environment variables
+
+When tests run, a certain suite always has just one project id. It can be treated as a constant, and imported statically (which simplified code tremendously).
+
+The `GCLOUD_PROJECT` env.var. was picked, because Firebase `firebase emulators:exec` already sets it.[^1]
+
+`test-fns` expects `GCLOUD_PROJECT` to be set in `package.json`, for launching the JEST tests.
+
+Another approach is shown in the `test-rules`, where the Global Setup sets `GCLOUD_PROJECT` to a certain value. Changes to the env.vars in this way are present in the sub-processes that subsequently run the test suites.
+
+Both ways are fine, and it is up to the test developer to prefer one over the other. 
+
+[^1]: A lame excuse; the name could be anything. But it stuck...
 
 
 ## Firebase vs. our approach?
@@ -32,9 +60,9 @@ The data is guarded against changes by the `firestoreTesting/readOnly.js` code, 
 Firebase provides some npm modules to help with testing:
 
 - `firebase-functions-test` described [here](https://firebase.google.com/docs/functions/unit-testing) (Firebase docs)
-- `@firebase/rules-unit-testing`[^1] described [here](https://firebase.google.com/docs/rules/unit-tests) (Firebase docs)
+- `@firebase/rules-unit-testing`[^2] described [here](https://firebase.google.com/docs/rules/unit-tests) (Firebase docs)
 
-[^1]: This was called `@firebase/testing`, until Aug 2020
+[^2]: This was called `@firebase/testing`, until Aug 2020
 
 These are both tools for unit testing. The first one tests Cloud Functions and the second access of Realtime Database or Cloud Firestore.
 
@@ -42,25 +70,15 @@ The approach taken by this repo differs from that provided by Firebase. We...
 
 1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to their app
 2. take a more integration testing approach than Firebase's libraries 
-3. prefer normal clients over test specific APIs
+3. prefer normal clients (or a similar API) over test specific APIs
 4. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
 
-For testing Cloud Functions, we use integration testing and normal JavaScript client instead of the `firebase-functions-test` library. This should provide less things to learn to the application developer.
+For testing Cloud Functions, we use integration testing and normal JavaScript client instead of the `firebase-functions-test` library.
 
 For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase approach leans on snapshot-like binary files, instead.
 
-As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^2]
+For testing Security Rules, our approach is derived from the Firebase `rules-unit-testing` library, but then enhanced eg. by making database access behave as immutable and not depending on a certain Firebase client - thus allowing the application developer to freely select between, say, 8.x and 9.x (beta).
 
-[^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.
+As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^3]
 
-
-## Priming data at JEST (no env.var. to point to the data)
-
-For the Security Rules testing, an `init` call is needed to prime the data. 
-
-This cannot be done implicitly, as part of the tests importing our code, because JEST runs multiple Node.js contexts. Implicit initialization would lead to each module testing security rules to run its own data priming.
-
-Therefore, the approach that needs Global Setup seems like the only (right) way to go.
-
-Note that with other tests the case may be different. You may well prime data within tests, if the data involves those tests only.
-
+[^3]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.

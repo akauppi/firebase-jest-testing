@@ -55,13 +55,6 @@
       "": [
         "Force the downstream project to explicitly depend on these. It would be wrong that we bring the major libs in."
       ]
-    },
-    "dependencies": {
-      "firebase-admin": [
-        "//NOT TRUE any more (remove?):",
-        "Seen as an implementation detail - thus in 'dependencies' and not in 'peerDependencies'. The idea is that the",
-        "application project would not need to use 'firebase-admin' directly (and therefore would not care about its very existence)."
-      ]
     }
   }
 }

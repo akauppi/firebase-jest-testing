@@ -4,7 +4,7 @@
 * Adapted from:
 *   https://github.com/firebase/firebase-js-sdk/blob/master/packages/rules-unit-testing/src/api/index.ts
 *
-* Note: This file is under the Apache 2.0 license.
+* Note: Original license is Apache 2.0 but the author considers this to be a small snippet.
 *
 * We do not wish to depend on '@firebase/rules-unit-testing' because it brings the client side JS SDK and getting one
 * restricts the users to either 8.x or 9.x API.
@@ -13,9 +13,7 @@
 // Note: Since we're kind of in third party code area here, 'projectId' is provided, not imported from '../config.js'.
 
 /*
-* Changes from 'rules-unit-testing':
-*   - Typescript types commented out
-*   - Reduced token options
+* Create a JWT token, suitable for Firebase emulators.
 *
 * References:
 *   - firebase-js-sdk > util > emulators.ts [1]
@@ -23,7 +21,8 @@
 *
 *     Describes the use of token fields, under emulation (eg. that 'iss' is "always set to 'https://securetoken.google.com/{projectId}').
 */
-function createUnsecuredJwt(uid, projectId) {   // (string, string) => string
+function createUnsecuredJwt(uid, projectId) {   // (string|null, string) => string
+
   // Unsecured JWTs use "none" as the algorithm.
   const header = {
     alg: 'none',

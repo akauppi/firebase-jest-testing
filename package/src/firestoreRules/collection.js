@@ -3,7 +3,6 @@
 *
 * The pseudo-API (similar to Firebase or Firebase-admin APIs, though those are currently in flux).
 */
-
 import { getAs, setAs, updateAs, deleteAs } from '../firestoreREST/index.js'
 
 function fail(msg) { throw new Error(msg); }
@@ -15,6 +14,8 @@ function collection(collectionPath) {   // string => { as: ... }
 
   return {
     as: (o) => {   // ({ uid:string }|null) => firebase.firestore.CollectionReference -like
+      if (typeof o !== 'object') fail(`Bad parameter - expecting '{ uid: string }|null': ${o}`);
+
       const uid = o ? o.uid : null;
 
       return {

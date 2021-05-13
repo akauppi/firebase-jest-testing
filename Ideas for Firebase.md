@@ -26,8 +26,6 @@ This would allow detaching launching (and configuring) of emulation from the cod
 
 **Work-arounds**
 
-Tried many; nothing quite suits.
-
 Ended up with a combination of reading `firebase.json` contents and `FIRESTORE_EMULATOR_HOST` env.var.
 
 This works, but feels clumsy. Thus the suggestion.

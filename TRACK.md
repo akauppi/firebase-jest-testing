@@ -1,20 +1,18 @@
 # Track
 
-## Jest cannot handle package `exports` ⚠️⚠️⚠️
+## Jest cannot handle package `exports` ⚠️
 
 - <strike>[jest-resolve can't handle "exports"](https://github.com/facebook/jest/issues/10422) (Jest #10422)</strike>
 - [Support package exports in `jest-resolve`](https://github.com/facebook/jest/issues/9771) (Jest #9771)
 - [Support ESM resolution](https://github.com/browserify/resolve/issues/222) (browserify/resolve #222)
 
-<strike>This is a **show stopper** for us, since an application project cannot use our features.</strike>
-
-Correction: Almost a show stopper for us. Found a way to come around the limitation (see "work around").
+Found ways to come around the limitation (see "work around").
 
 The issues state:
 
 >Duplicate of #9771. I haven't had time to work on ESM support in general for the last few months, and the immediate future doesn't look any more promising in that regard, unfortunately... Any help via PRs or research is of course welcome.
 
-&nbsp;
+<p></p>
 >I chatted with @ljharb about this, and a future version of resolve will support this. So we don't have to implement anything here. Will just hook it up when resolve is released with support for it 🎉
 
 It's a bit more complex than that. It seems that Jest is approaching ES modules (and `exports` as part of that) with two fronts: one is a native ES module resolver that may or may not be in active development (mentioned in Apr 2020). The mainstream seems to be the `browserify` resolver, which should bring these features eventually to Jest.
@@ -31,7 +29,7 @@ I'd rather see users of this repo helping SimenB with the native resolver:
 
 A custom resolver allows us to use the package *almost* as ES modules. It reflects the `exports` section in `package.json`, which is important for testability.
 
-`sample/hack-jest/custom-resolver.cjs`:
+`sample/hack-jest/self-resolver.cjs`:
 
 ```
 const pkg = require("../../package.json");
@@ -64,81 +62,78 @@ const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 module.exports = res;
 ```
 
-`sample/test-fns/jest.config.cjs`,<br />
-`sample/test-rules/jest.config.cjs`:
+`sample/jest.config.default.js`:
 
 ```
-  // Without this, wasn't able to get 'exports' to work.
-  resolver: "../hack-jest/custom-resolver.cjs",
+  // Resolves the subpackage paths using the package's 'exports' (until Jest does...).
+  resolver: "../hack-jest/self-resolver.cjs"
 ```
 
 Pros:
 
-- this setup allows us to use the library; without needing to sacrifice proper ES module publishing practices (no turning back!!)
-- use of modules exactly as they should be (turning off the `resolver` in Jest config is enough to see whether it's still required).
+- this setup allows us to use the library; without needing to sacrifice proper ES module publishing practices
+- use of modules exactly as they should be
+
+   Turning off the `resolver` in Jest config is enough to see whether it's still required.
 
 Cons:
 
-- does not restrict access to non-exported code (not a big deal)
+- **does not restrict access to non-exported code** (important since the point of `exports` is encapsulation!)
 - requires downstream apps to replicate the hack, until proper `exports` support is there
 
 
-## Jest allowing `globalSetup` to use `import`
-
-We use this in `sample/test-rules/jest.config.cjs`:
-
-```
-  globalSetup: "./setup.jest.cjs"
-```
-
-Cannot use an ES module there. Tried all kinds of `.mjs` etc. combinations (Aug 2020).
-
-Track:
-
-- [Native support for ES Modules > comment on globalSetup](https://github.com/facebook/jest/issues/9430#issuecomment-653818834)
-- [Support ESM versions of all pluggable modules](https://github.com/facebook/jest/issues/11167)
-  - `globalSetup` check box
-
-**Work around:**
- 
-- Do the priming of `sample/test-rules` using CommonJS - including dependencies.
-
- 
 ## firebase-js-sdk #2895
 
 - [FR: Immutability when testing Firestore Security Rules](https://github.com/firebase/firebase-js-sdk/issues/2895) 
    - let's see what Firebase authors reply
-		- not a reply in 4 months #sniff 😢
+		- not a reply in 13 <!--was: 4--> months #sniff 😢
 
 The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` flag in the URL. If this were to be used, all behaviour would be as-normal (delete, update, set), but no changes would actually be placed in the data.
 
 If we get that, it's easy to build a REST client around it. We can be the client that allows people to benefit from this. Of course, `@firebase/rules-unit-testing` can also do it, if they see value in the approach.
 
+>Update 13-May-21: 
+>
+>Going to build a locking mechanism, likely using Firebase itself for it. Such extra code could be removed if immutability control ever gets to the official APIs.
 
+<!-- disabled (merged)
 ## Jest #10325
 
 - [chore: convert jest-runtime to ESM](https://github.com/facebook/jest/pull/10325)
 
 This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
+-->
 
 ## `node-fetch` v3
 
 [v3 Roadmap](https://github.com/node-fetch/node-fetch/issues/668)
 
-<!-- done
-## Jest #11093
-
-- [ESM regression on Node.js 15.9](https://github.com/facebook/jest/issues/11093)
-- [Node.js 15.9 regression with Jest ESM](https://github.com/nodejs/node/issues/37426)
--->
+>Situation 13-May-21: 7 checkboxes (only) missing; `beta.9` is the latest release
 
 
-## jsdom: uses a deprecated `request-promise-native`
+## Deprecated `npm` dependencies
 
-- [Replace request with something better](https://github.com/jsdom/jsdom/issues/2792)
+- [Replace request with something better](https://github.com/jsdom/jsdom/issues/2792) (jsdom); affects JEST
 
-Would remove this warning we get at (fresh) `npm install`:
+   - [ ] `jsdom` [#3092](https://github.com/jsdom/jsdom/pull/3092) <!-- seems to be closing in... 13-May-21 -->
+   - [ ] JEST using the updated `jsdom`
+
+- [Replacing the deprecated request dependency](https://github.com/firebase/firebase-admin-node/issues/1269)
+
+When doing a fresh `npm install`, this shows up:
 
 ```
+$ npm install
 npm WARN deprecated request-promise-native@1.0.9: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
+npm WARN deprecated har-validator@5.1.5: this library is no longer supported
+npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+...
 ```
+
+- `request-promise-native`
+
+  Comes via both JEST packages (via `jsdom`)
+- `har-validator`, `request`
+
+  Comes via both JEST packages (via `jsdom`) and `firebase-tools@9.10.2`
+
