@@ -24,7 +24,7 @@ import fetch from 'node-fetch'
 import { path_v1 } from './common'
 import { projectId } from '../config'
 
-import { serverTimestampSentinel } from './sentinels'
+import { serverTimestampSentinel, deleteFieldSentinel } from './sentinels'
 
 /*
 * Carry out writes to Firestore.
@@ -48,7 +48,7 @@ async function commit_v1(token, writes) {   // (string|null, Array of Write) => 
     // 'transaction' not needed - doing all at once
   });
 
-  console.log("!!! Fetch", { token, uri, method, body } );  // DEBUG
+  //console.log("!!! Fetch", { token, uri, method, body } );  // DEBUG
 
   const res = await fetch(uri, {method, headers: token ? { ["Authorization"]: `Bearer ${token}` } : {}, body })
   const status = res.status;
@@ -97,7 +97,7 @@ async function commit_v1(token, writes) {   // (string|null, Array of Write) => 
 function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
 
   debugger;
-  // Process 'o', removing keys that carry the 'serverTimestamp_Sentinel'. Create a separate transforms object from them.
+  // Process 'o', removing keys that carry a sentinel. Create a separate transforms object from them.
   //
   const [oRemains, transforms] = splitSentinels(o);
 
@@ -121,8 +121,7 @@ function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
     }
   };
 
-  console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
-  //console.debug("!!! Write:", JSON.stringify(write,null,2) );   // DEBUG
+  //console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
 
   return write;
 }
@@ -153,11 +152,18 @@ function splitSentinels(o) {    // (object) => [object, Array of FieldTransform]
 
   const pairs = Object.entries(o).map( ([k,v]) => {
     if (v === serverTimestampSentinel) {
-      transforms.push( {
+      transforms.push({
         fieldPath: k,   // note: if doing recursive, we must prepend the field paths
         ["setToServerValue"]: 'REQUEST_TIME'
       });
       return undefined;
+
+    } else if (v === deleteFieldSentinel) {
+      // Does not need a transform to be added; removing the field from regular fields is enough (it will be in the
+      // update mask, causing it to be removed).
+      //
+      return undefined;
+
     } else {
       return [k,v];
     }

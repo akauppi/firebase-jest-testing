@@ -11,22 +11,19 @@ if (PRIME_ROUND) throw new Error("This module is for tests only");
 
 import { collection } from './collection.js'
 
-import { serverTimestampSentinel } from '../firestoreREST/sentinels'
+import { serverTimestampSentinel, deleteFieldSentinel } from '../firestoreREST/sentinels'
 
 // Enable '.toAllow' and '.toDeny' matchers for the tests, as a side effect
 //
 import './matchers.js';
 
-/***const dbAuth = {
-  collection
-}***/
-
 // Firestore client API has the '()' but they always are given the same value.
 //
 const serverTimestamp = () => serverTimestampSentinel;
+const deleteField = () => deleteFieldSentinel;
 
 export {
-  //dbAuth,
   collection,
-  serverTimestamp
+  serverTimestamp,
+  deleteField
 }

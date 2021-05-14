@@ -33,7 +33,7 @@ describe("'/invites' rules", () => {
 
   //--- InvitesC create rules ---
 
-  test.only ('only a member of a project can invite; only author can invite as-author', () => {
+  test('only a member of a project can invite; only author can invite as-author', () => {
     const template = { email: "aa@b.com", project: "1" };
     const dGen = (uid, asAuthor) => ({ ...template,
       asAuthor: asAuthor, by: uid, at: SERVER_TIMESTAMP
@@ -42,10 +42,10 @@ describe("'/invites' rules", () => {
 
     return Promise.all([
       expect( abc_invitesC.doc(id).set( dGen("abc",true )) ).toAllow(),   // author can invite as-author
-      //FIX expect( abc_invitesC.doc(id).set( dGen("abc",false )) ).toAllow(),  // ..or as collaborator
+      expect( abc_invitesC.doc(id).set( dGen("abc",false )) ).toAllow(),  // ..or as collaborator
 
       expect( def_invitesC.doc(id).set( dGen("def",true )) ).toDeny(),    // collaborator cannot invite as-author
-      //FIX expect( def_invitesC.doc(id).set( dGen("def",false )) ).toAllow(),  // ..but can as collaborator
+      expect( def_invitesC.doc(id).set( dGen("def",false )) ).toAllow(),  // ..but can as collaborator
 
       expect( auth_invitesC.doc(id).set( dGen("_",false )) ).toDeny(),    // user not in the project cannot invite to it
       expect( unauth_invitesC.doc(id).set( dGen("_",false )) ).toDeny()    // unauthenticated cannot invite

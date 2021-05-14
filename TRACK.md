@@ -118,7 +118,7 @@ This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
    - [ ] `jsdom` [#3092](https://github.com/jsdom/jsdom/pull/3092) <!-- seems to be closing in... 13-May-21 -->
    - [ ] JEST using the updated `jsdom`
 
-- [Replacing the deprecated request dependency](https://github.com/firebase/firebase-admin-node/issues/1269)
+- [npm WARN deprecated request@2.88.2: request has been deprecated](https://github.com/firebase/firebase-tools/issues/2215) (firebase-tools)
 
 When doing a fresh `npm install`, this shows up:
 

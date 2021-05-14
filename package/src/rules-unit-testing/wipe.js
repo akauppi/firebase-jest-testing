@@ -13,6 +13,7 @@ import fetch from 'node-fetch'
 import { FIRESTORE_HOST } from '../config.js'
 
 /*
+* tbd. If we get clearance to MIT this, let's move it to within 'firestoreAdmin/prime.js'.
 */
 async function wipe(projectId) {   // (string) => Promise of ()
   assert(projectId);
@@ -30,10 +31,9 @@ async function wipe(projectId) {   // (string) => Promise of ()
 
   const status = res.status;
 
-  if (status !== 200) {    // '@firebase/rules-unit-tests' only tests for 200 (not 2xx)
+  if (status !== 200) {
     const body = await res.text();
     const msg = `Unexpected response from ${method} ${uri} (${status}): ${body}`;
-    console.error(msg);
     throw new Error(msg);
   }
 }

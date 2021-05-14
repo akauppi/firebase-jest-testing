@@ -3,26 +3,23 @@
 */
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
-import { dbAuth, FieldValue } from 'firebase-jest-testing/firestoreReadOnly'
+import { collection, serverTimestamp, deleteField, arrayRemove, arrayUnion } from 'firebase-jest-testing/firestoreRules'
 
 const anyDate = new Date();   // a non-server date
+
+const SERVER_TIMESTAMP = serverTimestamp();
+const DELETE_FIELD = deleteField();
 
 let unauth_projectsC, auth_projectsC, abc_projectsC, def_projectsC, ghi_projectsC;
 
 beforeAll(  () => {
-  try {
-    const coll = dbAuth.collection('projects');
+  const coll = collection('projects');
 
-    unauth_projectsC = coll.as(null);
-    auth_projectsC = coll.as({uid:'_'});
-    abc_projectsC = coll.as({uid:'abc'});
-    def_projectsC = coll.as({uid:'def'});
-    ghi_projectsC = coll.as({uid:'ghi'});
-  }
-  catch (err) {
-    console.error( "Failed to initialize the Firebase database: ", err );   // not occurred
-    throw err;
-  }
+  unauth_projectsC = coll.as(null);
+  auth_projectsC = coll.as({uid:'_'});
+  abc_projectsC = coll.as({uid:'abc'});
+  def_projectsC = coll.as({uid:'def'});
+  ghi_projectsC = coll.as({uid:'ghi'});
 });
 
 describe("'/projects' rules", () => {
@@ -56,11 +53,9 @@ describe("'/projects' rules", () => {
   test('any authenticated user may create a project, but must include themselves as an author', async () => {
     // This implies: unauthenticated users cannot create a project, since they don't have a uid.
 
-    const serverTimestamp = FieldValue.serverTimestamp();
-
     const p3_valid = {
       title: "Calamity",
-      created: serverTimestamp,
+      created: SERVER_TIMESTAMP,
       // no 'removed'
       authors: ["abc"],
       members: ["abc"]
@@ -96,7 +91,7 @@ describe("'/projects' rules", () => {
 
   test("An author can not change the creation time", async () => {
     const p1mod = {
-      created: FieldValue.serverTimestamp()
+      created: SERVER_TIMESTAMP
     };
     await Promise.all([
       expect( abc_projectsC.doc("1").update(p1mod) ).toDeny(),
@@ -106,7 +101,7 @@ describe("'/projects' rules", () => {
 
   test("An author can mark a project '.removed'", async () => {
     const p1mod = {
-      removed: FieldValue.serverTimestamp()
+      removed: SERVER_TIMESTAMP
     };
     await Promise.all([
       expect( abc_projectsC.doc("1").update(p1mod) ).toAllow(),
@@ -116,7 +111,7 @@ describe("'/projects' rules", () => {
 
   test("An author can remove the '.removed' mark", async () => {
     const p2mod = {
-      removed: FieldValue.delete()
+      removed: DELETE_FIELD
     };
     await Promise.all( [
       expect( abc_projectsC.doc("2-removed").update(p2mod) ).toAllow(),
@@ -126,14 +121,14 @@ describe("'/projects' rules", () => {
 
   test("An author can add new authors, and remove authors as long as one remains", async () => {
     const p1_addAuthor = {
-      authors: FieldValue.arrayUnion("zxy"),
-      members: FieldValue.arrayUnion("zxy")   // add also to 'members' since not there, yet
+      authors: arrayUnion("zxy"),
+      members: arrayUnion("zxy")   // add also to 'members' since not there, yet
     };
     const p3_removeAuthor = {
-      authors: FieldValue.arrayRemove("def")
+      authors: arrayRemove("def")
     };
     const p1_removeAuthor = {
-      authors: FieldValue.arrayRemove("abc")    // only author
+      authors: arrayRemove("abc")    // only author
     };
 
     await Promise.all([

@@ -1,15 +1,13 @@
 /*
 * sample/test-fns/setup.jest.js
 *
-* Sets the data for functions tests (default project id).
+* Sets the data for functions tests.
 */
-import { prime } from 'firebase-jest-testing/firestoreAdmin'
 import { docs } from './docs.js'
 
-function fail(msg) { throw new Error(msg); }
+import { prime } from 'firebase-jest-testing/firestoreAdmin'
 
-const projectId = process.env["GCLOUD_PROJECT"]
-  || fail("Please provide 'GCLOUD_PROJECT' env.var. with project id.");
+const projectId = "fns-test";    // must be lower case
 
 const setup = async _ => {
   await prime(projectId, docs);

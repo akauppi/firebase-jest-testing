@@ -5,13 +5,12 @@
 */
 import { docs } from './docs.js'
 
-// Separate Firestore project id; allows parallel testing of Rules and other stuff.
-//
-process.env["GCLOUD_PROJECT"] = "rules-test";
+import { prime } from 'firebase-jest-testing/firestoreAdmin'
+
+const projectId = "rules-test";   // must be lower case
 
 async function setup() {
-  const { prime } = await import('firebase-jest-testing/firestoreAdmin');   // dynamic so that 'GCLOUD_PROJECT' can be in effect
-  await prime(docs);
+  await prime(projectId, docs);
 }
 
 export default setup;

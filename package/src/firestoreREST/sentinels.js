@@ -9,14 +9,15 @@
 // Used as normal in Firestore APIs (with '()'). In our code, it's checked by reference - thus no overlap with objects.
 //
 const serverTimestampSentinel = {}
+const deleteFieldSentinel = {}
 
 /* others:
   increment,
   arrayRemove,
-  arrayUnion,
-  deleteField
+  arrayUnion
 */
 
 export {
-  serverTimestampSentinel
+  serverTimestampSentinel,
+  deleteFieldSentinel
 }

@@ -1,8 +1,8 @@
 /*
-* src/firestoreREST/getUnlimited.js
+* src/firestoreREST/unlimited.js
 *
 * Context:
-*   Always called within tests (makes no sense to read data in a Global Setup).
+*   Always called within tests
 */
 import { strict as assert } from 'assert'
 import {PRIME_ROUND} from '../config.js'
@@ -41,6 +41,40 @@ async function getUnlimited(docPath) {  // (string) => Promise of undefined|obje
   // "Retrieves all fields in the document as an Object. Returns 'undefined' if the document doesn't exist."
 }
 
+/*
+* Set a document
+*/
+async function setUnlimited(docPath,o) {  // (string, object) => Promise of ()
+  await dbAdmin.doc(docPath).set(o);
+}
+
+/*
+* Delete a document
+*/
+async function deleteUnlimited(docPath) {  // (string) => Promise of ()
+  await dbAdmin.doc(docPath).delete();
+}
+
+/*
+* Create a document, but only if it doesn't already exist.
+*
+* Rejects with the following error if the document already exists:
+*   {
+*     message: "6 ALREADY_EXISTS: entity already exists: [...]"
+*     code: 6
+*   }
+*/
+async function createUnlimited(docPath,o) {   // (string, object) => Promise of ()
+
+  // "Creates a document referred to by this 'DocumentReference' with the provided object values. The write fails
+  // if the document already exists."
+  //
+  await dbAdmin.doc(docPath).create(o);
+}
+
 export {
-  getUnlimited
+  getUnlimited,
+  setUnlimited,
+  deleteUnlimited,
+  createUnlimited
 }

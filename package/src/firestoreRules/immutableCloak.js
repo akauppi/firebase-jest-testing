@@ -2,7 +2,7 @@
 * src/firestoreRules/immutableCloak.js
 */
 
-import { getUnlimited } from '../firestoreAdmin/getUnlimited'
+import { getUnlimited, setUnlimited, deleteUnlimited } from '../firestoreAdmin/unlimited'
 import { claimLock } from './lockMe'
 
 /*
@@ -16,13 +16,13 @@ import { claimLock } from './lockMe'
 *   true: access was granted
 *   string: access denied, reason in the string
 */
-function immutableCloak(docPath, op) {   // (string, () => Promise of true|string) => Promise of true|string
+async function immutableCloak(docPath, op) {   // (string?, () => Promise of true|string) => Promise of true|string
   let was;
   if (docPath) {
-    was = getUnlimited(docPath);
+    was = await getUnlimited(docPath);
   }
 
-  return claimLock().then( async releaseLock => {
+  return withinLock( async _ => {
     const ret = await op();
 
     if (docPath) {
@@ -32,7 +32,21 @@ function immutableCloak(docPath, op) {   // (string, () => Promise of true|strin
         await deleteUnlimited(docPath);
       }
     }
-    await releaseLock();
     return ret;
   });
+}
+
+async function withinLock(f) {    // (() => x) => x
+
+  const release = await claimLock();
+  try {
+    return f();
+  }
+  finally {
+    await release();
+  }
+}
+
+export {
+  immutableCloak
 }

@@ -1,23 +1,21 @@
 /*
 * src/config.js
 *
-* Provides access to emulator and project configuration, plus execution context (JEST Global Setup or part of test suite).
-*
 * Context:
 *   Imported both under Global Setup and tests.
 *
-* Note:
-*   Must have NO side effects; imported for reading an immutable context.
+* Provides access to emulator and project configuration, plus execution context (JEST Global Setup or part of test suite).
 *
-* On project id:
-*   Each individual JEST Node.js universe is only ever involved with one project ID. It's provided either by
-*   'GCLOUD_PROJECT' env.var. or (for the Security Tests) by the Global Setup setting the value.
+* Each individual JEST Node.js universe is only ever involved with one project ID. It's provided in the 'prime' call
+* and distributed to all tests under that Node environment, via an internal env.var.
 */
 import { readFileSync } from 'fs'
 
 const fn = process.env["FIREBASE_JSON"] || './firebase.json';
 
 function fail(msg) { throw new Error(msg); }
+
+const PRIME_ROUND = !global.afterAll;   // are we imported from 'globalSetup', or from the tests?
 
 const firebaseJson = JSON.parse(
   readFileSync(fn, 'utf8')
@@ -40,21 +38,15 @@ const FUNCTIONS_URL = (() => {
   return `http://localhost:${port}`;
 })();
 
-// Note: MUST BE in lower case. Otherwise priming data never gets through.
-//    See -> https://github.com/firebase/firebase-tools/issues/1147
+// If Global Setup, pass
+// In tests, expect 'prime' to have set 'PROJECT_ID' env.var.
 //
-const projectId = process.env["GCLOUD_PROJECT"]
-  || fail("Env.var 'GCLOUD_PROJECT' not set. Please set it in 'package.json' or the Global JEST Setup (specific value doesn't matter).");
-
-if (projectId !== projectId.toLowerCase()) {    // (could do it for the user, and just warn?)
-  fail("Please provide 'GCLOUD_PROJECT' with only lower case characters.");
-}
-
-const PRIME_ROUND = !global.afterAll;   // are we imported from 'globalSetup', or from the tests?
+const projectId = PRIME_ROUND ? null
+  : process.env["PROJECT_ID"] || fail("Internal error - env.var 'PROJECT_ID' not set. Did you run 'prime(projectId,docs)' in Global Setup?");
 
 export {
   FIRESTORE_HOST,
   FUNCTIONS_URL,
-  projectId,
-  PRIME_ROUND
+  PRIME_ROUND,
+  projectId
 }

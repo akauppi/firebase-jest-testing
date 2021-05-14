@@ -3,25 +3,22 @@
 */
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
-import { dbAuth, FieldValue } from 'firebase-jest-testing/firestoreReadOnly'
+import { collection, serverTimestamp, deleteField } from 'firebase-jest-testing/firestoreRules'
 
 const anyDate = new Date();   // a non-server date
+
+const SERVER_TIMESTAMP = serverTimestamp();
+const DELETE_FIELD = deleteField();
 
 let unauth_symbolsC, auth_symbolsC, abc_symbolsC, def_symbolsC;
 
 beforeAll( () => {
-  try {
-    const coll = dbAuth.collection('projects/1/symbols');
+  const coll = collection('projects/1/symbols');
 
-    unauth_symbolsC = coll.as(null);
-    auth_symbolsC = coll.as({uid:'_'});
-    abc_symbolsC = coll.as({uid:'abc'});
-    def_symbolsC = coll.as({uid:'def'});
-  }
-  catch (err) {
-    console.error( "Failed to initialize the Firebase database: ", err );   // not occurred
-    throw err;
-  }
+  unauth_symbolsC = coll.as(null);
+  auth_symbolsC = coll.as({uid:'_'});
+  abc_symbolsC = coll.as({uid:'abc'});
+  def_symbolsC = coll.as({uid:'def'});
 });
 
 describe("'/symbols' rules", () => {
@@ -53,7 +50,7 @@ describe("'/symbols' rules", () => {
   test('all members may create; creator needs to claim the symbol to themselves', async () => {
     const d = { layer: -6, shape: "star", size: 50, fillColor: "brown", center: { x: 56, y: 78 } };
 
-    const d_claimed = uid => ({ ...d, claimed: { at: FieldValue.serverTimestamp(), by: uid } });
+    const d_claimed = uid => ({ ...d, claimed: { at: SERVER_TIMESTAMP, by: uid } });
     const d_claimed_otherTime = uid => ({ ...d, claimed: { at: anyDate, by: uid } });
 
     await Promise.all([
@@ -71,7 +68,7 @@ describe("'/symbols' rules", () => {
   //--- symbolsC update rules ---
 
   test('members may claim a non-claimed symbol', async () => {
-    const s1_mod_valid = uid => ({ claimed: { by: uid, at: FieldValue.serverTimestamp() } });
+    const s1_mod_valid = uid => ({ claimed: { by: uid, at: SERVER_TIMESTAMP } });
     const s1_mod_otherTime = uid => ({ claimed: { by: uid, at: anyDate } });
 
     await Promise.all([
@@ -93,7 +90,7 @@ describe("'/symbols' rules", () => {
 
   // tbd. Cannot figure out why this fails. #help
   test.skip('members may revoke a claim', async () => {
-    const s2_revoke = { claimed: FieldValue.delete() };
+    const s2_revoke = { claimed: DELETE_FIELD };
 
     await Promise.all([
       expect( def_symbolsC.doc("2-claimed").update( s2_revoke )).toAllow(),     // claimed by him
@@ -102,7 +99,7 @@ describe("'/symbols' rules", () => {
   });
 
   test('claim cannot be changed (e.g. extended)', async () => {
-    const s2_extend = { claimed: { by: 'def', at: FieldValue.serverTimestamp() } };
+    const s2_extend = { claimed: { by: 'def', at: SERVER_TIMESTAMP } };
 
     await expect( def_symbolsC.doc("2-claimed").update( s2_extend )).toDeny();     // claimed by him
   });

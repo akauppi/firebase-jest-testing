@@ -10,10 +10,9 @@
 */
 //import { strict as assert } from 'assert'
 
-import { action_v1 } from './action!.js'
-import { commit_v1, writeGen, writeDeleteGen } from './commit'
+import { action_v1, delete_v1 } from './action!.js'
+import { commit_v1, writeGen } from './commit'
 
-import { getUnlimited } from '../firestoreAdmin/getUnlimited'
 import { createUnsecuredJwt } from '../rules-unit-testing/createJwt.js'
 
 import { projectId } from '../config.js'
@@ -51,7 +50,6 @@ async function setAs(uid, docPath, data) {    // (string|null, string, object) =
 
   const writes = [
     writeGen(docPath, data, false),    // set
-    await restoreGen(docPath)   // tbd.!!!
   ];
 
   return commit_v1(token, writes);
@@ -65,19 +63,9 @@ async function updateAs(uid, docPath, data) {    // (string|null, string, object
 
   const writes = [
     writeGen(docPath, data, true),   // update
-    await restoreGen(docPath)
   ];
 
   return commit_v1(token, writes);
-}
-
-/*
-* Fetches the current document at 'docPath' (if it exists), and prepares a 'Write' entry that restores to that state.
-*/
-async function restoreGen(docPath) {  // (string) => Write
-  const data = await getUnlimited(docPath);
-
-  return data ? writeGen(docPath, data, false) : writeDeleteGen(docPath);
 }
 
 // https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/delete
@@ -85,9 +73,7 @@ async function restoreGen(docPath) {  // (string) => Write
 function deleteAs(uid, docPath) {   // (string|null, string) => Promise of true|string
   const token = getToken(uid);
 
-  throw new Error("tbd. transaction!!")
-  // tbd. transaction!!
-  //return action_v1(token, 'DELETE', docPath);
+  return delete_v1(token, docPath);
 }
 
 export {

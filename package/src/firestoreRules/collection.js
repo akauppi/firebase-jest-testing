@@ -3,7 +3,8 @@
 *
 * The pseudo-API (similar to Firebase or Firebase-admin APIs, though those are currently in flux).
 */
-import { getAs, setAs, updateAs, deleteAs } from '../firestoreREST/index.js'
+import { getAs, setAs, updateAs, deleteAs } from '../firestoreREST/index'
+import { immutableCloak } from './immutableCloak'
 
 function fail(msg) { throw new Error(msg); }
 
@@ -29,8 +30,11 @@ function collection(collectionPath) {   // string => { as: ... }
         //    not seem to be available in the REST API, and to keep things simple, we just check a single document.
         //    Is this enough for the needs of checking access?
         //
+        // Note: Immutability wrapping _is_ required, since changes to a document by some other test may affect the
+        //    Security Rules concerned with this collection.
+        //
         get: () => {    // () => Promise of true|string
-          return getAs(uid, "any");
+          return immutableCloak( null, _ => getAs(uid, "any") );
         }
       }
     }
@@ -40,8 +44,11 @@ function collection(collectionPath) {   // string => { as: ... }
 function documentAs(uid, documentPath) {   // (string, string) => { get, set, delete }
 
   return {
+    // Note: Immutability wrapping _is_ required, since changes to a document by some other test may affect the
+    //    Security Rules concerned with this one.
+    //
     get: () => {    // () => Promise of true|string
-      return getAs(uid, documentPath);
+      return immutableCloak( null, _ => getAs(uid, documentPath) );
     },
 
     // Firestore 8.x client API has separate 'set' and 'update'.
@@ -59,14 +66,14 @@ function documentAs(uid, documentPath) {   // (string, string) => { get, set, de
     //    doc ref and another to a clear one. (Naturally, no such doc gets created, because of our immutability cover).
     //
     set: (data) => {    // (object) => Promise of true|string
-      return setAs(uid, documentPath, data);
+      return immutableCloak( documentPath, _ => setAs(uid, documentPath, data) );
     },
     update: (data) => {    // (object) => Promise of true|string
-      return updateAs(uid, documentPath, data);
+      return immutableCloak( documentPath, _ => updateAs(uid, documentPath, data) );
     },
 
     delete: () => {     // () => Promise of true|string
-      return deleteAs(uid, documentPath)
+      return immutableCloak( documentPath, _ => deleteAs(uid, documentPath) );
     }
   };
 }
