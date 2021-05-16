@@ -5,7 +5,7 @@
 */
 import { docs } from './docs.js'
 
-import { prime } from 'firebase-jest-testing/firestoreAdmin'
+import { prime } from 'firebase-jest-testing/firestoreAdmin/setup'
 
 const projectId = "fns-test";    // must be lower case
 

@@ -6,48 +6,13 @@
 */
 import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
 
-import { dbUnlimited as db } from 'firebase-jest-testing/firestore'
+import { dbUnlimited as db } from 'firebase-jest-testing/firestoreAdmin'
 import { eventually } from 'firebase-jest-testing/jest'
 
 import './matchers/toContainObject'
+import {dbUnlimited} from "firebase-jest-testing/firestoreAdmin";
 
-// Clear '/projects/1/userInfo/abc'
-//
-// Note: Since we leave the end result of running tests in the server, this is needed in case (in dev) the test is
-//    run multiple times.
-//
-beforeAll( async () => {    // takes about 456, 419 ms
-
-  try {
-    await db.doc("projects/1/userInfo/abc").delete();    // left-overs from earlier tests - maybe
-
-    // Delete all "userInfo/*"
-    await wipe( db.collection("userInfo") );
-  }
-  catch(err) {
-    console.error("Initialization failed:", err);   // not seen in wild
-    throw err;
-  }
-});
-
-async function wipe(collection) {   // CollectionReference => Promise of ()
-  const qss = await collection.get();
-  const proms = qss.docs.map( qdss => {
-    return qdss.ref.delete()
-  } );
-  await Promise.all(proms);
-}
-
-/*
-* Cleanup
-*
-* Seems that this is not really required. A bit weird, and deserves a deeper look, #oneday.
-*
-* tbd. Maybe the 'dbUnlimited.js' can take care of the cleanup.
-*/
-afterAll( async () => {
-  //await db.app().delete();    // "db.app is not a function" (but tests are fine without this)
-});
+const collection = collPath => dbUnlimited.collection(collPath);
 
 // Skipping, since gives (not sure when this started):
 //  <<
@@ -65,7 +30,7 @@ describe("userInfo shadowing", () => {
   let unsub;
 
   beforeAll( () => {
-    unsub = db.collection("projects/1/userInfo")
+    unsub = collection("projects/1/userInfo")
       .onSnapshot(qss => {    // intention is enough (write to cache)
         qss.forEach( qdss => {
           //console.debug("Sniffed:", qdss);
@@ -89,7 +54,7 @@ describe("userInfo shadowing", () => {
 
     // Write in 'userInfo' -> causes Cloud Function to update 'projectC/{project-id}/userInfo/{uid}' -> ’shadow’ changes
     //
-    await db.collection("userInfo").doc("abc").set(william);
+    await collection("userInfo").doc("abc").set(william);
 
     await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
   });
@@ -98,7 +63,7 @@ describe("userInfo shadowing", () => {
 
     // Write in central -> should NOT turn up
     //
-    await db.collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
+    await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
     await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );    // should pass
 

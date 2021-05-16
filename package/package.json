@@ -22,7 +22,9 @@
   ],
   "exports": {
     "./firestoreAdmin": "./src/firestoreAdmin/index.js",
+    "./firestoreAdmin/setup": "./src/firestoreAdmin/setup/index.js",
     "./firestoreRules": "./src/firestoreRules/index.js",
+    "./firebaseClientLike": "./src/firebaseClientLike/index.js",
     "./jest": "./src/jest/eventually.js"
   },
   "engines": {

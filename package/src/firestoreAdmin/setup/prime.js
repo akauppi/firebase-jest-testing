@@ -1,5 +1,5 @@
 /*
-* src/firestoreAdmin/prime.js
+* src/firestoreAdmin/setup/prime.js
 *
 * Write data to the emulated Firestore.
 *
@@ -7,7 +7,7 @@
 *   JEST Global Setup
 */
 import { strict as assert } from 'assert'
-import { PRIME_ROUND } from '../config.js'
+import { PRIME_ROUND, FIRESTORE_HOST } from '../../config.js'
 assert(PRIME_ROUND);
 
 //import { initializeApp } from 'firebase-admin'    // for "modular API" #later
@@ -29,9 +29,7 @@ import { default as admin } from 'firebase-admin'
 
 // Note: 'wipe' must not import the project id (it's not set at import time).
 //
-import { wipe } from '../rules-unit-testing/wipe.js'
-
-import { FIRESTORE_HOST } from '../config.js'
+import { wipe } from './wipe.js'
 
 /*
 * Prime a database with data
@@ -89,8 +87,6 @@ async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise 
 
   /*await*/ appAdmin.delete();    // let releasing run free (though only takes 0.20, 0.31 ms)
 }
-
-// tbd. move 'wipe' here
 
 export {
   prime

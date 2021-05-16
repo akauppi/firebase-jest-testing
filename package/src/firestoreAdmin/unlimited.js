@@ -72,9 +72,16 @@ async function createUnlimited(docPath,o) {   // (string, object) => Promise of 
   await dbAdmin.doc(docPath).create(o);
 }
 
+// Full
+//
+const dbUnlimited = dbAdmin;
+
 export {
   getUnlimited,
   setUnlimited,
   deleteUnlimited,
-  createUnlimited
+  createUnlimited,
+
+  // for functions tests
+  dbUnlimited
 }

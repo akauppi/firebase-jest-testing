@@ -1,19 +1,18 @@
 /*
-* src/firestoreREST/wipe.js
+* src/firestoreAdmin/setup/wipe.js
+*
+* Context:
+*   JEST Global Setup
 *
 * Clear a whole project's Firestore database.
-*
-* Based on '@firebase/rules-unit-testing' sources, but re-implemented using 'fetch' API.
-*
-* Original is under Apache 2.0 license, but this is considered small enough a snippet to warrant re-licensing.
 */
 import { strict as assert } from 'assert'
 import fetch from 'node-fetch'
 
-import { FIRESTORE_HOST } from '../config.js'
+import { FIRESTORE_HOST } from '../../config.js'
 
 /*
-* tbd. If we get clearance to MIT this, let's move it to within 'firestoreAdmin/prime.js'.
+* Based on 'rules-unit-testing' sources; re-implemented using 'fetch' API.
 */
 async function wipe(projectId) {   // (string) => Promise of ()
   assert(projectId);
