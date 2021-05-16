@@ -1,5 +1,10 @@
 # Changelog
 
+## 16-May-21 (0.0.3-alpha.2)
+
+- Re-implemented efficient locking.
+- Implemented also `arrayRemove` and `arrayUnion` sentinels/transforms, using `Symbol`.
+
 ## 11-May-21 (0.0.3-alpha.0)
 
 - Replaced `@firebase/rules-unit-test` with REST API calls.

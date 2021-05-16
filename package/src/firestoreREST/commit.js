@@ -117,7 +117,7 @@ function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
 
     update: {
       name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
-      ...mapValue(oRemains)   // 'Document' is kind of extended 'MapValue' (merge in the 'fields' field)
+      fields: mapValue(oRemains).mapValue.fields   // 'Document' is just like 'MapValue' without its top level
     }
   };
 
@@ -168,7 +168,7 @@ function writeDeleteGen(docPath) {    // (string) => Write
 *   https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents#Document
 *   https://firebase.google.com/docs/firestore/reference/rest/v1/Value
 */
-function mapValue(o) {    // (object) => { fields: ... }
+function mapValue(o) {    // (object) => { mapValue: { fields: ... } }
   assert(typeof o === 'object');
 
   const pairs = Object.entries(o).map(([k, v]) => {
@@ -176,7 +176,7 @@ function mapValue(o) {    // (object) => { fields: ... }
   });
   const fields = Object.fromEntries(pairs);
 
-  return { fields };
+  return { mapValue: { fields } };
 }
 
 function value(v) {   // (any) => { nullValue: null | ... }

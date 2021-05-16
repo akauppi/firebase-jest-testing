@@ -46,7 +46,7 @@ describe("'/projects' rules", () => {
 
   //--- ProjectsC create rules ---
 
-  test('any authenticated user may create a project, but must include themselves as an author', async () => {
+  test.skip('any authenticated user may create a project, but must include themselves as an author', async () => {
     // This implies: unauthenticated users cannot create a project, since they don't have a uid.
 
     const p3_valid = {
