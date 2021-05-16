@@ -137,3 +137,13 @@ npm WARN deprecated request@2.88.2: request has been deprecated, see https://git
 
   Comes via both JEST packages (via `jsdom`) and `firebase-tools@9.10.2`
 
+
+## Firebase emulators: passing Security Rules `debug()` info to the clients
+
+I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/firebase-js-sdk/issues/4793) and got the comment:
+
+> I filed an internal feature request for this matter, however we can't provide definite timelines [...]
+
+- [ ] Check again / ask ~ Jul 2021
+- [ ] Maybe move the matter to [firebase-tools](https://github.com/firebase/firebase-tools/issues) if making it takes time (it's currently in wrong place since not a matter for the JS client)
+

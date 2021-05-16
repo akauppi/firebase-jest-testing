@@ -11,7 +11,7 @@ if (PRIME_ROUND) throw new Error("This module is for tests only");
 
 import { collection } from './collection.js'
 
-import { serverTimestampSentinel, deleteFieldSentinel } from '../firestoreREST/sentinels'
+import { serverTimestampSentinel, deleteFieldSentinel, arrayRemove, arrayUnion } from '../firestoreREST/sentinels'
 
 // Enable '.toAllow' and '.toDeny' matchers for the tests, as a side effect
 //
@@ -25,5 +25,7 @@ const deleteField = () => deleteFieldSentinel;
 export {
   collection,
   serverTimestamp,
-  deleteField
+  deleteField,
+  arrayRemove,
+  arrayUnion
 }

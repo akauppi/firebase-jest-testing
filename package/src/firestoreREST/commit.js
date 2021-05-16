@@ -24,7 +24,7 @@ import fetch from 'node-fetch'
 import { path_v1 } from './common'
 import { projectId } from '../config'
 
-import { serverTimestampSentinel, deleteFieldSentinel } from './sentinels'
+import { splitSentinels } from './sentinels'
 
 /*
 * Carry out writes to Firestore.
@@ -143,37 +143,6 @@ function writeDeleteGen(docPath) {    // (string) => Write
 }
 
 /*
-* Split sentinels for the 'commit' REST API.
-*
-* Note: Currently does a shallow scan, but can be implemented as recursive if needed.
-*/
-function splitSentinels(o) {    // (object) => [object, Array of FieldTransform]
-  const transforms = [];
-
-  const pairs = Object.entries(o).map( ([k,v]) => {
-    if (v === serverTimestampSentinel) {
-      transforms.push({
-        fieldPath: k,   // note: if doing recursive, we must prepend the field paths
-        ["setToServerValue"]: 'REQUEST_TIME'
-      });
-      return undefined;
-
-    } else if (v === deleteFieldSentinel) {
-      // Does not need a transform to be added; removing the field from regular fields is enough (it will be in the
-      // update mask, causing it to be removed).
-      //
-      return undefined;
-
-    } else {
-      return [k,v];
-    }
-  }).filter(x => x);
-
-  const o2 = Object.fromEntries(pairs);
-  return [o2,transforms];
-}
-
-/*
 * Convert a JSON object (where sentinel values have been removed) into a 'MapValue':
 *
 *   {
@@ -233,5 +202,8 @@ function arrayValue(a) {  // (Array of any /*except Array*/) => { arrayValue: { 
 export {
   commit_v1,
   writeGen,
-  writeDeleteGen
+  writeDeleteGen,
+
+  // for 'sentinels.js'
+  arrayValue
 }

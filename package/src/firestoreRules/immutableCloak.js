@@ -38,12 +38,12 @@ async function immutableCloak(docPath, op) {   // (string?, () => Promise of tru
 
 async function withinLock(f) {    // (() => x) => x
 
-  const release = await claimLock();
+  const releaseProm = await claimLock();
   try {
     return f();
   }
   finally {
-    await release();
+    (await releaseProm)();    // free running tail
   }
 }
 
