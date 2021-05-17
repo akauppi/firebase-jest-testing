@@ -147,3 +147,9 @@ I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/fire
 - [ ] Check again / ask ~ Jul 2021
 - [ ] Maybe move the matter to [firebase-tools](https://github.com/firebase/firebase-tools/issues) if making it takes time (it's currently in wrong place since not a matter for the JS client)
 
+
+## Firebase docs: return schema of `httpsCallable` on the wire
+
+- [httpsCallable REST API interface uses field result instead of data - conflicts with the docs](https://github.com/firebase/firebase-tools/issues/3377)
+
+Check if they acknowledge the issue and whether the schema should be as in the docs.

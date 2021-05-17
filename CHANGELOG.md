@@ -4,6 +4,7 @@
 
 - Re-implemented efficient locking.
 - Implemented also `arrayRemove` and `arrayUnion` sentinels/transforms, using `Symbol`.
+- Implemented `firebaseClientLike` for `httpsCallables` testing.
 
 ## 11-May-21 (0.0.3-alpha.0)
 

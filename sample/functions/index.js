@@ -3,10 +3,11 @@
 *
 * Cloud Functions so we have something to test against.
 *
-* Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, ~Aug 2020~ Jan 2021).
+* Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, ~Aug 2020~ May 2021).
 */
 const functions = require('firebase-functions');
 //import * as functions from 'firebase-functions';
+const HttpsError = functions.https.HttpsError
 
 const admin = require('firebase-admin');
 //import * as admin from 'firebase-admin';
@@ -15,13 +16,21 @@ admin.initializeApp();
 
 // Sad that the default region needs to be in the code. There is no configuration for it. 😢
 //
-const regionalFunctions = functions;    // if you do production based on this code, change to 'functions.region("...")'
+const regionalFunctions = functions.region("mars-central2");
 
 /*
 * { msg: string } -> string
 */
 exports.greet = regionalFunctions.https
   .onCall((msg, context) => {
+
+    /*** KEEP
+    // If you need to signal errors, this is the way.
+    throw new HttpsError('unimplemented',   // from limited 'FunctionsErrorCode' catalogue
+      "message",
+      [1,2,3]
+    );***/
+
     return `Greetings, ${msg}.`;
   });
 

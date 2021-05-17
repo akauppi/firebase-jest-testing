@@ -13,8 +13,8 @@ import { path_v1 } from './common'
 * Resolves to 'true' if access is granted, or an error message, describing why the access failed (as received from
 * the emulator's response; may be useful for debugging the tests).
 */
-async function action_v1(token, method, tail) {   // (string|null, 'GET'|..., string) => Promise of true|string
-  const res = await myFetch(tail,method,token);
+async function get_v1(token, docPath) {   // (string|null, string) => Promise of true|string
+  const res = await myFetch(docPath,'GET',token);
     // fine with the default error
 
   const status = res.status;
@@ -88,10 +88,10 @@ async function delete_v1(token, docPath) {   // (string|null, string) => Promise
 async function myFetch(docPath, method, token) {
   const uri = `${path_v1}/${docPath}`;
 
-  return await fetch(uri, {method, headers: token ? { ["Authorization"]: `Bearer ${token}` } : {} });
+  return await fetch(uri, {method, headers: token ? { "Authorization": `Bearer ${token}` } : {} });
 }
 
 export {
-  action_v1,
+  get_v1,
   delete_v1
 }

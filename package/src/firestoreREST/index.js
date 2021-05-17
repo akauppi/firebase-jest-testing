@@ -10,7 +10,7 @@
 */
 //import { strict as assert } from 'assert'
 
-import { action_v1, delete_v1 } from './action!.js'
+import { get_v1, delete_v1 } from './action!.js'
 import { commit_v1, writeGen } from './commit'
 
 import { createUnsecuredJwt } from '../rules-unit-testing/createJwt.js'
@@ -39,7 +39,7 @@ function getToken(uid) {   // (string|null) => string|null
 function getAs(uid, docPath) {    // (string|null, string) => Promise of true|string
   const token = getToken(uid);
 
-  return action_v1(token, 'GET', docPath);
+  return get_v1(token, docPath);
 }
 
 /*

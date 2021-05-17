@@ -44,9 +44,24 @@ const FUNCTIONS_URL = (() => {
 const projectId = PRIME_ROUND ? null
   : process.env["PROJECT_ID"] || fail("Internal error - env.var 'PROJECT_ID' not set. Did you run 'prime(projectId,docs)' in Global Setup?");
 
+/*** disabled
+// Region is defined in the code of Cloud Functions, and not treated as a configuration by Firebase (no idea why there's
+// not an entry for it in 'firebase.json').
+//
+const functionsRegion = (() => {
+  let s = firebaseJson?._custom && firebaseJson._custom["functions.region"];
+  if (!s) {
+    s = "us-central1";    // Firebase default region
+    console.warning(`No '_custom["functions.region"]' in '${fn}': using default '${s}'.`);
+  }
+  return s;
+})();
+***/
+
 export {
   FIRESTORE_HOST,
   FUNCTIONS_URL,
   PRIME_ROUND,
-  projectId
+  projectId,
+  //functionsRegion
 }
