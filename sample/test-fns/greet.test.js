@@ -13,7 +13,7 @@ describe ('Cloud Function callables', () => {
     const msg = 'Jack';
 
     const fnGreet = httpsCallable("greet");
-    const data = (await fnGreet(msg)).data;
+    const { data } = await fnGreet(msg);
 
     expect(data).toBe("Greetings, Jack.");
   });

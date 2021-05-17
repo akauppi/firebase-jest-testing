@@ -266,8 +266,7 @@ service cloud.firestore {
             PROJ_isMember_COST1( after().project )      // else anyone in the project can invite
         && validInviteWrite()
 
-      // tbd. if we want to allow extending existing invite, the 'update' rule needs to be opened (a 'set' for an
-      //        existing entry observes it).
+      // The 'update' rule is used for a 'set' to an existing entry.
       allow update: if false
 
       allow delete: if false

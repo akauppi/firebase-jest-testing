@@ -3,8 +3,8 @@
 *
 * To be used until referencing with ES native modules works, within Jest.
 *
-* Note: This is for the 'firebase-jest-testing' library sample. You'll need a similar approach for your app (see
-*     documentation -> 'Writing tests.md').
+* Note: This is for the 'firebase-jest-testing' library sample. You'll need to use the 'jestResolver' provided as
+*     part of the package, in your project.
 *
 * References:
 *   - Configuring Jest > resolver (Jest docs)

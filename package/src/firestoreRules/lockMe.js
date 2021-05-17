@@ -42,12 +42,15 @@ function vidGen_DEBUG() {
 
 // Queue of pending Promises, within this environment.
 //
-const queue = [];   // Array of true|() => ()    ; resolve functions for the pending promises (already running one remains in the queue)
+const queue = [];   // Array of true| /*resolve*/ () => ()    ; resolve functions for the pending promises (head is the one running, or waiting for the global lock)
 
 let waits_PROF;     // Array of ms
 let opsTook_PROF;   // Array of ms
 
 let currentOpStart_PROF;   // ms
+
+// Check that no two callers (per Node environment) can be in the lock, at once.
+let imInside_DEBUG = false;
 
 /*
 * Claim the lock, among others accessing the same Firestore project.
@@ -60,35 +63,35 @@ async function claimLock() {    // () => Promise of /*release*/ () => ()
 
   const t0 = performance.now();
 
-  if (queue.length) {   // Lock is already held by this env, or being waited upon; append to the pending queue.
-    return new Promise(resolve => {
-      queue.push(resolve)
+  await (queue.length ? (    // Lock is already held by this env, or being waited upon; append to the pending queue.
+    new Promise(resolve => {
+      queue.push(resolve);
 
     }).then( _ => {   // awakened; things to do before the operation
-      const dt = trunc( performance.now() - t0 );
-      waits_PROF.push(dt);
+      assert(!imInside_DEBUG); imInside_DEBUG = true;
+    })
+  ) : (   // Queue is empty; claim the global lock
+    queue.push(true),   // marker that we are already claiming the lock (must be set before first 'await')
 
-      //console.log(now00_DEBUG(vid_DEBUG) + `Lock received after ${dt}ms`);    // 253, 254 | 7, 11, 19.5
-      currentOpStart_PROF = performance.now();
-
-    }).then( _ => release );    // provide the 'release' to the caller (calling which will activate the code above.. it's a bit twisted 🍭)
-
-  } else {    // Queue is empty; claim the global lock
-    queue.push(true);   // marker that we are already claiming the lock (must be set before first 'await')
+    assert(!imInside_DEBUG), imInside_DEBUG = true,
 
     // Profile the number of local locks, and the durations they waited + operations executed.
-    waits_PROF = [];
-    opsTook_PROF = [];
+    waits_PROF = [],
+    opsTook_PROF = [],
 
-    await claimGlobalLock();
+    claimGlobalLock()   // IDE note: "missing await" is false warning; ignore
+      .then( _ => {   // DEBUG
+        assert(imInside_DEBUG);
+      })
+  ));
 
-    const dt = trunc( performance.now() - t0 );
-    waits_PROF.push(dt);
-    //console.log(now00_DEBUG(vid_DEBUG) + `Lock (global) received after ${dt}ms`);    // 246
+  const dt = trunc( performance.now() - t0 );
+  waits_PROF.push(dt);
 
-    currentOpStart_PROF = performance.now();
-    return release;
-  }
+  //console.log(now00_DEBUG(vid_DEBUG) + `Lock received after ${dt}ms`);    // 246
+
+  currentOpStart_PROF = performance.now();
+  return release;
 
   // Proceed the queue; release the global lock if no more entries.
   //
@@ -98,15 +101,17 @@ async function claimLock() {    // () => Promise of /*release*/ () => ()
     assert(queue.length);
     queue.shift();
 
+    assert(imInside_DEBUG); imInside_DEBUG = false;
+
     assert(currentOpStart_PROF);
     opsTook_PROF.push( trunc(performance.now() - currentOpStart_PROF) );
     currentOpStart_PROF = undefined;
 
     if (queue.length) {   // more to go
       const resolveNext = queue[0];   // keep in the queue to show we have the global lock
-      resolveNext(release);
+      resolveNext();
     } else {
-      releaseGlobalLock();    // free-running tail
+      /*await*/ releaseGlobalLock();    // free-running tail
 
       // Report the profiling about this larger locking
       //
@@ -120,7 +125,7 @@ async function claimLock() {    // () => Promise of /*release*/ () => ()
       //   not count.
       // - Operations are 1..25ms, each
       //
-      if (false) console.info("Locking profiles:", {
+      if (true) console.info("Locking profiles:", {
         waits: waits_PROF,          // 246, 253, 254 (getting global lock is the decisive one; others wait alongside it)
         waitMedian,                 // 253
         waitMax,                    // 254

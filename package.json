@@ -4,11 +4,6 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@github.com/akauppi/firebase-jest-testing.git"
-  },
-  "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
   "engines": {
     "node": "^14.3 || ^15 || ^16",
     "npm": ">= 7.7.0"

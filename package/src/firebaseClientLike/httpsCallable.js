@@ -53,6 +53,10 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
 
     // 200:
     //
+    // 404: Not found
+    //    "Not found"
+    //    "Function logs_v1 does not exist, valid triggers are: cloudLoggingProxy_v0"
+    //
     // 500:
     //    Internal errors (function throws an exception that is not conforming to 'HttpsError' schema)
     //    {"error":{"message":"INTERNAL","status":"INTERNAL"}}
@@ -64,6 +68,11 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
     //    the 'code' parameter given in their constructor. Also "internal" is among the codes, so it may not be possible
     //    to fully differentiate between 'Error' and 'HttpsError', for us.
 
+    if (status === 404) {
+      const body = await res.text();
+      throw new Error(`Function '${uri}' not found (${status}): '${body}'`);
+    }
+
     const resJson = await res.json();
 
     // NOTE!!!
@@ -72,7 +81,7 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
     //
     // [1]: https://firebase.google.com/docs/functions/callable-reference#response_body
 
-    const { data, error, result } = resJson;
+    const { result, error } = resJson;
 
     // "If [the error] field is present, then the request is considered failed, regardless of the HTTP status code or
     // whether data is also present."
@@ -95,4 +104,3 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
 }
 
 export { httpsCallable }
-

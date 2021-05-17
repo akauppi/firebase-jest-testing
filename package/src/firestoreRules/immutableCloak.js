@@ -1,7 +1,6 @@
 /*
 * src/firestoreRules/immutableCloak.js
 */
-
 import { getUnlimited, setUnlimited, deleteUnlimited } from '../firestoreAdmin/unlimited'
 import { claimLock } from './lockMe'
 
@@ -17,12 +16,10 @@ import { claimLock } from './lockMe'
 *   string: access denied, reason in the string
 */
 async function immutableCloak(docPath, op) {   // (string?, () => Promise of true|string) => Promise of true|string
-  let was;
-  if (docPath) {
-    was = await getUnlimited(docPath);
-  }
 
   return withinLock( async _ => {
+    const was = docPath && await getUnlimited(docPath);
+
     const ret = await op();
 
     if (docPath) {
@@ -32,18 +29,19 @@ async function immutableCloak(docPath, op) {   // (string?, () => Promise of tru
         await deleteUnlimited(docPath);
       }
     }
+
     return ret;
   });
 }
 
-async function withinLock(f) {    // (() => x) => x
+async function withinLock(f) {    // (() => Promise of x) => Promise of x
 
-  const releaseProm = await claimLock();
+  const release = await claimLock();    // () => ()
   try {
-    return f();
+    return await f();
   }
   finally {
-    (await releaseProm)();    // free running tail
+    release();    // free running tail
   }
 }
 

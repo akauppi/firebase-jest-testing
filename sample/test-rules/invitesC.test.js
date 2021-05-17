@@ -33,7 +33,7 @@ describe("'/invites' rules", () => {
 
   //--- InvitesC create rules ---
 
-  test.skip('only a member of a project can invite; only author can invite as-author', () => {
+  test('only a member of a project can invite; only author can invite as-author', () => {
     const template = { email: "aa@b.com", project: "1" };
     const dGen = (uid, asAuthor) => ({ ...template,
       asAuthor: asAuthor, by: uid, at: SERVER_TIMESTAMP
