@@ -73,7 +73,6 @@ async function commit_v1(token, writes) {   // (string|null, Array of Write) => 
   } else {    // other status codes
     const body = await res.text();
     const msg = `Unexpected response from ${method} ${uri} (${status}): ${body}`;
-    console.error(msg);
     throw new Error(msg);
   }
 }
@@ -117,11 +116,11 @@ function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
 
     update: {
       name: `projects/${projectId}/databases/(default)/documents/${docPath}`,
-      fields: mapValue(oRemains).mapValue.fields   // 'Document' is just like 'MapValue' without its top level
+      ...mapValue(oRemains)   // 'Document' is just like an extended 'MapValue'
     }
   };
 
-  //console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
+  console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
 
   return write;
 }
@@ -164,19 +163,23 @@ function writeDeleteGen(docPath) {    // (string) => Write
 *     }
 *   }
 *
+* Note: Undefined values are simply skipped. They are used as markers for removing a field.
+*
 * See:
 *   https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents#Document
 *   https://firebase.google.com/docs/firestore/reference/rest/v1/Value
 */
-function mapValue(o) {    // (object) => { mapValue: { fields: ... } }
+function mapValue(o) {    // (object) => { fields: ... }
   assert(typeof o === 'object');
 
   const pairs = Object.entries(o).map(([k, v]) => {
+    if (v === undefined) { return null }    // skip fields with 'undefined' value. 'deleteField' sentinel uses this.
+
     return [k, value(v)]
-  });
+  }).filter( x => x );
   const fields = Object.fromEntries(pairs);
 
-  return { mapValue: { fields } };
+  return { fields };
 }
 
 function value(v) {   // (any) => { nullValue: null | ... }
@@ -188,15 +191,15 @@ function value(v) {   // (any) => { nullValue: null | ... }
 
     case 'object':    // null,Date,
       if (v === null) return { nullValue: null }
-      if (Array.isArray(v)) return arrayValue(v);
+      if (Array.isArray(v)) return { arrayValue: arrayValue(v) };
       if (v instanceof Date) return { timestampValue: v.toISOString() }   // tbd. is the format correct (RFC3339 with UTC "Zulu")?
 
-      return mapValue(v);
+      return { mapValue: mapValue(v) };
   }
 }
 
-function arrayValue(a) {  // (Array of any /*except Array*/) => { arrayValue: { values: Array of Value }}
-  return { arrayValue: { values: a.map(value) }};
+function arrayValue(a) {  // (Array of any /*except Array*/) => { values: Array of Value }
+  return { values: a.map(value) };
 }
 
 export {

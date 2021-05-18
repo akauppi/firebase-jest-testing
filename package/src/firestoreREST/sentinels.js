@@ -52,15 +52,18 @@ function splitSentinels(o) {    // (object) => [object, Array of FieldTransform]
     const transform = typeof v === 'object' && v[sentinelSymbol];    // false | undefined | [] | [transformKey, transformValue]
 
     if (transform) {   // some sentinel
-      const [tk,tv] = transform;
+      if (v === deleteFieldSentinel) {
+        // Add no transform but set the key 'undefined' - this takes it to 'updateMask' but omits from the payload.
+        return [k,undefined];
 
-      if (tk) {
+      } else {
+        const [tk, tv] = transform;
         transforms.push({
           fieldPath: k,   // note: if doing recursive, we must prepend the field paths
           [tk]: tv
         });
+        return undefined;
       }
-      return undefined;
     } else {        // normal
       return [k,v];
     }

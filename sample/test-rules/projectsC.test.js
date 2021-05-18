@@ -46,8 +46,8 @@ describe("'/projects' rules", () => {
 
   //--- ProjectsC create rules ---
 
-  test.skip('any authenticated user may create a project, but must include themselves as an author', async () => {
-    // This implies: unauthenticated users cannot create a project, since they don't have a uid.
+  test('any authenticated user may create a project, but must include themselves as an author', async () => {
+    // implies: unauthenticated users cannot create a project, since they don't have a uid.
 
     const p3_valid = {
       title: "Calamity",
@@ -59,7 +59,7 @@ describe("'/projects' rules", () => {
 
     const p3_withoutAuthor = {...p3_valid, authors: [] };
     const p3_badTime = {...p3_valid, created: anyDate };
-    const p3_alreadyRemoved = {...p3_valid, removed: serverTimestamp };
+    const p3_alreadyRemoved = {...p3_valid, removed: SERVER_TIMESTAMP };
 
     await Promise.all([
       expect( abc_projectsC.doc("3-fictional").set(p3_valid) ).toAllow(),
@@ -105,8 +105,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  // SKIPPED before 'deleteField' is faulty
-  test.skip ("An author can remove the '.removed' mark", () => {
+  test("An author can remove the '.removed' mark", () => {
     const p2mod = {
       removed: DELETE_FIELD
     };
@@ -116,7 +115,7 @@ describe("'/projects' rules", () => {
     ]);
   });
 
-  test.skip("An author can add new authors, and remove authors as long as one remains", () => {
+  test("An author can add new authors, and remove authors as long as one remains", () => {
     const p1_addAuthor = {
       authors: arrayUnion("zxy"),
       members: arrayUnion("zxy")   // add also to 'members' since not there, yet

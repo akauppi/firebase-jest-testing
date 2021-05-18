@@ -125,7 +125,7 @@ async function claimLock() {    // () => Promise of /*release*/ () => ()
       //   not count.
       // - Operations are 1..25ms, each
       //
-      if (true) console.info("Locking profiles:", {
+      if (false) console.info("Locking profiles:", {
         waits: waits_PROF,          // 246, 253, 254 (getting global lock is the decisive one; others wait alongside it)
         waitMedian,                 // 253
         waitMax,                    // 254
