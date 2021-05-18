@@ -186,7 +186,8 @@ function value(v) {   // (any) => { nullValue: null | ... }
 
   switch( typeof v ) {
     case 'boolean': return { booleanValue: v }
-    case 'number': return { doubleValue: v }
+    case 'number': return Number.isInteger(v) ? { integerValue: v.toString() }  // [2]
+                                              : { doubleValue: v }
     case 'string': return { stringValue: v }
 
     case 'object':    // null,Date,
@@ -196,6 +197,8 @@ function value(v) {   // (any) => { nullValue: null | ... }
 
       return { mapValue: mapValue(v) };
   }
+
+  // [2]: Important that integers are presented this way. Matters eg. to Security Rules being able to use 'is int'.
 }
 
 function arrayValue(a) {  // (Array of any /*except Array*/) => { values: Array of Value }

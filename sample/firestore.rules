@@ -65,16 +65,17 @@ service cloud.firestore {
       //  - members must contain all authors (and thus is >= 1)
       //
       function validProjectWrite() {
-        let possibleKeys = ["title", "created", "removed", "authors", "members"].toSet();
+        let requiredKeys = ['title','created','authors','members'].toSet();
+        let possibleKeys = requiredKeys.union( ['removed'].toSet() );
 
         return true
+          && after().keys().toSet().hasAll(requiredKeys) &&
+            possibleKeys.hasAll(after().keys())
           && after().title is string && after().title != ''
           && after().created is timestamp
           && (!isRemovedAfter() || (after().removed == request.time))
           && after().authors is list && after().authors.size() > 0
           && after().members is list && after().members.toSet().hasAll( after().authors.toSet() )
-
-          && possibleKeys.hasAll( request.resource.data.keys() )        // no unexpected keys
       }
 
       /*** DELAYED. Making a read version of validity is very hard.
@@ -203,8 +204,8 @@ service cloud.firestore {
           let possibleKeys = requiredKeys.union( ['claimed'].toSet() );
 
           return true
-            && (after().keys().toSet().hasAll(requiredKeys) &&
-                possibleKeys.hasAll(after().keys()))
+            && after().keys().toSet().hasAll(requiredKeys) &&
+                possibleKeys.hasAll(after().keys())
             && after().layer is int
             && after().shape in ['star']      // enum
             && after()['size'] > 0
@@ -320,7 +321,7 @@ service cloud.firestore {
 
       allow write: if true
         && isSignedIn() && request.auth.uid == userId
-        && debug(validUserInfoWrite())
+        && validUserInfoWrite()
 
       function validUserInfoWrite() {
         let requiredKeys = ['name','photoURL'];

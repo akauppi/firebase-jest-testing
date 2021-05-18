@@ -54,12 +54,12 @@ describe("'/symbols' rules", () => {
     return Promise.all([
       expect( abc_symbolsC.doc("99").set( d )).toDeny(),          // author, not claimed
 
-      //expect( abc_symbolsC.doc("99").set( d_claimed("abc") )).toAllow(),     // author, claimed
-      //expect( def_symbolsC.doc("99").set( d_claimed("def") )).toAllow(),     // collaborator, claimed
+      expect( abc_symbolsC.doc("99").set( d_claimed("abc") )).toAllow(),     // author, claimed
+      expect( def_symbolsC.doc("99").set( d_claimed("def") )).toAllow(),     // collaborator, claimed
 
-      //expect( abc_symbolsC.doc("99").set( d_claimed_otherTime("abc") )).toDeny(),     // author, claimed, not server time
+      expect( abc_symbolsC.doc("99").set( d_claimed_otherTime("abc") )).toDeny(),     // author, claimed, not server time
 
-      //expect( abc_symbolsC.doc("99").set( d_claimed("def") )).toDeny()     // author, claimed to another user
+      expect( abc_symbolsC.doc("99").set( d_claimed("def") )).toDeny()     // author, claimed to another user
     ]);
   });
 
