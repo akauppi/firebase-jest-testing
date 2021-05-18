@@ -120,7 +120,7 @@ function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
     }
   };
 
-  console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
+  //console.debug("!!! Write:", util.inspect(write, {depth: null}));    // DEBUG
 
   return write;
 }

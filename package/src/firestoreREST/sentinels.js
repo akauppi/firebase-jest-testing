@@ -39,37 +39,56 @@ function arrayUnion(...args) {    // (Value [, ...])
 /*
 * Split sentinels for the 'commit' REST API.
 *
-* Note: Currently does a shallow scan, but can be implemented as recursive if needed.
-*
 * Returns:
 *   [0]: Object with sentinel keys (and values) removed
 *   [1]: Field transforms adhering to the Firestore REST API, to write values in the server side
 */
-function splitSentinels(o) {    // (object) => [object, Array of FieldTransform]
+function splitSentinels(obj) {    // (object) => [object, Array of FieldTransform]
   const transforms = [];
 
-  const pairsRemain = Object.entries(o).map( ([k,v]) => {
-    const transform = typeof v === 'object' && v[sentinelSymbol];    // false | undefined | [] | [transformKey, transformValue]
+  // Collect transforms, recursively
+  //
+  // prefix: "" or a string that ends in a dot ('.').
+  //
+  function convert(o, prefix) {   // (object, string) => object   ; side effect: collects 'transforms'
 
-    if (transform) {   // some sentinel
-      if (v === deleteFieldSentinel) {
-        // Add no transform but set the key 'undefined' - this takes it to 'updateMask' but omits from the payload.
-        return [k,undefined];
+    const pairsRemain = Object.entries(o).map( ([k,v]) => {
+      const transform = typeof v === 'object' && v[sentinelSymbol];    // false | undefined | [] | [transformKey, transformValue]
 
-      } else {
-        const [tk, tv] = transform;
-        transforms.push({
-          fieldPath: k,   // note: if doing recursive, we must prepend the field paths
-          [tk]: tv
-        });
-        return undefined;
+      if (transform) {   // some sentinel
+        if (v === deleteFieldSentinel) {
+          // Add no transform but set the key 'undefined' - this takes it to 'updateMask' but omits from the payload.
+          return [k,undefined];
+
+        } else {
+          const [tk, tv] = transform;
+          transforms.push({
+            fieldPath: prefix + k,    // eg. "a.b"
+            [tk]: tv
+          });
+          return undefined;
+        }
+      } else {        // normal
+        if (typeof v === 'object' && v !== null && !(v instanceof Date)) {
+          if (Array.isArray(v)) {
+            // Sentinels within arrays skipped (are they supported by Firestore?). We could see if there are any,
+            // and issue a warning. #later
+            //
+            return [k,v];
+          } else {
+            const o2 = convert(v, `${prefix}${k}.`);
+            return [k,o2];
+          }
+        } else {
+          return [k, v];
+        }
       }
-    } else {        // normal
-      return [k,v];
-    }
-  }).filter(x => x);
+    }).filter(x => x);
 
-  const o2 = Object.fromEntries(pairsRemain);
+    return Object.fromEntries(pairsRemain);
+  }
+
+  const o2 = convert(obj,"");
   return [o2,transforms];
 }
 

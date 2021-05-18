@@ -65,7 +65,7 @@ describe("'/symbols' rules", () => {
 
   //--- symbolsC update rules ---
 
-  test.skip('members may claim a non-claimed symbol', () => {
+  test('members may claim a non-claimed symbol', () => {
     const s1_mod_valid = uid => ({ claimed: { by: uid, at: SERVER_TIMESTAMP } });
     const s1_mod_otherTime = uid => ({ claimed: { by: uid, at: anyDate } });
 
@@ -86,8 +86,7 @@ describe("'/symbols' rules", () => {
     ]);
   });
 
-  // tbd. Cannot figure out why this fails. #help
-  test.skip('members may revoke a claim', () => {
+  test('members may revoke a claim', () => {
     const s2_revoke = { claimed: DELETE_FIELD };
 
     return Promise.all([
