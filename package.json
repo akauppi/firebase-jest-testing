@@ -19,6 +19,7 @@
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
     "start": "firebase emulators:start --project=fns-test --config firebase.json --only functions,firestore",
+    "start2": "firebase emulators:start --project=rules-test --config firebase.json --only functions,firestore",
     "test:fns:callables": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -37,7 +38,7 @@
     "concurrently": "^6.0.2",
     "firebase-admin": "^9.8.0",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.10.2",
+    "firebase-tools": "^9.11.0",
     "jest": "^27.0.0-next.9",
     "jest-circus": "^27.0.0-next.9"
   },

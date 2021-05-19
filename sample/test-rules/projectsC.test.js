@@ -131,11 +131,8 @@ describe("'/projects' rules", () => {
       expect( abc_projectsC.doc("1").update(p1_addAuthor) ).toAllow(),
       expect( abc_projectsC.doc("3-multiple-authors").update(p3_removeAuthor) ).toAllow(),
 
-      // Possible Firestore emulator bug: if we remove the author with '{ authors: [] }', we are denied.
-      //    If we remove it with 'FieldValue.arrayRemove', we are allowed.
-      //
       expect( abc_projectsC.doc("1").update(p1_removeAuthor) ).toDeny(),  // only author
-      expect( abc_projectsC.doc("1").update( { authors: [] }) ).toDeny(),  // only author
+      //expect( abc_projectsC.doc("1").update( { authors: [] }) ).toDeny(),  // only author (another way of testing it)
 
       expect( ghi_projectsC.doc("3-multiple-authors").update(p3_removeAuthor) ).toDeny()  // collaborator
     ]);

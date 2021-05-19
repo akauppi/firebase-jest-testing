@@ -1,5 +1,9 @@
 # Changelog
 
+## 19-May-21 (0.0.3-alpha.3)
+
+- Documentation revise
+
 ## 16-May-21 (0.0.3-alpha.2)
 
 - Re-implemented efficient locking.

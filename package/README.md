@@ -6,21 +6,30 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-- Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate.
+<img alt="can photo" src="images/tin-can-proto.jpg" width=300 />
 
-- Compatible. You may use *either* 8.x or 9.x (beta) client JS SDK in your application project. More freedom.
-
-- Testing Security Rules *immutably* (a passing write or delete operation does not change one's primed data, and affect other tests). No flaky tests.
-
-- Testing *indirect (cloud based) Firestore changes*, by adding `.eventually` to the Jest arsenal.
-
-- Help functions for *priming* Firestore with JSON data.
-
-<!-- fade out..
-Cloud Function callables can also be tested, but you need to provide a Firebase JS client SDK for that, and copy-paste some boilerplate.
+<!-- tbd. Dedicated can picture, with `firebase-jest-testing` on it..
 -->
 
-This library does not bring a client side Firebase JS SDK transitive `npm` dependency to your project, and should therefore be *usable on both `8.x` and `9.x` Firebase JS SDKs*.
+`firebase-jest-testing` offers:
+
+- 🥫Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate!
+
+- 🪶Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required. Add only `firebase-admin` and it's ready to be served!
+
+- ⚡️Fast. Optimized for multithreading and Node.js. You'll likely max out your cores.
+
+<!-- 
+- Compatible. You may use *either* 8.x or 9.x (beta) client JS SDK in your application project. More freedom.
+-->
+
+- ‖‖‖ Security Rules are tested **immutably** - a passing write or delete operation does not change the data, and cannot disturb other tests. This is why we can parallelize the tests so much. No flaky tests.
+
+- ⏲For testing Cloud Functions at the integration level, `.eventually` extension is added to the Jest arsenal.
+
+- ﹛﹜Help functions for priming Firestore with *JSON data*.
+
+- `+` Means for testing callables.
 
 Only to be used with Jest 27.
 
