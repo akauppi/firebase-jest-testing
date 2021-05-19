@@ -280,7 +280,7 @@ The returned `Promise` should work as the JS SDK client. If there are communicat
 >Note: Roles are not currently implemented, but can be. In such case, it would go like `httpsCallable(name).as({ uid: "you" })` - maybe.
 
 
-## Priming with data
+## Priming with JSON data
 
 To run tests - even testing Security Rules - you need some seed data in Firestore. Such data is often hand crafted alongside the tests, and `firebase-jest-testing` provides the means to read it from a JSON / `.js` file.
 
@@ -340,7 +340,7 @@ As a particular case to watch for, create timestamps with `new Date()` (or `serv
 |`new Date('27 Mar 2020 14:17:00 GMT+0300')`|Fri Mar 27 2020 13:17:00 GMT+0200|
 
 
-## Why immutability matters? and how it's implemented
+## Why immutability matters (..and a bit about implementation)
 
 In the core of this library is the Security Rules testing, with immutable operations.
 

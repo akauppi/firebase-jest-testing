@@ -6,9 +6,10 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-<img alt="can photo" src="images/tin-can-proto.jpg" width=300 />
+![](images/tin-can-alpha.jpg)
 
-<!-- tbd. Dedicated can picture, with `firebase-jest-testing` on it..
+<!--
+<small><i>Image by A.Kauppi, CC by Attribution</small>
 -->
 
 `firebase-jest-testing` offers:
@@ -65,10 +66,16 @@ See the [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package
 
 ### Reference documentation
  
-The available tools are described in [Writing tests](./Writing%20tests.md).
+The contents are described in [Writing tests](./Writing%20tests.md):
 
+- Testing Security Rules
+- Testing Cloud Functions
+   - events
+   - callables
+- Priming with JSON data
+- Why immutability matters
+  - A bit about implementation
 
 ## Support
 
 If you wish to support the development of this software, be in touch with the author. We'll figure out something nice! ;)
-
