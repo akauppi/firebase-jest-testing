@@ -153,3 +153,10 @@ I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/fire
 - [httpsCallable REST API interface uses field result instead of data - conflicts with the docs](https://github.com/firebase/firebase-tools/issues/3377)
 
 Check if they acknowledge the issue and whether the schema should be as in the docs.
+
+
+## Modular `firebase-admin` (alpha)
+
+A modular version of `firebase-admin` is currently [in alpha](https://modular-admin.web.app).
+
+Let's take it into use, once it's stable.

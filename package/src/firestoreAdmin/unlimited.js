@@ -8,8 +8,8 @@ import { strict as assert } from 'assert'
 import {PRIME_ROUND} from '../config.js'
 assert(!PRIME_ROUND);
 
-//import { initializeApp } from 'firebase-admin'
-import { default as admin } from 'firebase-admin'
+//import { initializeApp } from 'firebase-admin/app'    // modular API (in alpha)
+import { default as admin } from 'firebase-admin'     // current stable API
 
 import {FIRESTORE_HOST, projectId} from '../config.js'
 

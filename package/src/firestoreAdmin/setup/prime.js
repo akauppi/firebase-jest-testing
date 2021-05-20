@@ -10,12 +10,13 @@ import { strict as assert } from 'assert'
 import { PRIME_ROUND, FIRESTORE_HOST } from '../../config.js'
 assert(PRIME_ROUND);
 
-//import { initializeApp } from 'firebase-admin'    // for "modular API" #later
+//import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
 
 // To successfully load 'firebase-admin' (9.x), you DO IT PRECISELY LIKE HERE!
 //
 //    import { default as admin } from 'firebase-admin'
-//    ...later:   admin.initializeApp()
+//    ...later:
+//    admin.initializeApp()
 //
 // DO NOT:
 //    - spread the 'admin' open (not in module root; not within functions):
@@ -23,9 +24,10 @@ assert(PRIME_ROUND);
 //        const { initializeApp } = admin   // DOES NOT WORK. Gives "Cannot read property 'INTERNAL' of undefined"
 //      <<
 //
-// The official "ES2015" way of "import * as admin from ..." does not work with native ES modules (likely only for bundlers).
+// The official "ES2015" way of "import * as admin from ..." does not work with native ES modules.
 //
-import { default as admin } from 'firebase-admin'
+//import admin from 'firebase-admin'; const initializeApp = admin.initializeApp;
+import { default as admin } from 'firebase-admin'   // WORKS
 
 // Note: 'wipe' must not import the project id (it's not set at import time).
 //
