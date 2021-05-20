@@ -67,11 +67,6 @@
       "firebase": [
         "Needed for testing the 'httpsCallable's. (hopefully able to use 9.x beta soon)"
       ]
-    },
-    "devDependencies": {
-      "REMOVE @firebase/{app|firestore}": [
-        "Not sure why these are needed - just refering to 'file:package' and having it installed isn't enough. :S"
-      ]
     }
   }
 }
