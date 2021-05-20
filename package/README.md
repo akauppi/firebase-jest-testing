@@ -4,6 +4,8 @@
 This README is visible on the npm package page: https://www.npmjs.com/package/firebase-jest-testing
 -->
 
+[![install size](https://packagephobia.com/badge?p=firebase-jest-testing@beta)](https://packagephobia.com/result?p=firebase-jest-testing@beta)
+
 Tools for testing Firebase backend features, using Jest.
 
 <img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/master/package/images/tin-can-alpha.jpg" width="350" />
