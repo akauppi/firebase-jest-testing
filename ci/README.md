@@ -259,9 +259,9 @@ Cloud Build > `Triggers` > `Create Trigger`
 
 Something like this:
 
->![](.images/trigger-sample.png)
+>![](.images/edit-trigger.png)
 
-Note: The intention is not to give a 100% working set of properties.
+Note: The above is just a sample. Study each choice in turn, and make your own decisions.
 
 ## Manual run
 
@@ -270,26 +270,23 @@ You can trigger new runs (say, for debugging) by the `Run` button under Cloud Bu
 >![](.images/run-trigger.png)
 
 
+## Where are we now?
+
+
+
 ## CI/CD
 
 The author's intention is that the following would happen:
 
-- When someone pushes changes to `master` (or merges a PR to it), and if the changes have to do with `packages/backend/**` (except for `*.md` and documentation images),
-  - `npm test` would need to pass, in that folder
-  - `npm deploy` would automatically be run; keeping the cloud backend always on-par with `master`
+- When someone pushes changes to `master` or merges a PR to it - except for documentation images,
+  - `npm test` would need to pass
 
-If either of these fails, such a push would fail.
+If the tests fail, such a push would fail.
 
 - When someone creates a PR that targets `master`, and (..same conditions on source as above..),
   - `npm test` would need to pass
 
 If that fails, creating such a PR would fail.
-
----
-
-...and the same, with `packages/app/` and `packages/app-deploy-ops`, with slight modifications.
-
-Note that pushing changes to `packages/app` should trigger deployment, even if the deployment harness (`packages/app-deploy-ops`) is unchanged.
 
 
 ## Maintenance

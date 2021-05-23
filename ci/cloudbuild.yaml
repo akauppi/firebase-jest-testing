@@ -41,6 +41,6 @@ steps:
 #
 # Takes:
 #   local runs:   1m16s, 1m22s
-#   CI:           ...
+#   CI:           1m42s
 #
 timeout: 240s
