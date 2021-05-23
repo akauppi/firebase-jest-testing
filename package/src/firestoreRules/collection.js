@@ -41,6 +41,8 @@ function collection(collectionPath) {   // string => { as: ... }
   };
 }
 
+asdasdsa
+
 function documentAs(uid, documentPath) {   // (string, string) => { get, set, delete }
 
   return {
