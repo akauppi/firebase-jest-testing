@@ -272,6 +272,60 @@ You can trigger new runs (say, for debugging) by the `Run` button under Cloud Bu
 
 ## Where are we now?
 
+The CI pipeline is setup up.
+
+### Pull Requests
+
+Let's make a Pull Request and see how it shows in GitHub.
+
+```
+$ git checkout -b temp-230521
+
+# edit some change; eg. add white space to non-document file
+
+$ git commit -m "testing CI"
+
+$ git push --set-upstream origin temp-230521
+```
+
+Go to [GitHub](https://github.com/akauppi/firebase-jest-testing).
+
+Create a pull request with the button there, mentioning the recent push.
+
+![](.images/github-pr-checks-pass.png)
+
+>When taking the shot, the tests had immediately passed. Seems if you do manual runs, and nothing changes, those are remembered by the PR handling. That's cool. 🧊
+
+Make a breaking change that would cause a test to fail.
+
+```
+$ git commit -m "break test"
+$ git push
+```
+
+The GitHub PR page should show this:
+
+![](.images/github-pr-processing.png)
+
+...turning into this:
+
+![](.images/github-pr-failed.png)
+
+Note that the "Merge pull request" button is still available, though not highlighted.
+
+>`#help`: The author does not know, how to disallow merges completely. If you do, please let him know.
+
+
+### Manual pushes
+
+Pushing changes to `master` manually should also run the CI, and fail if the tests fail. Let's try it!
+
+>If you didn't merge the PR above, you can use the same branch.
+
+```
+
+
+
 
 
 ## CI/CD
