@@ -1,0 +1,50 @@
+#
+# .gcloudignore
+#
+# Defines the files *not* sent to Cloud Build.
+#
+# Note:
+#   We could go with the default (that is built by '.gitignore' files), but there are some other, unnecessary paths that
+#   don't need to be in the build.
+#
+# List files that would be sent:
+#   <<
+#     # in project root
+#     $ gcloud meta list-files-for-upload
+#   <<
+#
+
+# Default (follow the '.gitignore's):
+#
+.gcloudignore
+.git
+.gitignore
+.npmignore
+#!include:.gitignore
+
+# ^-- Note: '#!include' is a command; not a comment!
+
+# No need for submodules
+/**/.gitmodules
+
+# Global '.gitignore' (of the author); not observed by Cloud Build defaults
+#
+/.idea/
+.DS_Store
+
+/ci/
+
+# Others irrelevant for the build
+#
+/**/.images/
+*.md
+.editorconfig
+.npmrc
+
+*.disabled
+*.delme
+
+# Cruft
+/body-*.json
+/body*.json
+/curl.sh

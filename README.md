@@ -142,6 +142,15 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 >Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm run ci` while the emulator is running. Shut it down by Ctrl-C.
 
 
+## CI setup
+
+- Changes to `master` (direct push or merge):
+
+   Google Cloud Build runs `npm test`, allows merge only if test pass.
+
+More details in [`ci/README`](ci/README.md).
+
+
 ## Other docs
 
 - [Approach](APPROACH.md)
