@@ -4,15 +4,17 @@
 This README is visible on the npm package page: https://www.npmjs.com/package/firebase-jest-testing
 -->
 
+[![install size](https://packagephobia.com/badge?p=firebase-jest-testing@beta)](https://packagephobia.com/result?p=firebase-jest-testing@beta)
+
 Tools for testing Firebase backend features, using Jest.
 
-![](images/tin-can-alpha.jpg)
+<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/master/package/images/tin-can-alpha.jpg" width="350" />
 
 <!--
 <small><i>Image by A.Kauppi, CC by Attribution</small>
 -->
 
-`firebase-jest-testing` offers:
+Offers:
 
 - 🥫Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate!
 
@@ -66,15 +68,20 @@ See the [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package
 
 ### Reference documentation
  
-The contents are described in [Writing tests](./Writing%20tests.md):
+The contents are described in [Writing tests](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md) (GitHub `HEAD`):
 
-- Testing Security Rules
-- Testing Cloud Functions
-   - events
-   - callables
-- Priming with JSON data
-- Why immutability matters
-  - A bit about implementation
+- [Testing Security Rules](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-security-rules)
+- Testing Cloud Functions [events](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-cloud-functions-events) and [callables](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-cloud-functions-callables)
+- [Priming with JSON data](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#priming-with-json-data)
+- [Why immutability matters](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#why-immutability-matters-and-a-bit-about-implementation) ..and a bit about [implementation](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#implementation-details)
+
+<!-- Editor's note:
+Did not find a way to link from 'npmjs.org' `README` to the `Writing tests.md` within the same published package.
+
+The only solutions are:
+- linking to another page (maybe keep by versions)
+- bring all that text here?
+-->
 
 ## Support
 

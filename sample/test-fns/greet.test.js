@@ -1,9 +1,7 @@
 /*
 * sample/test-fns/greet.test.js
 */
-import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
-
-function fail(msg) { throw new Error(msg); }    // Jest doesn't offer one
+import { test, expect, describe } from '@jest/globals'
 
 import { httpsCallable } from 'firebase-jest-testing/firebaseClientLike'
 

@@ -7,7 +7,6 @@
 */
 const functions = require('firebase-functions');
 //import * as functions from 'firebase-functions';
-const HttpsError = functions.https.HttpsError
 
 const admin = require('firebase-admin');
 //import * as admin from 'firebase-admin';
@@ -25,11 +24,11 @@ exports.greet = regionalFunctions.https
   .onCall((msg, context) => {
 
     /*** KEEP
-    // If you need to signal errors, this is the way.
-    throw new HttpsError('unimplemented',   // from limited 'FunctionsErrorCode' catalogue
-      "message",
-      [1,2,3]
-    );***/
+    // If you need to signal errors, this is the way. Use codes only from 'FunctionsErrorCode' selection:
+    //  -> https://firebase.google.com/docs/reference/functions/providers_https_#functionserrorcode
+    //
+    throw new functions.https.HttpsError('unimplemented',"message",[...details]);
+    ***/
 
     return `Greetings, ${msg}.`;
   });

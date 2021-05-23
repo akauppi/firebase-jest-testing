@@ -1,0 +1,46 @@
+#
+# cloudbuild.yaml
+#
+# Builder image:
+#   https://github.com/akauppi/firebase-ci-builder
+#
+# Runtime environment:
+#   - Current directory is '/workspace'
+#   - env.variables (just some):
+#     PWD=/workspace
+#     HOME=/builder/home
+#
+# Triggers:
+#   - functional changes to 'master' branch
+#     - changes only affecting '.md' files are excluded
+#
+# Notes:
+#   - cannot use '<<: &anchor' and '<<: *anchor' YAML syntax in Cloud Build, it seems.
+
+substitutions:
+  _BUILDER_TAG: 9.11.0-node16-npm7
+
+steps:
+  # DEBUG
+  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+    entrypoint: bash
+    args: ['-c', 'env']
+
+  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+    entrypoint: npm
+    args: ['install']
+  #- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+  #  entrypoint: bash
+  #  args: ['-c', 'ls -al']
+  #
+  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+    entrypoint: npm
+    args: ['test']
+
+# --- Timeout
+#
+# Takes:
+#   local runs:   1m16s, 1m22s
+#   CI:           1m42s
+#
+timeout: 240s
