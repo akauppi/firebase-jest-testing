@@ -63,7 +63,7 @@
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
     ],
-    "dependencies": {
+    "dependencies_": {
       "firebase": [
         "Needed for testing the 'httpsCallable's. (hopefully able to use 9.x beta soon)"
       ]
