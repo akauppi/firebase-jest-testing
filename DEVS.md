@@ -20,7 +20,7 @@ The `rules-test` dataset is intended to be read-only, protected by the locks.
 If - for debugging this code - you ever need to see what the database contents became, just change the `--project` id in the `package.json` to `rules-test`:
 
 ```
-    "start": "firebase emulators:start --project=fns-test --config firebase.json --only functions,firestore",
+    "start": "firebase emulators:start --project=rules-test --config firebase.json --only functions,firestore",
 ```
 
 The default is `fns-test` so that functions tests would work.

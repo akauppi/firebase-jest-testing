@@ -255,6 +255,18 @@ Check the Issues if you have problems with the tool. Especially [Gets stuck duri
 
 ## Setting up Triggers
 
+We wish the CI to run tests when:
+
+- a new PR (or a change to an existing PR), targeting `master` is available.
+  
+  This will help us see, whether merging the changes is relatively safe.
+
+- someone pushes directly to `master`  
+
+>There are many ways to set up workflows for one's repo, and they are partly matters of taste. Use your own judgement with the repos you own. Eg. you can rule out direct pushes altogether, and require that everything goes through PRs.
+
+### Trigger for PRs
+
 Cloud Build > `Triggers` > `Create Trigger`
 
 Something like this:
@@ -263,18 +275,9 @@ Something like this:
 
 Note: The above is just a sample. Study each choice in turn, and make your own decisions.
 
-## Manual run
+We can test this trigger only by making a PR. 
 
-You can trigger new runs (say, for debugging) by the `Run` button under Cloud Build > `Triggers`:
-
->![](.images/run-trigger.png)
-
-
-## Where are we now?
-
-The CI pipeline is setup up.
-
-### Pull Requests
+#### Testing the trigger
 
 Let's make a Pull Request and see how it shows in GitHub.
 
@@ -316,32 +319,53 @@ Note that the "Merge pull request" button is still available, though not highlig
 >`#help`: The author does not know, how to disallow merges completely. If you do, please let him know.
 
 
-### Manual pushes
+## Manual pushes
 
-Pushing changes to `master` manually should also run the CI, and fail if the tests fail. Let's try it!
+The trigger we created only handles Pull Requests. Let's create another, similar one, to prevent direct pushes to `master` if they were to break the tests.
 
->If you didn't merge the PR above, you can use the same branch.
+Cloud Build > `Triggers` 
+
+Pick your earlier trigger > `⋮` > `duplicate`. 
+
+Edit the new trigger, changing:
+
+- name, e.g. to `firebase-jest-tester-push`
+- description
+- `Event` > `Push to a branch`
+
+### Testing
 
 ```
+$ git checkout master
+```
+
+Make any change to your repo - just adding white space to a `.js` file will do.
+
+```
+$ git commit -m "testing CI"
+$ git push
+```
+
+**Expected:**
+
+- CI would run, and the push only succeed if the tests pass
+
+**Actual:**
+
+- The push doesn't trigger the CI.
+
+><font color=red>Disappointing. What is wrong with the setup??</font>
 
 
+## Manual run
+
+For `Push to a branch` -kind of triggers, there is a `Run` button that allows you to trigger the CI runs, manually. This can be used for debugging the build pipeline.
+
+>![](.images/run-trigger.png)
 
 
-
-## CI/CD
-
-The author's intention is that the following would happen:
-
-- When someone pushes changes to `master` or merges a PR to it - except for documentation images,
-  - `npm test` would need to pass
-
-If the tests fail, such a push would fail.
-
-- When someone creates a PR that targets `master`, and (..same conditions on source as above..),
-  - `npm test` would need to pass
-
-If that fails, creating such a PR would fail.
-
+<!--
+tbd. describe better, merge with what is in 'DEVS.md'?
 
 ## Maintenance
 
@@ -350,27 +374,13 @@ If that fails, creating such a PR would fail.
 So each build you do (at least using the `gcloud builds submit` command) adds to a pile of sources.
 
 Pay it a visit some day.
-
-
-## Sum it up
-
-Setting up the *culture* of CI/CD and a working *delivery pipeline* may be the most important things to do *early on*. It should not be hard, and hopefully this page and folder has made it easy for you.
-
-Once you have the road clear, it's motivating to build the product. CI/CD's job is to *reduce the friction* of shipping working features to your audience, for receiving their feedback, in turn.
-
-That sounds important, right?
-
-Now, go build the product!! 💪🤩🎉
-
-
-
+-->
 
 
 ## References
 
 - [Cloud Build](https://cloud.google.com/build/) (GCP)
 - [Creating GitHub App triggers](https://cloud.google.com/build/docs/automating-builds/create-github-app-triggers) (Cloud Build docs)
-- [Deploying to Firebase](https://cloud.google.com/build/docs/deploying-builds/deploy-firebase) (Cloud Build docs)
 - [Building and debugging locally](https://cloud.google.com/build/docs/build-debug-locally) (Cloud Build docs)
 - `gcloud builds submit --help`
 

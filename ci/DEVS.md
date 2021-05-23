@@ -30,6 +30,12 @@ It has a `source/` folder with `.tgz` packages.
 
 If you have problems, check that the packaging is how you'd imagine it to be.
 
+<!-- tbd. Is there something one should do, to help the cleanup (eg. lifecycle settings for the storage bucket?)
+
+### Maintenance
+
+...
+-->
 
 ### Build logs
 
