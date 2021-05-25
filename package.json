@@ -19,7 +19,6 @@
     "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
     "start": "firebase emulators:start --project=fns-test --config firebase.json --only functions,firestore",
-    "start2": "firebase emulators:start --project=rules-test --config firebase.json --only functions,firestore",
     "test:fns:callables": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -35,38 +34,26 @@
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
-    "concurrently": "^6.0.2",
+    "concurrently": "^6.2.0",
     "firebase-admin": "^9.8.0",
     "firebase-jest-testing": "file:package",
     "firebase-tools": "^9.11.0",
-    "jest": "^27.0.0-next.9",
-    "jest-circus": "^27.0.0-next.9"
+    "jest": "^27.0.1"
   },
   "//": {
     "--experimental-vm-modules": [
-      "Needed for now (Aug 2020), to use native ES6 modules with Jest"
+      "Needed for now (May 2021, ~Aug 2020~), to use native ES6 modules with Jest"
     ],
-    "--detectOpenHandles speeds up tests": [
-      "This is weird, but consistent (Jest 26). If we keep it in 'npm test', the test execution is ~2x faster (as reported, per test).",
-      "However, chose to keep it only in tests which otherwise give a warning."
-    ],
-    "bunny": [
-      "If httpsCallables are among the emulated features, Cloud Functions needs a dummy project id. The value is used in",
+    "firebase emulators:...": [
+      "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
       "construction of the URL for the callable."
     ],
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
-      ">=13.2: native ES module support",
-      "",
-      "15.9.0..15.11 (maybe more) and Jest 27.0.0-next.3 have a love bug: https://github.com/nodejs/node/issues/37426"
+      ">=13.2: native ES module support"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
-    ],
-    "dependencies": {
-      "firebase": [
-        "Needed for testing the 'httpsCallable's. (hopefully able to use 9.x beta soon)"
-      ]
-    }
+    ]
   }
 }

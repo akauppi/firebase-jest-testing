@@ -10,13 +10,24 @@ Cloud Build ignores the files in the *root*'s `.gitignore` automatically but:
 
 For these reasons, the repo has its own `.gcloudignore`, to keep the transports small.
 
-### See what gets shipped
-
-At project root:
+## See what gets shipped
 
 ```
-$ gcloud meta list-files-for-upload
+$ gcloud meta list-files-for-upload ..
 ```
+
+## Semi-cloud builds
+
+This command is a middle ground between the local build and Cloud Build. 
+
+Runs a Cloud Build run, triggered from the command line.
+
+```
+$ gcloud builds submit ..
+```
+
+Maybe useful.
+
 
 ## Use of Cloud Storage 
 
@@ -49,20 +60,6 @@ gs://[PROJECT_NUMBER].cloudbuild-logs.googleusercontent.com/
 
 >*tbd. Where can I see Cloud Build logs?*
 
-
-## Semi-cloud builds
-
-This command is a middle ground between the local build and Cloud Build. If the author understands right, it:
-
-- runs a Cloud Build run, triggered from the command line
-
-```
-$ gcloud builds submit ..
-```
-
-It's cheap for you to use. No Docker instances; just ~0.5MB upload to the cloud, and you see the console output in real time.
-
-Maybe useful.
 
 ## Troubleshoot manually
 

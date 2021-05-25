@@ -7,8 +7,6 @@ export default {
   testEnvironment: 'jest-environment-node',
   transform: {},
 
-  testRunner: "jest-circus/runner",   // upcoming default for Jest (should be faster/better...)
-
   // Default is 5000. None of our tests take that long; fail fast.
   testTimeout: 2000,
 

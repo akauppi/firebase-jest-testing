@@ -39,16 +39,14 @@ The documentation is meant to be made generic, in a way that *other repos* can l
 
 This is a larger discussion, covered in:
 
-- [Building the Builder](./Building the Builder.md)
+- [Building the Builder](Building%20the%20Builder.md)
 
 You can either finish with this document and check it later, or drop in their right now. Your CI script will eventually need the builder to exist. 
 
-<!-- tbd. IS THIS EVEN NEEDED??
 ### GitHub: Enable App triggers
 
 - In [GitHub Marketplace](https://github.com/marketplace), enable the "Google Cloud Build" application
 - Add your GitHub repo to the Cloud Build app
--->
 
 
 ## Building locally (optional)
@@ -382,5 +380,6 @@ Pay it a visit some day.
 - [Cloud Build](https://cloud.google.com/build/) (GCP)
 - [Creating GitHub App triggers](https://cloud.google.com/build/docs/automating-builds/create-github-app-triggers) (Cloud Build docs)
 - [Building and debugging locally](https://cloud.google.com/build/docs/build-debug-locally) (Cloud Build docs)
+- [Building Node.js applications](https://cloud.google.com/build/docs/building/build-nodejs) (Cloud Build docs)
 - `gcloud builds submit --help`
 
