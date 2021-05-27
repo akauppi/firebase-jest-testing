@@ -9,10 +9,16 @@ import fetch from 'node-fetch'
 
 import { FUNCTIONS_URL, projectId } from '../config'
 
-// Note: The emulator hosts functions as if in the default region ('us-central1'), even when their code uses
-//    'functions.region'. ('firebase-tools' 9.10.2)
-//
-const functionsRegion = "us-central1";
+let functionsRegion = "us-central1";
+
+/*
+* Set the region for emulation.
+*
+* Call this before 'httpsCallable' if your functions are not available in the Firebase default ("us-central1") region.
+*/
+function setRegion(region) {    // (string) => ()
+  functionsRegion = region;
+}
 
 /*
 * Call a Cloud Functions callable.
@@ -103,4 +109,4 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
   }
 }
 
-export { httpsCallable }
+export { setRegion, httpsCallable }

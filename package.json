@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "concurrently": "^6.2.0",
-    "firebase-admin": "^9.8.0",
+    "firebase-admin": "^9.9.0",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.11.0",
+    "firebase-tools": "^9.12.0",
     "jest": "^27.0.1"
   },
   "//": {

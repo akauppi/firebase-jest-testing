@@ -238,7 +238,9 @@ This is just the normal `firebase-admin` `Firestore` handle, but the library:
 
 Cloud Functions provide [callable functions](https://firebase.google.com/docs/functions/callable) that are "similar but not identical to HTTP functions".
 
-To test the callables, `firebase-jest-testing` provides a `firebaseClientLike` module that exercises the emulated callable functions, using REST APIs. This means you won't need to bring in a 100+ MB JS client SDK for this sake.
+To test the callables, `firebase-jest-testing` provides a `firebaseClientLike` module that exercises the emulated callable functions, using REST APIs. The interface has been made to be close to that of the JS SDK, but it's not 100% the same.
+
+The sole purpose is to relieve your backend tests from needing to bring in a JS client SDK, nor configure one for emulators.
 
 Here's the whole sample test:
 
@@ -246,11 +248,17 @@ Here's the whole sample test:
 /*
 * sample/test-fns/greet.test.js
 */
-import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
+import { test, expect, describe, beforeAll } from '@jest/globals'
 
-import { httpsCallable } from 'firebase-jest-testing/firebaseClientLike'
+import { httpsCallable, setRegion } from 'firebase-jest-testing/firebaseClientLike'
+
+const region = "mars-central2";
 
 describe ('Cloud Function callables', () => {
+
+  beforeAll( () => {
+    setRegion(region)
+  });
 
   test ('returns a greeting', async () => {
     const msg = 'Jack';
@@ -263,9 +271,27 @@ describe ('Cloud Function callables', () => {
 });
 ```
 
+### The regions story?
+
+- Cloud Functions can be run in regions.
+- The Cloud Functions emulator is regions aware (since 9.12.0), and tests need to target a region that exists.
+- Your functions can use no regions (defaults to `us-central1`), one or multiple.
+- We don't want your Cloud Functions code to have any special arrangements for tests.
+- We cannot (without heuristics analysis of the Cloud Functions emulator logs) know in the tests, which regions your functions were set up to run on.
+
+These statements lead us to the following advice, with regard to testing callables:
+
+1. If you run Cloud Functions in the default region (even if you also run them in other regions), you don't need to do anything special. Calling `setRegion` is not needed.
+2. If you *only* run in non-default region(s), specify one such region in the `setRegion` call.
+
+This should cover most of the use cases.
+
+>Special case: If you have *different implementations* in different regions, and wish to test them separately, be in touch with the library authors. You can still use `setRegion` by calling it multiple times, but must take care of the execution order of such tests; `setRegion` influences *all* `httpsCallable` tests following it as a global setting. As a fallback, you can of course always use the normal JS SDK client instead of `firebaseClientLike` API.
+
+
 ### `httpsCallable`
 
-Again, the `httpsCallable` API has been *tried* to be kept as close to normal Firebase JS SDK as possible. It's not quite the same, though. 
+Like the Firebase JS SDK call of the same name, but without the first (`fns`) parameter.
 
 ```
 httpsCallable(name)   // (string) => ((data) => Promise of { data: any|undefined, error: object|undefined ))
@@ -273,11 +299,17 @@ httpsCallable(name)   // (string) => ((data) => Promise of { data: any|undefined
 
 Give the name of the callable, and then call the returned function with input data.
 
-Compared to the JS SDK, there is no initial `fns` parameter, because it's not needed.
-
 The returned `Promise` should work as the JS SDK client. If there are communication level problems (e.g. the named callable is not reached), the `Promise` rejects.
 
 >Note: Roles are not currently implemented, but can be. In such case, it would go like `httpsCallable(name).as({ uid: "you" })` - maybe.
+
+### `setRegion`
+
+Call this to set the region where your callables are running, under emulation. Only needed if one of the regions is not the Firebase default (`us-central1`), or if your implementations vary between regions, and you wish to separately test them.
+
+```
+setRegion(region)
+```
 
 
 ## Priming with JSON data

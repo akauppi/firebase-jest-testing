@@ -1,9 +1,11 @@
 # Changelog
 
-## 26-May-21 (0.0.3-beta.2)
+## 27-May-21 (0.0.3-beta.2; unpublished)
 
 - Updated to Jest 27.0.1
 - **CHANGE:** Moved `firebase-admin` to be an implementation detail (dependency instead of peer dependency)
+- Updated to `firebase-admin` 9.9.0, `firebase-tools` 9.12.0
+- **FIX:** Added `setRegion` for `firebaseClientLike` (callables testing), due to Cloud Functions Emulators in 9.12.0 being aware of regions.
 
 ## 19-May-21 (0.0.3-alpha.3)
 

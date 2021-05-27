@@ -1,11 +1,17 @@
 /*
 * sample/test-fns/greet.test.js
 */
-import { test, expect, describe } from '@jest/globals'
+import { test, expect, describe, beforeAll } from '@jest/globals'
 
-import { httpsCallable } from 'firebase-jest-testing/firebaseClientLike'
+import { httpsCallable, setRegion } from 'firebase-jest-testing/firebaseClientLike'
+
+const region = "mars-central2";
 
 describe ('Cloud Function callables', () => {
+
+  beforeAll( () => {
+    setRegion(region)
+  });
 
   test ('returns a greeting', async () => {
     const msg = 'Jack';
