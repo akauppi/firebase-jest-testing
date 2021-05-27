@@ -8,7 +8,7 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/master/package/images/tin-can-alpha.jpg" width="350" />
+<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/master/package/images/tin-can-beta.png" width="350" />
 
 <!--
 <small><i>Image by A.Kauppi, CC by Attribution</small>
@@ -21,10 +21,6 @@ Offers:
 - 🪶Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required. Add only `firebase-admin` and it's ready to be served!
 
 - ⚡️Fast. Optimized for multithreading and Node.js. You'll likely max out your cores.
-
-<!-- 
-- Compatible. You may use *either* 8.x or 9.x (beta) client JS SDK in your application project. More freedom.
--->
 
 - ‖‖‖ Security Rules are tested **immutably** - a passing write or delete operation does not change the data, and cannot disturb other tests. This is why we can parallelize the tests so much. No flaky tests.
 
