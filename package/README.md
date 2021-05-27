@@ -8,7 +8,7 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/master/package/images/tin-can-beta.png" width="350" />
+<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/0.0.3-beta.2/package/images/tin-can-beta.png" width="350" />
 
 <!--
 <small><i>Image by A.Kauppi, CC by Attribution</small>
