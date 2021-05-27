@@ -22,25 +22,27 @@ substitutions:
 
 steps:
   # DEBUG
-  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-    entrypoint: bash
-    args: ['-c', 'env']
+- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+  entrypoint: bash
+  args: ['-c', 'env']
 
-  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-    entrypoint: npm
-    args: ['install']
-  #- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-  #  entrypoint: bash
-  #  args: ['-c', 'ls -al']
-  #
-  - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-    entrypoint: npm
-    args: ['test']
+- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+  entrypoint: npm
+  args: ['install']
+- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+  entrypoint: npm
+  args: ['test']
 
 # --- Timeout
 #
 # Takes:
 #   local runs:   1m16s, 1m22s
-#   CI:           1m42s
+#   CI (default): 1m42s
+#   CI (e2-highcpu-8):
 #
 timeout: 240s
+
+options:
+  # "Requesting a high-CPU virtual machine may increase the startup time of your build."
+  # Cost is 0.016 USD / CPU min (no free tier)
+  machineType: 'E2_HIGHCPU_8'

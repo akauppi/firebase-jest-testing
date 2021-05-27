@@ -39,7 +39,7 @@ Only to be used with Jest 27.
 
 ## Requires
 
-- Jest 27 - [milestone](https://github.com/facebook/jest/milestone/12)
+- Jest 27
 
    The module is built with ES modules in mind. Transitioning your project to Jest 27 is likely more meaningful than forking and backporting this code to Jest 26 and CommonJS.
 
@@ -59,14 +59,15 @@ Add this to the `jest.config.js`:
 resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
 ```
 
->Note: This is needed because (as of 27.0.0-next.9), Jest resolver does not treat modules with `exports` appropriately. This is likely going to be fixed before Jest 27 is out.
+>Note: This is needed because (as of 27.0.1), Jest resolver does not treat modules with `exports` appropriately.
 
 
-### Sample project
+## Sample project
 
 See the [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package.json` and `sample` folder for practical examples.
 
-### Reference documentation
+
+## Reference documentation
  
 The contents are described in [Writing tests](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md) (GitHub `HEAD`):
 
@@ -80,8 +81,25 @@ Did not find a way to link from 'npmjs.org' `README` to the `Writing tests.md` w
 
 The only solutions are:
 - linking to another page (maybe keep by versions)
-- bring all that text here?
+- bring all that text here? (..which may be good? :) - then rename this "Writing tests" )
 -->
+
+## Troubleshooting
+
+Launching Jest 27 needs certain Node flags. Check `package.json`:
+
+```
+    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
+```
+
+Does your testing project have `type: "module"`.
+
+This tool hasn't been tested in a Common-JS / mixed ESM + Common-JS project. Let the author know if it works for you.
+
+
+## Projects using this
+
+- [GroundLevel-firebase-es](http://github.com/akauppi/GroundLevel-firebase-es) - a modern (ESM based) template for building, testing, deploying and operating web apps
 
 ## Support
 
