@@ -1,6 +1,6 @@
 # Changelog
 
-## 27-May-21 (0.0.3-beta.2; unpublished)
+## 27-May-21 (0.0.3-beta.2)
 
 - Updated to Jest 27.0.1
 - **CHANGE:** Moved `firebase-admin` to be an implementation detail (dependency instead of peer dependency)
