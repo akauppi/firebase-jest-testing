@@ -96,13 +96,6 @@ If we get that, it's easy to build a REST client around it. We can be the client
 >
 >Going to build a locking mechanism, likely using Firebase itself for it. Such extra code could be removed if immutability control ever gets to the official APIs.
 
-<!-- disabled (merged)
-## Jest #10325
-
-- [chore: convert jest-runtime to ESM](https://github.com/facebook/jest/pull/10325)
-
-This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
--->
 
 ## `node-fetch` v3
 
@@ -111,12 +104,13 @@ This may or may not mean that we can use more ESM, once Jest 27 is out. 🤞
 >Situation 13-May-21: 7 checkboxes (only) missing; `beta.9` is the latest release
 
 
+<!-- See KNOWN.md
 ## Deprecated `npm` dependencies
 
 - [Replace request with something better](https://github.com/jsdom/jsdom/issues/2792) (jsdom); affects JEST
 
-   - [ ] `jsdom` [#3092](https://github.com/jsdom/jsdom/pull/3092) <!-- seems to be closing in... 13-May-21 -->
-   - [ ] JEST using the updated `jsdom`
+   - [x] `jsdom` [#3092](https://github.com/jsdom/jsdom/pull/3092)
+   - [x] JEST using the updated `jsdom`
 
 - [npm WARN deprecated request@2.88.2: request has been deprecated](https://github.com/firebase/firebase-tools/issues/2215) (firebase-tools)
 
@@ -129,14 +123,7 @@ npm WARN deprecated har-validator@5.1.5: this library is no longer supported
 npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
 ...
 ```
-
-- `request-promise-native`
-
-  Comes via both JEST packages (via `jsdom`)
-- `har-validator`, `request`
-
-  Comes via both JEST packages (via `jsdom`) and `firebase-tools@9.10.2`
-
+-->
 
 ## Firebase emulators: passing Security Rules `debug()` info to the clients
 
@@ -160,3 +147,13 @@ Check if they acknowledge the issue and whether the schema should be as in the d
 A modular version of `firebase-admin` is currently [in alpha](https://modular-admin.web.app).
 
 Let's take it into use, once it's stable.
+
+
+## Jest requires `--experimental-vm-modules`
+
+- [Comment in Jest #9430](https://github.com/facebook/jest/issues/9430#issuecomment-851060583) states:
+
+   >After updating to jest v27 (and ts-jest v27), I no longer need `NODE_OPTIONS=--experimental-vm-modules` to run tests in a project with package.json type key set to "module".
+   
+For us, that is not true.
+
