@@ -151,9 +151,26 @@ Let's take it into use, once it's stable.
 
 ## Jest requires `--experimental-vm-modules`
 
-- [Comment in Jest #9430](https://github.com/facebook/jest/issues/9430#issuecomment-851060583) states:
+- [ ] [Roadmap for stabilization of vm modules](https://github.com/nodejs/node/issues/37648) (Node.js)
 
-   >After updating to jest v27 (and ts-jest v27), I no longer need `NODE_OPTIONS=--experimental-vm-modules` to run tests in a project with package.json type key set to "module".
+According to [Comment in Jest #9430](https://github.com/facebook/jest/issues/9430#issuecomment-851060583):
+
+>After updating to jest v27 (and ts-jest v27), I no longer need `NODE_OPTIONS=--experimental-vm-modules` to run tests in a project with package.json type key set to "module".
    
 For us, that is not true.
+
+>According to @SimenB, here are the issues that should probably be taken care of before we unflag and mark vm modules as stable
+
+Track the Node.js issue, and see when we can strip the parameters.
+
+
+## Jest should not require `--detectOpenHandles`
+
+- [ ] [Jest does not exit tests cleanly with Firebase Firestore, an older version does. (Potentially jsdom related, repro *is* included.)](https://github.com/facebook/jest/issues/11464) (Jest)
+
+Also in Firebase JS SDK: [Jest + @firebase/rules-unit-testing has unstopped asynchronous operations](https://github.com/firebase/firebase-js-sdk/issues/4884)
+
+  >Further digging showed that the gRPC BackoffTimeout was the cause; Jest exits as soon as it finishes. [...]
+  
+This is about any Firebase gRPC using client. All we can do is wait, and track the Jest issue...
 
