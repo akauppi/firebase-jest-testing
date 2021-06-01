@@ -13,6 +13,9 @@ import { default as admin } from 'firebase-admin'     // current stable API
 
 import {FIRESTORE_HOST, projectId} from '../config.js'
 
+/*
+* All the exposed methods operate on this one Firestore Admin app. This hides emulator configuration from the rest.
+*/
 const dbAdmin = (_ => {
   const adminApp = admin.initializeApp({
     projectId
@@ -72,6 +75,19 @@ async function createUnlimited(docPath,o) {   // (string, object) => Promise of 
   await dbAdmin.doc(docPath).create(o);
 }
 
+/*
+* Wait until a document no longer exists.
+*/
+function waitUntilDeleted(docPath) {    // (string) => Promise of ()
+
+  return new Promise( (resolve) => {
+    const unsub = dbAdmin.doc(docPath).onSnapshot( ss => {
+      if (!ss.exists) resolve();
+      unsub();
+    });
+  })
+}
+
 const dbUnlimited = dbAdmin;
 
 export {
@@ -79,6 +95,7 @@ export {
   setUnlimited,
   deleteUnlimited,
   createUnlimited,
+  waitUntilDeleted,
 
   // for functions tests
   dbUnlimited

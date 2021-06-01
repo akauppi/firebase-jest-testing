@@ -1,5 +1,10 @@
 # Changelog
 
+## ongoing (0.0.3-beta.3)
+
+- **[INTERNAL]** Global lock waiting no longer polls, but listens to the document changes. (clearer; shouldn't be a big thing...)
+
+
 ## 27-May-21 (0.0.3-beta.2)
 
 - Updated to Jest 27.0.1

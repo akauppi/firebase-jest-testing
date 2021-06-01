@@ -16,7 +16,7 @@
 import { strict as assert } from 'assert'
 import { performance } from 'perf_hooks'
 
-import { createUnlimited, deleteUnlimited } from '../firestoreAdmin/unlimited'
+import { createUnlimited, deleteUnlimited, waitUntilDeleted } from '../firestoreAdmin/unlimited'
 
 // Note: Node.js 15+ has this (but it's not worth abandoning Node.js 14, just yet).
 //      https://nodejs.org/api/timers.html#timers_timerspromises_settimeout_delay_value_options
@@ -179,10 +179,9 @@ async function claimGlobalLock() {  // () => Promise of ()
 
       retries = retries + 1;
 
-      // Firestore operations seem to take ~10..30ms and the env having the lock likely has multiple of them, queued.
-      // There's no point in pinging the lock doc too frequently.
+      // Wait until the document is seen to have been removed. Then, try again.
       //
-      await soon(5);
+      await waitUntilDeleted(lockDoc);
     }
   }
 }
@@ -203,10 +202,6 @@ function trunc(ms) {    // (number) => number
 
   // Note: Don't use '.toFixed' because it returns a string
   //return ms.toFixed(1);
-}
-
-function soon(ms) {   // (int) => Promise of ()
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export {
