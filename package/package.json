@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -24,8 +24,7 @@
     "./firestoreAdmin": "./src/firestoreAdmin/index.js",
     "./firestoreAdmin/setup": "./src/firestoreAdmin/setup/index.js",
     "./firestoreRules": "./src/firestoreRules/index.js",
-    "./firebaseClientLike": "./src/firebaseClientLike/index.js",
-    "./jest": "./src/jest/eventually.js"
+    "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
     "node": "^14.3 || ^15 || ^16",

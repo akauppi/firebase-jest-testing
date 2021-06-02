@@ -4,8 +4,21 @@
 * Context:
 *   From tests
 */
-import { dbUnlimited } from "./unlimited.js"
+import {dbAdmin, eventually} from "./dbAdmin.js"
+
+/*
+* Note: Just doing 'const { collection, doc } = dbAdmin' does not work.
+*/
+function collection(path) {
+  return dbAdmin.collection(path);
+}
+
+function doc(path) {
+  return dbAdmin.doc(path);
+}
 
 export {
-  dbUnlimited
+  collection,
+  doc,
+  eventually
 }

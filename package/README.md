@@ -11,7 +11,7 @@ Tools for testing Firebase backend features, using Jest.
 <img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/0.0.3-beta.2/package/images/tin-can-beta.png" width="350" />
 
 <!--
-<small><i>Image by A.Kauppi, CC by Attribution</small>
+Can designed in Fusion 360, by A.Kauppi - https://a360.co/3fHTV9y
 -->
 
 Offers:
@@ -55,7 +55,7 @@ Add this to the `jest.config.js`:
 resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
 ```
 
->Note: This is needed because (as of 27.0.1), Jest resolver does not treat modules with `exports` appropriately.
+>Note: This is needed because the Jest 27 resolver does not treat modules with `exports` appropriately. Eventually, this will become unnecessary.
 
 
 ## Sample project
@@ -88,14 +88,10 @@ Launching Jest 27 needs certain Node flags. Check `package.json`:
     "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
 ```
 
-Does your testing project have `type: "module"`.
+Does your testing project have `type: "module"`? 
 
-This tool hasn't been tested in a Common-JS / mixed ESM + Common-JS project. Let the author know if it works for you.
+- This tool hasn't been tested in a Common-JS / mixed ESM + Common-JS project. Let the author know if it works for you.
 
-
-## Projects using this
-
-- [GroundLevel-firebase-es](http://github.com/akauppi/GroundLevel-firebase-es) - a modern (ESM based) template for building, testing, deploying and operating web apps
 
 ## Support
 

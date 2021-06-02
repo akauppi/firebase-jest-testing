@@ -1,5 +1,5 @@
 /*
-* src/firestoreClient/index.js
+* src/firebaseClientLike/index.js
 *
 * Context:
 *   Tests.

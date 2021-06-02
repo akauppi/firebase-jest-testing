@@ -2,8 +2,8 @@
 
 ## ongoing (0.0.3-beta.3)
 
-- **[INTERNAL]** Global lock waiting no longer polls, but listens to the document changes. (clearer; shouldn't be a big thing...)
-
+- **[REWORK]** Global lock waiting no longer polls, but listens to the document changes.
+- **[API CHANGE]** `eventually` returns a Promise; no longer a polling Jest extension (bye bye!!).
 
 ## 27-May-21 (0.0.3-beta.2)
 

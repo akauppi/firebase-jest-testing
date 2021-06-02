@@ -4,43 +4,12 @@
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
 */
-import { test, expect, describe, beforeAll, afterAll } from '@jest/globals'
-
-import { eventually } from 'firebase-jest-testing/jest'
+import { test, expect, describe } from '@jest/globals'
 
 import './matchers/toContainObject'
-import {dbUnlimited} from "firebase-jest-testing/firestoreAdmin";
+import { collection, eventually } from "firebase-jest-testing/firestoreAdmin"
 
-const collection = collPath => dbUnlimited.collection(collPath);
-
-// Skipping, since gives (not sure when this started):
-//  <<
-//     linking error, not in local cache
-//  <<
-//
 describe("userInfo shadowing", () => {
-
-  // During execution of the tests, collect changes to 'projects/1/userInfo/{uid}' here:
-  //
-  const shadow = new Map();   // { <uid>: { ... } }
-
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-  let unsub;
-
-  beforeAll( () => {
-    unsub = collection("projects/1/userInfo")
-      .onSnapshot(qss => {    // intention is enough (write to cache)
-        qss.forEach( qdss => {
-          //console.debug("Sniffed:", qdss);
-          shadow.set( qdss.id, qdss.data() );
-        })
-      });
-  });
-
-  afterAll( () => {
-    unsub();
-  });
 
   // Note: We don't declare 'async done => ...' for Jest. That is an oxymoron: only either 'done' or the end of an
   //    async/await body would resolve a test but not both.
@@ -51,20 +20,34 @@ describe("userInfo shadowing", () => {
       photoURL: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Dalton_Bill-edit.png"
     };
 
-    // Write in 'userInfo' -> causes Cloud Function to update 'projectC/{project-id}/userInfo/{uid}' -> ’shadow’ changes
-    //
+    // Write in 'userInfo' -> causes a Cloud Function to update 'projectC/{project-id}/userInfo/{uid}'
     await collection("userInfo").doc("abc").set(william);
 
-    await expect( eventually( _ => shadow.get("abc") ) ).resolves.toContainObject(william);
+    // Style 1:
+    //  - 'eventually' only passes when the right kind of object is there.
+    //
+    await expect( eventually("projects/1/userInfo/abc", o => o && shallowEquals(o,william)) ).resolves.not.toThrow();
+
+    // Style 2:
+    //  - 'eventually' passes on first valid doc, checking is done outside of 'expect'.
+    //
+    //await expect( eventually("projects/1/userInfo/abc") ).resolves.toContainObject(william);
   });
 
   test('Central user information is not distributed to a project where the user is not a member', async () => {
 
-    // Write in central -> should NOT turn up
+    // Write in 'userInfo' -> should NOT turn up in project 1.
     //
     await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
-    await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );    // should pass
-
-  }, 500 /*ms*/ );
+    await expect( eventually("projects/1/userInfo/xyz", o => !!o, 300 /*ms*/) ).resolves.toBeFalsy();
+  }, 600 /*ms*/ );
 });
+
+/*
+* Returns 'true' if the two objects have same values; shallow.
+*/
+function shallowEquals(o1,o2) {   // (obj,obj) => boolean
+  return Object.keys(o1).length === Object.keys(o2).length &&
+    Object.keys(o1).every(k => o1[k] === o2[k]);
+}

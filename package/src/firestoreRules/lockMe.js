@@ -16,7 +16,7 @@
 import { strict as assert } from 'assert'
 import { performance } from 'perf_hooks'
 
-import { createUnlimited, deleteUnlimited, waitUntilDeleted } from '../firestoreAdmin/unlimited'
+import {dbAdmin} from '../firestoreAdmin/dbAdmin'
 
 // Note: Node.js 15+ has this (but it's not worth abandoning Node.js 14, just yet).
 //      https://nodejs.org/api/timers.html#timers_timerspromises_settimeout_delay_value_options
@@ -158,16 +158,7 @@ async function claimGlobalLock() {  // () => Promise of ()
 
   let retries=0;
   while(true) {
-    const gotIt = await createUnlimited(lockDoc,{}).then( _ =>
-      true
-    )
-    .catch(async err => {
-      if (err.code === 6) {     //err.message.startsWith("6: ALREADY EXISTS:"
-        return false;
-      }
-      throw err;    // unknown exception
-    });
-
+    const gotIt = await tryCreate(lockDoc,{});
     if (gotIt) {
       weAreLocked_ASSERT = true;
       return;
@@ -192,9 +183,47 @@ async function releaseGlobalLock() {
 
   const t0rel = performance.now();
 
-  await deleteUnlimited(lockDoc);
+  await dbAdmin.doc(lockDoc).delete();
 
   //console.debug(`Releasing took: ${ trunc(performance.now() - t0rel) }ms`);   // 15.3, 21.8, 85, 113
+}
+
+/*
+* Try to create a document, atomically.
+*
+* Returns 'true' if succeeded; 'false' if the document already exists.
+*/
+async function tryCreate(docPath, o) {   // (string, object) => Promise of Boolean
+
+  // "Creates a document referred to by this 'DocumentReference' with the provided object values. The write fails
+  // if the document already exists."
+  //
+  const ret = await dbAdmin.doc(docPath).create(o).then( _ =>
+    true
+  )
+  .catch(async err => {
+    if (err.code === 6) {   // { code: 6, message: "6 ALREADY_EXISTS: entity already exists: [...]" }
+      return false;
+    }
+    throw err;    // unknown exception
+  });
+
+  return ret;
+}
+
+/*
+* Wait until a document no longer exists.
+*
+* Note: Not using 'eventually' at least as long as its API is in flux (also, we don't need a timeout).
+*/
+function waitUntilDeleted(docPath) {    // (string) => Promise of ()
+
+  return new Promise( (resolve) => {
+    const unsub = dbAdmin.doc(docPath).onSnapshot( ss => {
+      if (!ss.exists) resolve();
+      unsub();
+    });
+  })
 }
 
 function trunc(ms) {    // (number) => number

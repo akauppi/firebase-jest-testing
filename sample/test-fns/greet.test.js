@@ -8,7 +8,6 @@ import { httpsCallable, setRegion } from 'firebase-jest-testing/firebaseClientLi
 const region = "mars-central2";
 
 describe ('Cloud Function callables', () => {
-
   beforeAll( () => {
     setRegion(region)
   });

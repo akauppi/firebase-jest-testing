@@ -2,58 +2,55 @@
 
 ## One-stop shop
 
-The user of the library is not expected to know about `firebase-admin` or Firebase JS SDK details. We do follow those programming models as closely as it makes sense, but don't expose either one directly to the tests.
+The user of the library is not expected to know about `firebase-admin` or Firebase JS SDK details. We do follow the `firebase-admin` API as closely as it makes sense, or leak aspects of it in the implementation, but don't expect the user to need to read the corresponding documentation, to be able to create tests.
 
-If the test developer wants, they can use `firebase-admin` or `firebase` JS SDK in their tests, for sure.
+If the test developer wants, they can bring in `firebase-admin` or `firebase` JS SDK into their tests, but they need to take care of the configuration, in that case.
 
->The version of `firebase-admin` is constrained by our peer dependency. The client JS SDK is free to choose, since we don't use one (especially handy during the transition from 8.x to 9.x or later such incompatibile version bumps).
+>Note: The version of `firebase-admin` in the parent application is constrained by our (semi-internal) use of it. This matters especially within the transition from 9.x to "modular" Node.js admin library. The client JS SDK is free to choose, since we don't use one (but rely on REST APIs).
 
 
 ## Where to prime the data
 
-There are two ways that both work. Kind of. 
+This is very self-evident, in hindsight.
 
-In the development, we used both for a while, then settled for B. Let's see, why.
+During development, functions tests data was primed *at the launch of the emulator*. 
 
-|||
-|---|---|
-|A. Prime at service launch|In this case, priming the data is done immediately after launching the Firebase emulators, from `package.json`.
-|B. Prime as part of the tests|Tests are in charge of priming the database (clean & re-populate) before executing tests.|
+Now, tests themselves prime the data as part of their setup. This means:
 
-B is better, because of two things:
+- running tests is consistent - they always have the same initial dataset
+- one can change the dataset (this happens rarely, but..) and not need to restart the emulators
 
-- The dataset may be changed. In such a case, in case A one would need to restart the emulators, whereas in B, things just work. Less surprises is good.
-- No left-overs. If tests make changes to the dataset, such would accumulate and may cause tests to unexpectedly fail. 
-
-It's best to prime again, each time tests are run.
-
->Note: This aspect is self-evident when claimed, still not necessarily noticed since we change the primed data rather infrequently.
+You probably should stick with the setup shown in the "sample" project.
 
 
-## The project id
+## Where to set the project id(s)
 
-><font color=red>This gets redone! We'll drop the `GCLOUD_PROJECT` and set an internal env.var. in `prime`, instead! #17</font>
+This was an important bit to help keep the code simple!
 
-This was an important bit to help keep the code simple.
+JEST provides additional complexity (for a reason) by running different test suites in separate Node.js contexts. Also the Global Setup stage is separate from these contexts, and communication between the setup and tests must happen either via:
 
-JEST provides additional complexity (for a reason!) by running different test suites in separate Node contexts. Also the Global Setup stage is separate from these contexts, and thus communication between the setup and tests must happen either via:
-
-- a database (priming)
+- a database (eg. priming)
 - file system
 - environment variables
 
-When tests run, a certain suite always has just one project id. It can be treated as a constant, and imported statically (which simplified code tremendously).
+When tests *run*, a certain suite always has just one project id. It can be treated as a constant, and imported statically.
 
-The `GCLOUD_PROJECT` env.var. was picked, because Firebase `firebase emulators:exec` already sets it.[^1]
+The eventual pattern became:
 
-`test-fns` expects `GCLOUD_PROJECT` to be set in `package.json`, for launching the JEST tests.
+1. The tests provide an opaque, lower case project id when calling `prime`:
 
-Another approach is shown in the `test-rules`, where the Global Setup sets `GCLOUD_PROJECT` to a certain value. Changes to the env.vars in this way are present in the sub-processes that subsequently run the test suites.
+   ```
+   const projectId = "fns-test";
+   
+   const setup = async _ => {
+     await prime(projectId, docs);
+   }
+   ```
 
-Both ways are fine, and it is up to the test developer to prefer one over the other. 
+2. `prime` uses it for itself, but also sets the `PROJECT_ID` env.var. for the clients
+3. When tests run, `config.js` reads the project id from `PROJECT_ID`
 
-[^1]: A lame excuse; the name could be anything. But it stuck...
-
+The name of the env.var. is completely internal to the implementation. It's nice that the test setup provides the project id to use, since those matter also for launching the emulators (selects, which project's data is shown in the emulator UI).
 
 ## Firebase vs. our approach?
 

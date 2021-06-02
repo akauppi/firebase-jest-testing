@@ -1,7 +1,7 @@
 /*
 * src/firestoreRules/immutableCloak.js
 */
-import { getUnlimited, setUnlimited, deleteUnlimited } from '../firestoreAdmin/unlimited'
+import { dbAdmin } from '../firestoreAdmin/dbAdmin'
 import { claimLock } from './lockMe'
 
 /*
@@ -24,9 +24,9 @@ async function immutableCloak(docPath, op) {   // (string?, () => Promise of tru
 
     if (docPath) {
       if (was) {
-        await setUnlimited(docPath,was);
+        await dbAdmin.doc(docPath).set(was);
       } else {
-        await deleteUnlimited(docPath);
+        await dbAdmin.doc(docPath).delete();
       }
     }
 
@@ -43,6 +43,16 @@ async function withinLock(f) {    // (() => Promise of x) => Promise of x
   finally {
     release();    // free running tail
   }
+}
+
+/*
+* What's currently in a certain Firestore path?
+*/
+async function getUnlimited(docPath) {  // (string) => Promise of undefined|object
+
+  const dss = await dbAdmin.doc(docPath).get();   // DocumentSnapshot
+  return dss.data();
+  // "Retrieves all fields in the document as an Object. Returns 'undefined' if the document doesn't exist."
 }
 
 export {
