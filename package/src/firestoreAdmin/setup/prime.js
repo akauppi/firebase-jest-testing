@@ -14,20 +14,17 @@ assert(PRIME_ROUND);
 
 // To successfully load 'firebase-admin' (9.x), you DO IT PRECISELY LIKE HERE!
 //
-//    import { default as admin } from 'firebase-admin'
-//    ...later:
-//    admin.initializeApp()
-//
 // DO NOT:
-//    - spread the 'admin' open (not in module root; not within functions):
-//      <<
-//        const { initializeApp } = admin   // DOES NOT WORK. Gives "Cannot read property 'INTERNAL' of undefined"
-//      <<
+//    - spread the 'admin' open (not in module root; not within functions).
+//        >> const { initializeApp } = admin    // gives "Cannot read property 'INTERNAL' of undefined"
+//    - assign to a value
+//        >> const initializeApp = admin.initializeApp;   // ..same error
 //
 // The official "ES2015" way of "import * as admin from ..." does not work with native ES modules.
 //
 //import admin from 'firebase-admin'; const initializeApp = admin.initializeApp;
-import { default as admin } from 'firebase-admin'   // WORKS
+import { default as admin } from 'firebase-admin';   // WORKS
+function initializeApp(a,b) { return admin.initializeApp(a,b) }
 
 // Note: 'wipe' must not import the project id (it's not set at import time).
 //
@@ -75,7 +72,7 @@ async function prime(projectId, data) {    // ({ <docPath>: { <field>: <value> }
 * Note: Do not merge this code with 'getUnlimited'. This one works in the Global
 */
 async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
-  const appAdmin = admin.initializeApp({
+  const appAdmin = initializeApp({
     projectId
   }, `prime-${Date.now()}`);    // unique from other "apps"
 

@@ -9,7 +9,8 @@ import {PRIME_ROUND} from '../config.js'
 assert(!PRIME_ROUND);
 
 //import { initializeApp } from 'firebase-admin/app'    // modular API (in alpha)
-import { default as admin } from 'firebase-admin'     // current stable API
+import { default as admin } from 'firebase-admin';    // stable API
+function initializeApp(a,b) { return admin.initializeApp(a,b) }
 
 import {FIRESTORE_HOST, projectId} from '../config.js'
 
@@ -17,7 +18,7 @@ import {FIRESTORE_HOST, projectId} from '../config.js'
 * All the exposed methods operate on this one Firestore Admin app. This hides emulator configuration from the rest.
 */
 const dbAdmin = (_ => {
-  const adminApp = admin.initializeApp({
+  const adminApp = initializeApp({
     projectId
   }, `unlimited-${ Date.now() }`);   // unique name keeps away from other "apps" (configurations, really); btw. would be nice if Firebase APIs had nameless "apps" easier.
 
