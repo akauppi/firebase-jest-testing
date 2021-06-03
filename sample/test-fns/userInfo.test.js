@@ -40,8 +40,8 @@ describe("userInfo shadowing", () => {
     //
     await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
-    await expect( eventually("projects/1/userInfo/xyz", o => !!o, 300 /*ms*/) ).resolves.toBeFalsy();
-  }, 600 /*ms*/ );
+    await expect( eventually("projects/1/userInfo/xyz", o => !!o, 300 /*ms*/) ).resolves.toBeUndefined();
+  }, 9999 /*ms*/ );
 });
 
 /*

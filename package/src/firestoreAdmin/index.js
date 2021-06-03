@@ -4,7 +4,7 @@
 * Context:
 *   From tests
 */
-import {dbAdmin, eventually} from "./dbAdmin.js"
+import {dbAdmin, eventually, listener_EXP} from "./dbAdmin.js"
 
 /*
 * Note: Just doing 'const { collection, doc } = dbAdmin' does not work.
@@ -20,5 +20,7 @@ function doc(path) {
 export {
   collection,
   doc,
-  eventually
+  eventually,
+  //
+  listener_EXP
 }
