@@ -37,8 +37,8 @@
     "concurrently": "^6.2.0",
     "firebase-admin": "^9.9.0",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.12.0",
-    "jest": "^27.0.3"
+    "firebase-tools": "^9.12.1",
+    "jest": "^27.0.4"
   },
   "//": {
     "--experimental-vm-modules": [
