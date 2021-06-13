@@ -4,7 +4,7 @@
 * Context:
 *   From tests
 */
-import {dbAdmin, eventually, listener_EXP} from "./dbAdmin.js"
+import {dbAdmin, eventually, preheat_EXP} from "./dbAdmin.js"
 
 /*
 * Note: Just doing 'const { collection, doc } = dbAdmin' does not work.
@@ -22,5 +22,5 @@ export {
   doc,
   eventually,
   //
-  listener_EXP
+  preheat_EXP
 }

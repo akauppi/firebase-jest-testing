@@ -197,3 +197,7 @@ Solutions could be:
 
    This would be less elegant but suffice as a work-around.
  
+ 
+## Firebase Emulators: Cloud Functions does not pre-heat the emulated functions
+
+- [ ] [Functions emulator needs pre-heating - slower test times on first test run](https://github.com/firebase/firebase-tools/issues/3488)

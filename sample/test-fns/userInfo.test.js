@@ -4,12 +4,19 @@
 * Test that '/projectsC/.../userInfoC' gets updated, by cloud functions, when the global '/userInfoC' changes (if
 * users are in the project).
 */
-import { test, expect, describe } from '@jest/globals'
+import { test, expect, describe, beforeAll } from '@jest/globals'
 
 import './matchers/toContainObject'
-import { collection, eventually } from "firebase-jest-testing/firestoreAdmin"
+import { collection, eventually, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
 
 describe("userInfo shadowing", () => {
+
+  // Have this, to move ~320ms of test execution time away from the reports (shows recurring timing). To show first
+  // (worst) timing, don't do this.
+  //
+  beforeAll( () => {
+    preheat_EXP("projects/1/userInfo");
+  })
 
   // Note: We don't declare 'async done => ...' for Jest. That is an oxymoron: only either 'done' or the end of an
   //    async/await body would resolve a test but not both.
