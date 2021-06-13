@@ -135,16 +135,11 @@ I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/fire
 - [ ] Maybe move the matter to [firebase-tools](https://github.com/firebase/firebase-tools/issues) if making it takes time (it's currently in wrong place since not a matter for the JS client)
 
 
-## Firebase docs: return schema of `httpsCallable` on the wire
-
-- [httpsCallable REST API interface uses field result instead of data - conflicts with the docs](https://github.com/firebase/firebase-tools/issues/3377)
-
-Check if they acknowledge the issue and whether the schema should be as in the docs.
-
-
 ## Modular `firebase-admin` (alpha)
 
 A modular version of `firebase-admin` is currently [in alpha](https://modular-admin.web.app).
+
+>The repo works nicely with it. But there's no major benefit over the 9.x one. 
 
 Let's take it into use, once it's stable.
 
@@ -153,13 +148,15 @@ Let's take it into use, once it's stable.
 
 - [ ] [Roadmap for stabilization of vm modules](https://github.com/nodejs/node/issues/37648) (Node.js)
 
+<!-- hidden
 According to [Comment in Jest #9430](https://github.com/facebook/jest/issues/9430#issuecomment-851060583):
 
 >After updating to jest v27 (and ts-jest v27), I no longer need `NODE_OPTIONS=--experimental-vm-modules` to run tests in a project with package.json type key set to "module".
    
 For us, that is not true.
+-->
 
->According to @SimenB, here are the issues that should probably be taken care of before we unflag and mark vm modules as stable
+The [Jest docs](https://jestjs.io/docs/next/ecmascript-modules) mention that `--experimental-vm-modules` is needed.
 
 Track the Node.js issue, and see when we can strip the parameters.
 
@@ -174,3 +171,29 @@ Also in Firebase JS SDK: [Jest + @firebase/rules-unit-testing has unstopped asyn
   
 This is about any Firebase gRPC using client. All we can do is wait, and track the Jest issue...
 
+
+## Jest FR: tapping to the test timeout
+
+- [Expecting a Promise *not* to complete, in Jest
+](https://stackoverflow.com/questions/67822996/expecting-a-promise-not-to-complete-in-jest) (SO)
+
+This looks like a case not currently supported (Jest 27).
+
+Solutions could be:
+
+- [ ] ability to tap into the timeout, to turn it into pass/fail:
+
+   ```
+   beforeTimeout( () => {
+     // make the Promise resolve
+   })
+   ```
+   
+   If Jest were to provide this, they should allow the handler (above) to cause the Promise (that the test is waiting for) to resolve or reject, and *only then* truly time out.
+   
+   This would make sure that no Promise is left dangling.
+
+- [ ] ability to query the running test's timeout value (so we can wait less)
+
+   This would be less elegant but suffice as a work-around.
+ 

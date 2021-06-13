@@ -6,12 +6,8 @@
 * Forget about 'createDocument' and 'patch' - they don't support 'serverTimestamp' (and other such) sentinels (ehem,
 * "transforms" in the Firebase lingo). Also, 'commit' does what they do so there's no need for them.
 *
-* Documentation (lack of):
+* References:
 *
-*   The "transforms" side is greatly under-documented by Firebase. Here are the tidbits this code is based upon:
-*
-*   - SO question from 2018 (with one answer!):
-*     -> https://stackoverflow.com/questions/53943408/firestore-rest-api-add-timestamp
 *   - commit API
 *     -> https://firebase.google.com/docs/firestore/reference/rest/v1/projects.databases.documents/commit
 *     -> https://firebase.google.com/docs/firestore/reference/rest/v1/Write
@@ -60,9 +56,7 @@ async function commit_v1(token, writes) {   // (string|null, Array of Write) => 
   //    403 (Forbidden) with body (white space added for clarity):
   //      { "error": { "code": 403, "message": "\nfalse for 'create' @ L262", "status":"PERMISSION_DENIED" } }
 
-  // Emulator only provides 200 result (all 2xx would be success).
-  //
-  if (status === 200) {
+  if (status === 200) {   // no need to check 2xx
     return true;
 
   } else if (status === 403) {   // access denied
@@ -95,7 +89,6 @@ async function commit_v1(token, writes) {   // (string|null, Array of Write) => 
 */
 function writeGen(docPath, o, merge) {    // (string, object, boolean) => Write
 
-  debugger;
   // Process 'o', removing keys that carry a sentinel. Create a separate transforms object from them.
   //
   const [oRemains, transforms] = splitSentinels(o);
@@ -135,7 +128,6 @@ function writeDeleteGen(docPath) {    // (string) => Write
 
   // Note: We don't set a precondition for the document to exist (one could, using 'currentDocument').
 
-  console.debug("DELETE WRITE:", docPath);
   return {
     delete: `projects/${projectId}/databases/(default)/documents/${docPath}`
   }

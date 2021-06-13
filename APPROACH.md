@@ -52,6 +52,19 @@ The eventual pattern became:
 
 The name of the env.var. is completely internal to the implementation. It's nice that the test setup provides the project id to use, since those matter also for launching the emulators (selects, which project's data is shown in the emulator UI).
 
+
+## Immutability cloaking
+
+Immutability cloaking needs to know the original contents of the data.
+
+We tried a couple of approaches to this:
+
+- reading before each potentially mutating operation (takes 12..32 per operation)
+- passing the data from prime to cloak, via file system (unnecessarily burdens also runs not intended for testing Security Rules)
+
+.. before settling on reading the whole database at the loading of the immutability cloak module.
+
+
 ## Firebase vs. our approach?
 
 Firebase provides some npm modules to help with testing:

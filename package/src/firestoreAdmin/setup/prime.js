@@ -7,7 +7,7 @@
 *   JEST Global Setup
 */
 import { strict as assert } from 'assert'
-import { PRIME_ROUND, FIRESTORE_HOST } from '../../config.js'
+import {PRIME_ROUND, FIRESTORE_HOST} from '../../config.js'
 assert(PRIME_ROUND);
 
 //import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
@@ -26,8 +26,6 @@ assert(PRIME_ROUND);
 import { default as admin } from 'firebase-admin';   // WORKS
 function initializeApp(a,b) { return admin.initializeApp(a,b) }
 
-// Note: 'wipe' must not import the project id (it's not set at import time).
-//
 import { wipe } from './wipe.js'
 
 /*
@@ -69,7 +67,7 @@ async function prime(projectId, data) {    // ({ <docPath>: { <field>: <value> }
 /*
 * Do something, using a temporary admin access to Firestore.
 *
-* Note: Do not merge this code with 'getUnlimited'. This one works in the Global
+* Note: Do not merge this with 'dbAdmin.js'. This one works in the Global Setup.
 */
 async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise of () ) => Promise of ()
   const appAdmin = initializeApp({

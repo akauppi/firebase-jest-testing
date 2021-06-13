@@ -47,12 +47,24 @@ async function withinLock(f) {    // (() => Promise of x) => Promise of x
 
 /*
 * What's currently in a certain Firestore path?
+*
+* NOTE: Each read from Firestore takes 12..32 ms. (shaving them off made 'npm run test:rules:all' run in 4.0s instead of 5.0s!!)
 */
 async function getUnlimited(docPath) {  // (string) => Promise of undefined|object
 
   const dss = await dbAdmin.doc(docPath).get();   // DocumentSnapshot
   return dss.data();
   // "Retrieves all fields in the document as an Object. Returns 'undefined' if the document doesn't exist."
+}
+
+function __getUnlimited(docPath) {  // (string) => undefined|object
+
+  // 'docPath' we get is like "project/1" but the docs seem to have a preceding slash.
+  //
+  const tmp = docPath.startsWith('/') ? docPath : `/${docPath}`;
+
+  const v= stash.get(tmp);
+  return v;
 }
 
 export {

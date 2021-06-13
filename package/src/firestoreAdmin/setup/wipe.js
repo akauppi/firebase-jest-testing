@@ -9,6 +9,8 @@
 import { strict as assert } from 'assert'
 import fetch from 'node-fetch'
 
+// Note: project id is *not* available at import time; 'wipe' gets it as a parameter.
+
 import { FIRESTORE_HOST } from '../../config.js'
 
 /*

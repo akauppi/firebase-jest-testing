@@ -1,7 +1,6 @@
 /*
 * sample/test-rules/userInfoC.test.js
 */
-import { strict as assert } from 'assert'
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
 import { collection } from 'firebase-jest-testing/firestoreRules'
@@ -9,20 +8,17 @@ import { collection } from 'firebase-jest-testing/firestoreRules'
 describe("'/userInfo' rules", () => {
   let unauth_userinfoC, abc_userinfoC, def_userinfoC;
 
-  beforeAll( async () => {    // tbd. remove 'async' when all tests pass
+  beforeAll( () => {
     const coll = collection('userInfo');   // root collection
 
     unauth_userinfoC = coll.as(null);
     abc_userinfoC = coll.as({uid:'abc'});
     def_userinfoC = coll.as({uid:'def'});
-
-    assert(unauth_userinfoC && abc_userinfoC && def_userinfoC);
   });
 
   //--- UserInfoC read rules ---
 
   test('no-one should be able to read', () => Promise.all([
-
     expect( unauth_userinfoC.get("abc") ).toDeny(),   // unauthenticated
     expect( abc_userinfoC.get("abc") ).toDeny(),     // valid user (cannot read even one's own)
   ]));

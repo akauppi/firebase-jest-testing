@@ -82,10 +82,12 @@ The only solutions are:
 
 ## Troubleshooting
 
-Launching Jest 27 needs certain Node flags. Check `package.json`:
+Launching Jest 27 needs certain Node flags. See [ECMAScript Modules](https://jestjs.io/docs/next/ecmascript-modules) (Jest docs).
+
+In `package.json`:
 
 ```
-    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
+"test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
 ```
 
 Does your testing project have `type: "module"`? 

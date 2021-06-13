@@ -41,6 +41,17 @@ describe("userInfo shadowing", () => {
     await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
     await expect( eventually("projects/1/userInfo/xyz", o => !!o, 300 /*ms*/) ).resolves.toBeUndefined();
+
+    // Ideally:
+    //await expect( eventually("projects/1/userInfo/xyz") ).resolves.toBeUndefined()
+    //
+    //Within 'eventually', code would:
+    //  <<
+    //    beforeTimeout( () => { /*resolve the Promise with 'undefined'*/ } );
+    //  <<
+    //
+    // This would allow us to steer the wait by the Jest normal timeout parameter, instead of having two.
+
   }, 9999 /*ms*/ );
 });
 
