@@ -8,17 +8,23 @@
     "node": "^14.3 || ^16",
     "npm": ">= 7.7.0"
   },
+  "bin": {
+    "wait-for": "./tools/wait-for.js"
+  },
   "scripts": {
-    "test": "npm run ci",
+    "test": "npm run -s ci",
     "ci": "npm run ci:seq",
     "---": "",
-    "ci:seq": "firebase emulators:exec --project=fns-test --config firebase.json --only firestore,functions \"npm run --silent _ci_fns && npm run --silent _ci_rules\"",
+    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_seq\"",
+    "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
+    "//ci:seq": "firebase emulators:exec --project=fns-test \"npm run --silent _ci_fns && npm run --silent _ci_rules\"",
+    "ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_par\"",
+    "_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
+    "//ci:par": "firebase emulators:exec --project=fns-test \"npm run _ci_par_2\"",
     "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
-    "ci:par": "firebase emulators:exec --project=fns-test --config firebase.json --only firestore,functions \"npm run _ci_par_2\"",
-    "_ci_par_2": "concurrently -n test-fns,test-rules \"npm run _ci_fns\" \"npm run _ci_rules\"",
     "---  ": "",
-    "start": "firebase emulators:start --project=fns-test --config firebase.json --only functions,firestore",
+    "start": "firebase emulators:start --project=fns-test",
     "test:fns:callables": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -34,6 +40,7 @@
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
+    "@local/self": "file:.",
     "concurrently": "^6.2.0",
     "firebase-admin": "^9.10.0",
     "firebase-jest-testing": "file:package",
@@ -54,6 +61,11 @@
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
-    ]
+    ],
+    "devDependencies": {
+      "@local/self": [
+        "Allows us to use the 'bin' section to alias commands."
+      ]
+    }
   }
 }

@@ -17,3 +17,17 @@ These are due to:
 |`request`|`firebase-tools@9.12.0`|
 |`uuid`|`firebase-tools@9.12.0`, via `request` and `universal-analytics`|
 
+## "Unable to fetch project Admin SDK" -warning
+
+When launching the Emulators:
+
+```
+⚠  functions: Unable to fetch project Admin SDK configuration, Admin SDK behavior in Cloud Functions emulator may be incorrect.
+```
+
+This is because of [these lines](https://github.com/firebase/firebase-tools/blob/806479510cfb1328d8cfe9bb4a2a6e830d91ca61/src/emulator/adminSdkConfig.ts#L37-L40) and the fact that we're not using `demo-*` as the project id.
+
+The author feels that Firebase could shut up this warning, *if there is no active Firebase project*. That obviously makes a project id "fake".
+
+>The convention of `demo-` is a larger than Firebase (GCP) convention. It's great - but not necessarily something that needs to creep in to our user base. It's One More Magic Thing 🧙‍♀️to know.
+
