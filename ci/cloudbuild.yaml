@@ -18,7 +18,7 @@
 #   - cannot use '<<: &anchor' and '<<: *anchor' YAML syntax in Cloud Build, it seems.
 
 substitutions:
-  _BUILDER_TAG: 9.11.0-node16-npm7
+  _BUILDER_TAG: 9.12.1-node16-npm7
 
 steps:
   # DEBUG
