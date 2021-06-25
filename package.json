@@ -42,7 +42,6 @@
   "devDependencies": {
     "@local/self": "file:.",
     "concurrently": "^6.2.0",
-    "firebase-admin": "^9.10.0",
     "firebase-jest-testing": "file:package",
     "firebase-tools": "^9.14.0",
     "jest": "^27.0.5"
