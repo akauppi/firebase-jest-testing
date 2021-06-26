@@ -11,23 +11,25 @@ If the test developer wants, they can bring in `firebase-admin` or `firebase` JS
 
 ## Where to prime the data
 
+<!-- tbd. Consider removing this? -->
+
 This is very self-evident, in hindsight.
 
-During development, functions tests data was primed *at the launch of the emulator*. 
+During development, functions test data was primed *at the launch of the emulator*. 
 
 Now, tests themselves prime the data as part of their setup. This means:
 
 - running tests is consistent - they always have the same initial dataset
 - one can change the dataset (this happens rarely, but..) and not need to restart the emulators
 
-You probably should stick with the setup shown in the "sample" project.
+You probably should stick with this setup.
 
 
 ## Where to set the project id(s)
 
 This was an important bit to help keep the code simple!
 
-JEST provides additional complexity (for a reason) by running different test suites in separate Node.js contexts. Also the Global Setup stage is separate from these contexts, and communication between the setup and tests must happen either via:
+JEST provides additional complexity (for a reason) by running different test suites in separate Node.js contexts. The Global Setup stage is separate from these contexts, and communication between the setup and tests must happen either via:
 
 - a database (eg. priming)
 - file system
@@ -55,6 +57,10 @@ The name of the env.var. is completely internal to the implementation. It's nice
 
 ## Immutability cloaking
 
+<!-- can be removed, once we're stable with the read-all-database-at-import approach -->
+
+>Immutability cloaking means the act of making Firestore data look (to the tests) like it wouldn't change, when in fact it does.
+
 Immutability cloaking needs to know the original contents of the data.
 
 We tried a couple of approaches to this:
@@ -62,7 +68,7 @@ We tried a couple of approaches to this:
 - reading before each potentially mutating operation (takes 12..32 per operation)
 - passing the data from prime to cloak, via file system (unnecessarily burdens also runs not intended for testing Security Rules)
 
-.. before settling on reading the whole database at the loading of the immutability cloak module.
+.. before settling on reading the whole database at the loading of the immutability cloak module (not implemented, yet / Jun 2021).
 
 
 ## Firebase vs. our approach?
@@ -70,9 +76,9 @@ We tried a couple of approaches to this:
 Firebase provides some npm modules to help with testing:
 
 - `firebase-functions-test` described [here](https://firebase.google.com/docs/functions/unit-testing) (Firebase docs)
-- `@firebase/rules-unit-testing`[^2] described [here](https://firebase.google.com/docs/rules/unit-tests) (Firebase docs)
+- `@firebase/rules-unit-testing`[^1] described [here](https://firebase.google.com/docs/rules/unit-tests) (Firebase docs)
 
-[^2]: This was called `@firebase/testing`, until Aug 2020
+[^1]: This was called `@firebase/testing`, until Aug 2020
 
 These are both tools for unit testing. The first one tests Cloud Functions and the second access of Realtime Database or Cloud Firestore.
 
@@ -83,12 +89,10 @@ The approach taken by this repo differs from that provided by Firebase. We...
 3. prefer normal clients (or a similar API) over test specific APIs
 4. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
 
-For testing Cloud Functions, we use integration testing and normal JavaScript client instead of the `firebase-functions-test` library.
-
 For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase approach leans on snapshot-like binary files, instead.
 
-For testing Security Rules, our approach is derived from the Firebase `rules-unit-testing` library, but then enhanced eg. by making database access behave as immutable and not depending on a certain Firebase client - thus allowing the application developer to freely select between, say, 8.x and 9.x (beta).
+For testing Security Rules, our approach is originally derived from the Firebase `rules-unit-testing` library, but then enhanced by making database access behave as immutable, not depending on a certain Firebase client, and providing the allowed/denied test at the end of the line, for better readability.
 
-As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^3]
+As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^2]
 
-[^3]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.
+[^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.

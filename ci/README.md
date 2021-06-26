@@ -1,8 +1,8 @@
 # CI
 
-This folder contains the guidance for Cloud Build to automatically perform actions (eg. run tests), when the repo contents are being pushed to the server.
+The repos' CI is set up using Cloud Build. Tests are run for each PR targeting `master` or `next` branches.
 
-The documentation is meant to be made generic, in a way that *other repos* can link to us, for documentation, and only provide the `cloudbuild.yaml` within their particular repositories. 
+The CI is run in a particular GCP project (`ci-builder`) that the author has for this purpose.
 
 >Note: Commands in this document are intended to be executed in the `ci` folder.
 
@@ -10,38 +10,34 @@ The documentation is meant to be made generic, in a way that *other repos* can l
 
 - `gcloud` Google Cloud Platform CLI
 
+   <details><summary>Installation on macOS</summary>
    Follow [Installing Google Cloud SDK](https://cloud.google.com/sdk/docs/install)
 	
-	>Note: At least earlier, on macOS, it was best to run the `./google-cloud-sdk/install.sh` in the folder that would remain the install target. 
-	>
-	>The author has `gcloud` under `~/bin/google-cloud-sdk`.
+	After unpacking, move the folder to a permament location (author uses `~/bin/google-cloud-sdk`). The installation is on that directory only, and uninstalling means removing the directory.
 
    ```
    $ gcloud --version
-   Google Cloud SDK 341.0.0
+	Google Cloud SDK 343.0.0
 	...
    ```
 
-   Update by: 
-   
-   ```
-   $ gcloud components update
-   ```
+   Update by: `gcloud components update`
+	</details>
 
-- `docker`
-- GNU `make`
+   <details><summary>Installation on Windows 10 + WSL2</summary>
+   tbd.. `#contribute`
+   </details>
 
-<!-- whisper
->Note: We might switch `make` out, in favour of Bash scripts. `#later`
--->
+- Docker
 
-### Builder image pushed to a repository you have access to
+   Needed for building the builders.
 
-This is a larger discussion, covered in:
 
-- [Building the Builder](Building%20the%20Builder.md)
+### GCP: CI project, Builder image
 
-You can either finish with this document and check it later, or drop in their right now. Your CI script will eventually need the builder to exist. 
+- [Building the builder](Building%20the%20Builder.md)
+
+You can either finish with this document and check it later, or drop in their right now. Your CI script will eventually need the builder to exist.
 
 ### GitHub: Enable App triggers
 
@@ -49,7 +45,28 @@ You can either finish with this document and check it later, or drop in their ri
 - Add your GitHub repo to the Cloud Build app
 
 
-## Building locally (optional)
+## Building manually
+
+Make sure you are logged into the GCP project used for the Cloud Build.
+
+```
+$ gcloud config get-value project
+ci-builder
+```
+
+```
+$ gcloud builds submit ..
+```
+
+This packages the files (filtered by `../.gcloudignore`), ships them to Cloud Build, runs the build in the cloud, and streams the output to your terminal.
+
+It's a GREAT way to check builds when developing them. You don't need to commit changes to git until the builds work!
+
+>Side note: 
+>There is also a `cloud-build-local` tool that allows to run the whole build, locally. However, it's badly maintained (Jun 2021), slow, and needs restarting Docker every now and then. Avoid it.
+
+
+<!-- DEPRECATED: `cloud-build-local` is badly maintained, and not available with the way we recommend installing for Windows 10 + WSL2; disabled.
 
 There is a `cloud-build-local` tool that allows one to run Cloud Build scripts, locally. Let's try it!
 
@@ -249,19 +266,18 @@ Starting Step #3
 **Troubleshooting**
 
 Check the Issues if you have problems with the tool. Especially [Gets stuck during build](https://github.com/GoogleCloudPlatform/cloud-build-local/issues/79).
+-->
 
 
 ## Setting up Triggers
 
 We wish the CI to run tests when:
 
-- a new PR (or a change to an existing PR), targeting `master` is available.
+- a new PR (or a change to an existing PR), targeting `master` (or `next`) is available.
   
   This will help us see, whether merging the changes is relatively safe.
 
-- someone pushes directly to `master`  
-
->There are many ways to set up workflows for one's repo, and they are partly matters of taste. Use your own judgement with the repos you own. Eg. you can rule out direct pushes altogether, and require that everything goes through PRs.
+Deployment of versions to `npm` is left to be done manually.
 
 ### Trigger for PRs
 
@@ -295,8 +311,6 @@ Create a pull request with the button there, mentioning the recent push.
 
 ![](.images/github-pr-checks-pass.png)
 
->When taking the shot, the tests had immediately passed. Seems if you do manual runs, and nothing changes, those are remembered by the PR handling. That's cool. 🧊
-
 Make a breaking change that would cause a test to fail.
 
 ```
@@ -314,65 +328,29 @@ The GitHub PR page should show this:
 
 Note that the "Merge pull request" button is still available, though not highlighted.
 
->`#help`: The author does not know, how to disallow merges completely. If you do, please let him know.
 
+## Use of Cloud Storage (extra)
 
-## Manual pushes
+Cloud Build uses Cloud Storage (of the same project) to store files. The buckets look like this:
 
-The trigger we created only handles Pull Requests. Let's create another, similar one, to prevent direct pushes to `master` if they were to break the tests.
+>![](.images/cloud-storage-buckets.png)
 
-Cloud Build > `Triggers` 
+|bucket|file sizes|purpose|
+|---|---|---|
+|`artifacts.*/containers/images`|1..25 MB|(unknown)|
+|`*_cloudbuild/source/*.tgz`|~33 kB|source tarballs|
 
-Pick your earlier trigger > `⋮` > `duplicate`. 
+The storage requirements are minimal, but by default there's no lifecycle rule for these files, meaning they will be kept "forever".
 
-Edit the new trigger, changing:
+>Here is one benefit of keeping one's CI's running on a separate GCP project - all the storage buckets we see here are connected to CI/CD runs (and therefore easier to clean).
 
-- name, e.g. to `firebase-jest-tester-push`
-- description
-- `Event` > `Push to a branch`
+Either:
 
-### Testing
+- forget about this :)
+- visit it once a year, and remove the buckets totally
+- add lifecycle rules that remove aged stuff
 
-```
-$ git checkout master
-```
-
-Make any change to your repo - just adding white space to a `.js` file will do.
-
-```
-$ git commit -m "testing CI"
-$ git push
-```
-
-**Expected:**
-
-- CI would run, and the push only succeed if the tests pass
-
-**Actual:**
-
-- The push doesn't trigger the CI.
-
-><font color=red>Disappointing. What is wrong with the setup??</font>
-
-
-## Manual run
-
-For `Push to a branch` -kind of triggers, there is a `Run` button that allows you to trigger the CI runs, manually. This can be used for debugging the build pipeline.
-
->![](.images/run-trigger.png)
-
-
-<!--
-tbd. describe better, merge with what is in 'DEVS.md'?
-
-## Maintenance
-
->Cloud Build does not automatically delete contents in this bucket. To delete objects you're no longer using for builds, you can either set up lifecycle configuration on the bucket or manually delete the objects.
-
-So each build you do (at least using the `gcloud builds submit` command) adds to a pile of sources.
-
-Pay it a visit some day.
--->
+CI/CD older than a month are likely not ever needed (= 30 days and delete would be fine).
 
 
 ## References

@@ -3,6 +3,8 @@
 ## ...
 
 - **[EXP:REWORK]** `preheat_EXP` instead of `listener_EXP` (same thing, more focused role, reduced implementation)
+- Changed to using the "modular API" Admin SDK (still in alpha)
+- Docs revised (root and `ci`).
 
 ## 13-Jun-21 (0.0.3-beta.3)
 

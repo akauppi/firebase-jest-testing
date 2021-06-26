@@ -13,9 +13,9 @@ These are due to:
 
 |||
 |---|---|
-|`har-validator`|`firebase-tools@9.12.0`, via `request`|
-|`request`|`firebase-tools@9.12.0`|
-|`uuid`|`firebase-tools@9.12.0`, via `request` and `universal-analytics`|
+|`har-validator`|`firebase-tools@9.14.0`, via `request`|
+|`request`|`firebase-tools@9.14.0`|
+|`uuid@3.4.0`|`firebase-tools@9.14.0`, via `request` and `universal-analytics`|
 
 ## "Unable to fetch project Admin SDK" -warning
 
