@@ -9,6 +9,7 @@
     "npm": ">= 7.7.0"
   },
   "bin": {
+    "active-project": "./tools/active-project.sh",
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
@@ -17,10 +18,8 @@
     "---": "",
     "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_seq\"",
     "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
-    "//ci:seq": "firebase emulators:exec --project=fns-test \"npm run --silent _ci_fns && npm run --silent _ci_rules\"",
     "ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_par\"",
     "_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
-    "//ci:par": "firebase emulators:exec --project=fns-test \"npm run _ci_par_2\"",
     "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
     "---  ": "",

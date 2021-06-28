@@ -40,7 +40,6 @@
     "firebase-admin": "^9.100.0-alpha.1",
     "node-fetch": "^3.0.0-beta.9"
   },
-  "scripts": {},
   "//": {
     "exports": [
       "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."

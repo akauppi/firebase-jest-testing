@@ -12,23 +12,19 @@
 *   <<
 */
 expect.extend({
-  toContainObject(received, argument) {
+  toContainObject(received, expected) {   // (any, object) => { message: () => string, pass: boolean }
     const { printReceived, printExpected } = this.utils;
 
     const pass = this.equals(received,
-      expect.objectContaining(argument)
+      expect.objectContaining(expected)
     )
 
-    if (pass) {
-      return {
-        message: () => (`expected ${printReceived(received)} not to contain object ${printExpected(argument)}`),
-        pass: true
-      }
-    } else {
-      return {
-        message: () => (`expected ${printReceived(received)} to contain object ${printExpected(argument)}`),
-        pass: false
-      }
+    return pass ? {
+      message: () => `expected ${ printReceived(received) } not to contain object ${ printExpected(expected) }`,
+      pass: true
+    } : {
+      message: () => `expected ${ printReceived(received) } to contain object ${ printExpected(expected) }`,
+      pass: false
     }
   }
 })

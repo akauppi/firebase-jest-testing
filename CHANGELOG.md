@@ -1,10 +1,11 @@
 # Changelog
 
-## ...
+## ... (0.0.3-beta.4)
 
 - **[EXP:REWORK]** `preheat_EXP` instead of `listener_EXP` (same thing, more focused role, reduced implementation)
-- Changed to using the "modular API" Admin SDK (still in alpha)
+- **CHANGE:** using the "modular API" Admin SDK (still in alpha)
 - Docs revised (root and `ci`).
+- **CHANGE:** Removed `eventually` from the lib - was too specific and can be done in the tests.
 
 ## 13-Jun-21 (0.0.3-beta.3)
 

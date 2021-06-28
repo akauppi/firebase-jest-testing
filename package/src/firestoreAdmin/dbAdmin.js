@@ -35,7 +35,8 @@ const dbAdmin = (_ => {
   return db;
 })();
 
-/*
+/*** temporarily disabled
+/_*
 * Wait for a document to change so that predicate 'p' becomes true.
 *
 * If 'timeoutMs' is provided, times out after that time.
@@ -43,7 +44,7 @@ const dbAdmin = (_ => {
 * Resolves with:
 *   object|null (the value of the object, or that it's not there) when the predicate holds
 *   false if timed out
-*/
+*_/
 function eventually(docPath, p, timeoutMs) {    // (string, (object|null) => boolean, ms?) => Promise of object|null|undefined
   // Undocumented: if 'p' omitted, just wait for any document
   p = p || (o => !!o);
@@ -71,7 +72,7 @@ function eventually(docPath, p, timeoutMs) {    // (string, (object|null) => boo
       }
     });
   })
-}
+}*/
 
 /*
 * Pre-heat the Admin SDK <-> Firebase Emulators listening connection.
@@ -114,9 +115,8 @@ function preheat_EXP(collPath) {    // (string) => (string, ((object|null) => bo
 
 export {
   dbAdmin,
-  eventually,
+  //eventually,
 
   // EXPERIMENTAL
-  //listener_EXP,
   preheat_EXP
 }
