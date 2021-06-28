@@ -10,6 +10,7 @@
   },
   "bin": {
     "active-project": "./tools/active-project.sh",
+    "filter-emulators": "./tools/filter-emulators.sh",
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
@@ -23,7 +24,7 @@
     "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
     "---  ": "",
-    "start": "firebase emulators:start --project=fns-test",
+    "start": "firebase emulators:start --project=fns-test | $(filter-emulators)",
     "test:fns:callables": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -36,6 +37,12 @@
     "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
     "--- -": "",
     "postinstall": "npm --prefix sample/functions install",
+    "--- - ": "",
+    "preci:seq": "npm run -s _checkNoActive",
+    "preci:par": "npm run -s _checkNoActive",
+    "prestart": "npm run -s _checkNoActive",
+    "_checkNoActive": "(! active-project) || ( >&2 echo \"You are currently logged into a Firebase project. That's not necessary for running the tests, and we recommend you to log out ('npx firebase-tools use --clear').\"; echo \"This is to make sure cloud instances are not affected.\"; echo \"\"; false )",
+    "--- --": "",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
