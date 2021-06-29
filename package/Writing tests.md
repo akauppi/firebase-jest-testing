@@ -169,50 +169,11 @@ This part of the library uses `firebase-admin` library (you are provided a prope
 ```
 import { 
   collection, 
-  doc,
-  eventually
+  doc
 } from 'firebase-jest-testing/firestoreAdmin'
 ```
 
 See `sample/test-fns/userInfo.test.js` for an example.
-
-### `eventually`
-
-```
-import { collection, eventually } from "firebase-jest-testing/firestoreAdmin"
-
-describe("...", () => {
-  
-  test("...", async () => {
-    ...
-    // Write in 'userInfo' -> causes a Cloud Function to update 'projectC/{project-id}/userInfo/{uid}'
-    //
-    await collection("userInfo").doc("abc").set(william);
-
-    await expect( eventually("projects/1/userInfo/abc", o => o && shallowEquals(o,william)) ).resolves.not.toThrow();
-  })
-})
-```
-
-```
-eventually( docPath, p, timeoutMs? )	// (string, obj|null => boolean, int?) => Promise of obj|null|false 
-```
-
-`eventually` returns a `Promise` that resolves if the watched document changes in a way that the predicate `p` approves, or with `false` if `timeoutMs` is provided and the wait times out.
-
->You only need the `timeoutMs` if you expect the change *not* to take place. This is a somewhat difficult thing to test, since it may well take 500ms for a change to propagate, using the emulator. And is that long enough?
->
->Also, we'd like to integrate this with the Jest test's own timeout setting, but haven't found a way to read it (or have a hook that executes just before Jest gives up on a test). Consider this the best we can do at the moment - suggestions are welcome!
-
-<!-- Author's note
-The timeout case is not much better than:
-
-```
-await sleep(200).then( _ => expect( shadow.keys() ).not.toContain("xyz") );
-```
-
-..where the test would simply sleep for a given time, then probe the document once for its momentary value. `eventually` does process every interim value, but since we expect no change to happen, the two approaches perform similarly.
--->
 
 
 ### `collection`, `doc`

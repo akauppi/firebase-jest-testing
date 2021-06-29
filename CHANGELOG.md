@@ -1,8 +1,13 @@
 # Changelog
 
-## ...
+## 29-Jun-21 (0.0.3-beta.4)
 
-- **[EXP:REWORK]** `preheat_EXP` instead of `listener_EXP` (same thing, more focused role, reduced implementation)
+- **REWORK:** `preheat_EXP` replaces `listener_EXP` (same thing, more focused role, reduced implementation)
+- **BIG CHANGE:** using the "modular API" Admin SDK (still in alpha)
+- Docs revised (root and `ci`).
+- **CHANGE (API):** Removed `eventually` - was too specific and can be done in tests.
+- **CHANGE (SAMPLE):** No launch of emulators if there is an active Firebase project.
+- **FIX (SAMPLE)**: Using `demo-1` as the project ID (makes Firebase Emulators play local)
 
 ## 13-Jun-21 (0.0.3-beta.3)
 

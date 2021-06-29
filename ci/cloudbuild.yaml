@@ -14,30 +14,26 @@
 #   - functional changes to 'master' branch
 #     - changes only affecting '.md' files are excluded
 #
-# Notes:
-#   - cannot use '<<: &anchor' and '<<: *anchor' YAML syntax in Cloud Build, it seems.
-
-substitutions:
-  _BUILDER_TAG: 9.11.0-node16-npm7
 
 steps:
   # DEBUG
-- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-  entrypoint: bash
-  args: ['-c', 'env']
+#- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+#  entrypoint: bash
+#  args: ['-c', 'env']
 
 - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
   entrypoint: npm
   args: ['install']
 - name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
   entrypoint: npm
-  args: ['test']
+  args: ['run','ci']
 
 # --- Timeout
 #
 # Takes:
-#   local runs:   1m16s, 1m22s
-#   CI (default): 1m42s, 1m34s
-#   CI (e2-highcpu-8): 1m12s    <-- ~ -25% speed effect, compared to 1 core runs (free tier)
+#   CI: 1m48s, 1m53s
 #
 timeout: 240s
+
+substitutions:
+  _BUILDER_TAG: 9.12.1-node16-npm7

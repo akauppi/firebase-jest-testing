@@ -7,7 +7,7 @@
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
 import './matchers/toContainObject'
-import { collection, eventually, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
+import { collection, doc, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
 
 describe("userInfo shadowing", () => {
 
@@ -18,9 +18,6 @@ describe("userInfo shadowing", () => {
     preheat_EXP("projects/1/userInfo");
   })
 
-  // Note: We don't declare 'async done => ...' for Jest. That is an oxymoron: only either 'done' or the end of an
-  //    async/await body would resolve a test but not both.
-  //
   test('Central user information is distributed to a project where the user is a member', async () => {
     const william = {
       displayName: "William D.",
@@ -28,44 +25,66 @@ describe("userInfo shadowing", () => {
     };
 
     // Write in 'userInfo' -> causes a Cloud Function to update 'projectC/{project-id}/userInfo/{uid}'
+    //
     await collection("userInfo").doc("abc").set(william);
 
     // Style 1:
     //  - 'eventually' only passes when the right kind of object is there.
     //
-    await expect( eventually("projects/1/userInfo/abc", o => o && shallowEquals(o,william)) ).resolves.not.toThrow();
+    //await expect( waitForIt("projects/1/userInfo/abc", shallowEqualsGen(william)) ).resolves.not.toThrow();
 
     // Style 2:
     //  - 'eventually' passes on first valid doc, checking is done outside of 'expect'.
     //
-    //await expect( eventually("projects/1/userInfo/abc") ).resolves.toContainObject(william);
+    await expect( waitForIt("projects/1/userInfo/abc") ).resolves.toContainObject(william);
   });
 
+  // Variant that works with Jest 27
   test('Central user information is not distributed to a project where the user is not a member', async () => {
 
     // Write in 'userInfo' -> should NOT turn up in project 1.
     //
     await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
-    await expect( eventually("projects/1/userInfo/xyz", o => !!o, 300 /*ms*/) ).resolves.toBeUndefined();
+    await sleepMs(300);   // give time
+    await expect( doc("projects/1/userInfo/xyz").get().then( ss => ss.exists ) ).resolves.toBe(false);
+  }, 9999);
 
-    // Ideally:
-    //await expect( eventually("projects/1/userInfo/xyz") ).resolves.toBeUndefined()
-    //
-    //Within 'eventually', code would:
-    //  <<
-    //    beforeTimeout( () => { /*resolve the Promise with 'undefined'*/ } );
-    //  <<
-    //
-    // This would allow us to steer the wait by the Jest normal timeout parameter, instead of having two.
+  /*
+  test.ideally('Central user information is not distributed to a project where the user is not a member', async () => {
 
-  }, 9999 /*ms*/ );
+    // Write in 'userInfo' -> should NOT turn up in project 1.
+    //
+    await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
+
+    await expect( waitForIt("projects/1/userInfo/xyz") ).timesOut;   // tbd. needs Jest extension or mod!
+  });*/
 });
 
 /*
-* Returns 'true' if the two objects have same values; shallow.
+* Generates a function that returns 'true' if the two objects have same values; shallow.
 */
-function shallowEquals(o1,o2) {   // (obj,obj) => boolean
-  return Object.keys(o1).length === Object.keys(o2).length &&
+function shallowEqualsGen(o2) {   // (obj) => (obj) => boolean
+  return o1 => Object.keys(o1).length === Object.keys(o2).length &&
     Object.keys(o1).every(k => o1[k] === o2[k]);
 }
+
+/*
+* Provide a Promise that resolves, if the right kind of change takes place in the watched doc.
+*/
+function waitForIt(docPath, predicate) {    // (string, ((object) => any)? ) => Promise of {...Firestore document }
+  return new Promise( (resolve) => {
+
+    const unsub = doc(docPath).onSnapshot( ss => {
+      const o = ss.exists ? ss.data() : null;
+      if (!o) return;
+
+      if (!predicate || predicate(o)) {
+        resolve(o);
+        unsub();
+      }
+    });
+  });
+}
+
+const sleepMs = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });

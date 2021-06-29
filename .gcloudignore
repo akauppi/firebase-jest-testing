@@ -37,6 +37,7 @@
 # Others irrelevant for the build
 #
 /**/.images/
+/**/images/
 *.md
 .editorconfig
 .npmrc
@@ -45,6 +46,5 @@
 *.delme
 
 # Cruft
-/body-*.json
 /body*.json
 /curl.sh

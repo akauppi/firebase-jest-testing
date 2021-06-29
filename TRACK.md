@@ -1,35 +1,36 @@
 # Track
 
+## Concurrently: piping 
+
+- [ ] [Weird hanging bug with --kill-others](https://github.com/kimmobrunfeldt/concurrently/issues/104)
+
+If solved, could enable emulator output filtering also for CI.
+ 
+
 ## Jest cannot handle package `exports` ⚠️
 
-- <strike>[jest-resolve can't handle "exports"](https://github.com/facebook/jest/issues/10422) (Jest #10422)</strike>
 - [Support package exports in `jest-resolve`](https://github.com/facebook/jest/issues/9771) (Jest #9771)
 - [Support ESM resolution](https://github.com/browserify/resolve/issues/222) (browserify/resolve #222)
 
 Found ways to come around the limitation (see "work around").
 
-The issues state:
+It seems that Jest is approaching ES modules (and `exports` as part of that) with two fronts: one is a native ES module resolver that may or may not be in active development (mentioned in Apr 2020). The mainstream seems to be the `browserify` resolver, which should bring these features eventually to Jest.
 
->Duplicate of #9771. I haven't had time to work on ESM support in general for the last few months, and the immediate future doesn't look any more promising in that regard, unfortunately... Any help via PRs or research is of course welcome.
+All in all, it looks way too deep waters for this project. Let's just wait it out - if you are more eager, please check the situation and help SimenB with the work in Jest!!!
 
-<p></p>
->I chatted with @ljharb about this, and a future version of resolve will support this. So we don't have to implement anything here. Will just hook it up when resolve is released with support for it 🎉
-
-It's a bit more complex than that. It seems that Jest is approaching ES modules (and `exports` as part of that) with two fronts: one is a native ES module resolver that may or may not be in active development (mentioned in Apr 2020). The mainstream seems to be the `browserify` resolver, which should bring these features eventually to Jest.
-
-All in all, it looks way too deep waters for this project. Let's just wait it out - if you are more eager, please check the situation and propose updates to this doc / this repo - or help SimenB with the work in Jest!!!
-
+<!-- disabled
 **Direction:**
 
 I'd rather see users of this repo helping SimenB with the native resolver:
 
 >I'm currently working on support for ESM natively in Jest, and while we have a version today that sorta works, it's not a compliant implementation. (author of Jest, 25-Apr-20)
+-->
 
 **Work around:**
 
 A custom resolver allows us to use the package *almost* as ES modules. It reflects the `exports` section in `package.json`, which is important for testability.
 
-`sample/hack-jest/self-resolver.cjs`:
+<details><summary>`sample/hack-jest/self-resolver.cjs`</summary>
 
 ```
 const pkg = require("../../package.json");
@@ -61,40 +62,40 @@ const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
 module.exports = res;
 ```
+</details>
 
-`sample/jest.config.default.js`:
+<details><summary>`sample/jest.config.default.js`</summary>
 
 ```
   // Resolves the subpackage paths using the package's 'exports' (until Jest does...).
   resolver: "../hack-jest/self-resolver.cjs"
 ```
+</details>
 
 Pros:
 
 - this setup allows us to use the library; without needing to sacrifice proper ES module publishing practices
 - use of modules exactly as they should be
 
-   Turning off the `resolver` in Jest config is enough to see whether it's still required.
-
 Cons:
 
 - **does not restrict access to non-exported code** (important since the point of `exports` is encapsulation!)
 - requires downstream apps to replicate the hack, until proper `exports` support is there
 
+Turning off the `resolver` in Jest config is enough to see whether it's still required.
 
-## firebase-js-sdk #2895
+
+## firebase-js-sdk #2895 ☠️
 
 - [FR: Immutability when testing Firestore Security Rules](https://github.com/firebase/firebase-js-sdk/issues/2895) 
    - let's see what Firebase authors reply
-		- not a reply in 13 <!--was: 4--> months #sniff 😢
+		- not a reply in 14 <!--was: 13,4--> months #sniff 😢
+
+>Note: The issue is clearly in a wrong project - it should be in `firebase-tools`.
 
 The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` flag in the URL. If this were to be used, all behaviour would be as-normal (delete, update, set), but no changes would actually be placed in the data.
 
-If we get that, it's easy to build a REST client around it. We can be the client that allows people to benefit from this. Of course, `@firebase/rules-unit-testing` can also do it, if they see value in the approach.
-
->Update 13-May-21: 
->
->Going to build a locking mechanism, likely using Firebase itself for it. Such extra code could be removed if immutability control ever gets to the official APIs.
+We've already built a stable work-around. The benefit would be simplified code (and a ~5% speed improvement).
 
 
 ## `node-fetch` v3
@@ -104,26 +105,23 @@ If we get that, it's easy to build a REST client around it. We can be the client
 >Situation 13-May-21: 7 checkboxes (only) missing; `beta.9` is the latest release
 
 
-<!-- See KNOWN.md
-## Deprecated `npm` dependencies
+## Firebase: deprecated `npm` dependencies
 
-- [Replace request with something better](https://github.com/jsdom/jsdom/issues/2792) (jsdom); affects JEST
-
-   - [x] `jsdom` [#3092](https://github.com/jsdom/jsdom/pull/3092)
-   - [x] JEST using the updated `jsdom`
-
-- [npm WARN deprecated request@2.88.2: request has been deprecated](https://github.com/firebase/firebase-tools/issues/2215) (firebase-tools)
+- [npm WARN deprecated request@2.88.2: request has been deprecated](https://github.com/firebase/firebase-tools/issues/2215)
 
 When doing a fresh `npm install`, this shows up:
 
 ```
 $ npm install
-npm WARN deprecated request-promise-native@1.0.9: request-promise-native has been deprecated because it extends the now deprecated request package, see https://github.com/request/request/issues/3142
 npm WARN deprecated har-validator@5.1.5: this library is no longer supported
 npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
 ...
 ```
--->
+
+>We have made a decision not to rush and try to remove request from the codebase all at once as that will almost certainly introduce bugs. Instead we are moving away piece-by-piece as we fix other things.
+
+Mentioned in `KNOWN.md`.
+
 
 ## Firebase emulators: passing Security Rules `debug()` info to the clients
 
@@ -133,15 +131,6 @@ I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/fire
 
 - [ ] Check again / ask ~ Jul 2021
 - [ ] Maybe move the matter to [firebase-tools](https://github.com/firebase/firebase-tools/issues) if making it takes time (it's currently in wrong place since not a matter for the JS client)
-
-
-## Modular `firebase-admin` (alpha)
-
-A modular version of `firebase-admin` is currently [in alpha](https://modular-admin.web.app).
-
->The repo works nicely with it. But there's no major benefit over the 9.x one. 
-
-Let's take it into use, once it's stable.
 
 
 ## Jest requires `--experimental-vm-modules`
@@ -161,15 +150,23 @@ The [Jest docs](https://jestjs.io/docs/next/ecmascript-modules) mention that `--
 Track the Node.js issue, and see when we can strip the parameters.
 
 
-## Jest should not require `--detectOpenHandles`
+## Jest should not require `--detectOpenHandles` 🏓
 
 - [ ] [Jest does not exit tests cleanly with Firebase Firestore, an older version does. (Potentially jsdom related, repro *is* included.)](https://github.com/facebook/jest/issues/11464) (Jest)
 
-Also in Firebase JS SDK: [Jest + @firebase/rules-unit-testing has unstopped asynchronous operations](https://github.com/firebase/firebase-js-sdk/issues/4884)
+- Also in [Jest + @firebase/rules-unit-testing has unstopped asynchronous operations](https://github.com/firebase/firebase-js-sdk/issues/4884) (Firebase JS SDK)
 
   >Further digging showed that the gRPC BackoffTimeout was the cause; Jest exits as soon as it finishes. [...]
   
 This is about any Firebase gRPC using client. All we can do is wait, and track the Jest issue...
+
+**Work-around**:
+
+Have `--detectOpenHandles` in the Jest parameters.
+
+<!-- Editor's note:
+Earned the ping-pong emoji because seemingly neither on Firebase nor Jest turf
+-->
 
 
 ## Jest FR: tapping to the test timeout
@@ -177,27 +174,21 @@ This is about any Firebase gRPC using client. All we can do is wait, and track t
 - [Expecting a Promise *not* to complete, in Jest
 ](https://stackoverflow.com/questions/67822996/expecting-a-promise-not-to-complete-in-jest) (SO)
 
-This looks like a case not currently supported (Jest 27).
+The SO entry is stale (no answers; Jun 2021). Looks like a case not currently supported (Jest 27).
 
-Solutions could be:
+- [ ] Prepare a PR to Jest that would implemente this. `#contribute`
 
-- [ ] ability to tap into the timeout, to turn it into pass/fail:
+  See detailed description in [Jest problems](./Jest%20problems.md).
 
-   ```
-   beforeTimeout( () => {
-     // make the Promise resolve
-   })
-   ```
+
+## Cloud Functions: allow functions to be defined as ESM
+
+- [ ] [Add support for parsing function triggers from ES modules](https://github.com/firebase/firebase-tools/pull/3485) (pr)
+
+   Once that's deployed, we can try changing `sample/functions/package.json` to be `type: "module"`.
    
-   If Jest were to provide this, they should allow the handler (above) to cause the Promise (that the test is waiting for) to resolve or reject, and *only then* truly time out.
-   
-   This would make sure that no Promise is left dangling.
+## Concurrently
 
-- [ ] ability to query the running test's timeout value (so we can wait less)
+- [SIGINT is sent twice when pressing Ctrl-C, causing dirty shutdown](https://github.com/kimmobrunfeldt/concurrently/issues/283)
 
-   This would be less elegant but suffice as a work-around.
- 
- 
-## Firebase Emulators: Cloud Functions does not pre-heat the emulated functions
-
-- [ ] [Functions emulator needs pre-heating - slower test times on first test run](https://github.com/firebase/firebase-tools/issues/3488)
+   Have seen this. Not sure it's `concurrently`, though.

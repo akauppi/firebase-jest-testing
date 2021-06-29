@@ -7,10 +7,10 @@
   },
   "emulators": {
     "firestore": {
-      "port": "6767"
+      "port": 6767
     },
     "functions": {
-      "port": "5002"
+      "port": 5002
     }
   }
 }

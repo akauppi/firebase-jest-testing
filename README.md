@@ -32,8 +32,9 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- npm >= 7.7.0
 - node >= 14.3
+- npm >= 7.7.0
+- Jest >= 27
 
 <!--
 Developed with:
@@ -72,32 +73,33 @@ The `npm` targets in this flow:
 |`ci:seq`|Run tests sequentially|
 |`ci:par`|Run tests in parallel|
 
-The sequential runs provide easier-to-follow logs, but `ci:par` provides ~5s faster execution[^1-faster], since the Cloud Functions and Security Rules are tested in parallel.
+The sequential runs provide easier-to-follow logs, but `ci:par` provides ~2s faster execution[^1-faster], since the Cloud Functions and Security Rules are tested in parallel. 
+
+>Depending on your tests, the difference may be starker, so `ci:par` is kept in the repo as a sample.
 
 [^1-faster]: Faster on a desktop (multicore) machine, which you might not have in CI/CD.
+
 
 Launching the tests is this easy:
 
 ```
 $ npm run ci
 ...
-Test Suites: 3 passed, 3 total
-Tests:       5 passed, 5 total
+Test Suites: 2 passed, 2 total
+Tests:       3 passed, 3 total
 Snapshots:   0 total
-Time:        4.108 s
+Time:        2.547 s, estimated 3 s
 
 ...
 Test Suites: 5 passed, 5 total
-Tests:       1 skipped, 28 passed, 29 total
+Tests:       29 passed, 29 total
 Snapshots:   0 total
-Time:        7.165 s
+Time:        5.389 s
 ```
 
 Note that the results for Cloud Functions tests and Security Rules tests are provided separately. It could be possible to merge these but the author currently thinks it's not carrying real benefits.
 
 The downside of "CI mode" is that each run launches a new emulator. This takes ~5s that we can spare, by using the "dev" mode.
-
->All the tests should pass (or be skipped). If you find some that don't, please file an issue.
 
 
 ### Dev mode
@@ -145,17 +147,16 @@ Once you think things are rolling fine, run `npm run ci` to confirm.
 
 ## CI setup
 
-- Changes to `master` (direct push or merge):
+CI is set up for pull requests, using Cloud Build.
 
-   Google Cloud Build runs `npm test`, allows merge only if test pass.
-
-More details in [`ci/README`](ci/README.md).
+See [`ci/README`](ci/README.md) for details.
 
 
 ## Other docs
 
 - [Approach](APPROACH.md)
 - [Developer notes](DEVS.md)
+- [Known issues](KNOWN.md)
 
 ## References
 

@@ -10,7 +10,7 @@ import { strict as assert } from 'assert'
 import {PRIME_ROUND, FIRESTORE_HOST} from '../../config.js'
 assert(PRIME_ROUND);
 
-//import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
+import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
 
 // To successfully load 'firebase-admin' (9.x), you DO IT PRECISELY LIKE HERE!
 //
@@ -23,8 +23,8 @@ assert(PRIME_ROUND);
 // The official "ES2015" way of "import * as admin from ..." does not work with native ES modules.
 //
 //import admin from 'firebase-admin'; const initializeApp = admin.initializeApp;
-import { default as admin } from 'firebase-admin';   // WORKS
-function initializeApp(a,b) { return admin.initializeApp(a,b) }
+//import { default as admin } from 'firebase-admin';   // WORKS
+//function initializeApp(a,b) { return admin.initializeApp(a,b) }
 
 import { wipe } from './wipe.js'
 

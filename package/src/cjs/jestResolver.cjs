@@ -3,16 +3,15 @@
 *
 * To be used by application projects, to resolve 'firebase-jest-testing' within Jest.
 *
-* The problem is that Jest 26.x resolver (aka browserify resolver) does not treat a module with 'exports'
+* The problem is that Jest 27 resolver (aka browserify resolver) does not treat a module with 'exports'
 * field correctly. Once it does, we abandon this.
 *
 * Usage:
-*   # 'jest.config.cjs':
+*   # 'jest.config.js':
 *   <<
-*     module.exports = {
-*       //resolver: "firebase-jest-testing/cjs/jestResolver"
+*     export default {
+*       ...,
 *       resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
-*       ...
 *     }
 *   <<
 *

@@ -28,7 +28,6 @@ const pkgExports = pkg.exports;
   //   "./firestoreAdmin/setup": "./src/firestoreAdmin/setup/index.js",
   //   "./firestoreRules": "./src/firestoreRules/index.js",
   //   "./firestoreClientLike": "./src/firestoreClientLike/index.js",
-  //   "./jest": "./src/jest/eventually.js"
   // }
 
 const pkgEntries = Object.entries(pkgExports).map( ([k,v]) => {
