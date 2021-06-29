@@ -42,7 +42,7 @@ The eventual pattern became:
 1. The tests provide an opaque, lower case project id when calling `prime`:
 
    ```
-   const projectId = "fns-test";
+   const projectId = "demo-1";  // was: "fns-test"
    
    const setup = async _ => {
      await prime(projectId, docs);
@@ -96,3 +96,32 @@ For testing Security Rules, our approach is originally derived from the Firebase
 As a testing framework, we use Jest, and have extended its normally unit testing -based approach to integration tests, just so much that we don't need to teach the application developer two testing frameworks. At least, not for the back-end.[^2]
 
 [^2]: Using Cypress for the front end is likely too big a temptation for most. But having one tool for front, another for the back-end may be acceptable.
+
+
+## What counts as an "offline" project?
+
+Firebase Emulators documentation defines a "real" and a "demo" project [here](https://firebase.google.cn/docs/emulator-suite/connect_functions?hl=en&%3Bauthuser=3&authuser=3#choose_a_firebase_project).
+
+- Real project is *"one you configured and activated in the Firebase console"*.
+
+- Fake / offline ("demo") project *"has no Firebase console configuration"* and *"has the `demo-` prefix"*.
+
+This leaves a hole. 🕳 
+
+Not having an active project - just providing a random name with the `--project` flag, is not categorized as either "real" or "demo" project.
+
+The author advocates defining a fake (or "offline") project as:
+
+>A fake (offline) project is one that is not activated in the Firebase console.
+
+"demo" could be mentioned under the "Real" definition as:
+
+>A real project cannot have an id that starts with `demo-`.
+
+This would be clearer than the existing definition, yet fully compatible with it (`demo-` projects are also "fake", because they are not - and cannot be - "activated").
+
+---
+
+To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule can be scrapped, later.[^3]
+
+[^3]: It feels awkward to be call tests "demo", since they obviously aren't...

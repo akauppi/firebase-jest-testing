@@ -1,21 +1,20 @@
 # Track
 
+## Concurrently: piping 
+
+- [ ] [Weird hanging bug with --kill-others](https://github.com/kimmobrunfeldt/concurrently/issues/104)
+
+If solved, could enable emulator output filtering also for CI.
+ 
+
 ## Jest cannot handle package `exports` ⚠️
 
-- <strike>[jest-resolve can't handle "exports"](https://github.com/facebook/jest/issues/10422) (Jest #10422)</strike>
 - [Support package exports in `jest-resolve`](https://github.com/facebook/jest/issues/9771) (Jest #9771)
 - [Support ESM resolution](https://github.com/browserify/resolve/issues/222) (browserify/resolve #222)
 
 Found ways to come around the limitation (see "work around").
 
-The issues state:
-
->Duplicate of #9771. I haven't had time to work on ESM support in general for the last few months, and the immediate future doesn't look any more promising in that regard, unfortunately... Any help via PRs or research is of course welcome.
-
-<p></p>
->I chatted with @ljharb about this, and a future version of resolve will support this. So we don't have to implement anything here. Will just hook it up when resolve is released with support for it 🎉
-
-It's a bit more complex than that. It seems that Jest is approaching ES modules (and `exports` as part of that) with two fronts: one is a native ES module resolver that may or may not be in active development (mentioned in Apr 2020). The mainstream seems to be the `browserify` resolver, which should bring these features eventually to Jest.
+It seems that Jest is approaching ES modules (and `exports` as part of that) with two fronts: one is a native ES module resolver that may or may not be in active development (mentioned in Apr 2020). The mainstream seems to be the `browserify` resolver, which should bring these features eventually to Jest.
 
 All in all, it looks way too deep waters for this project. Let's just wait it out - if you are more eager, please check the situation and help SimenB with the work in Jest!!!
 

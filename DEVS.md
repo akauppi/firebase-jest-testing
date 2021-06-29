@@ -25,4 +25,6 @@ If &ndash; for debugging this code &ndash; you ever need to see what the databas
   "start": "firebase emulators:start --project=rules-test",
 ```
 
-The default is `fns-test` so that functions tests would work.
+Change the project id eventually back, so that functions tests work.
+
+>Note: With a project name that doesn't start `demo-`, you'll get all kinds of warnings.

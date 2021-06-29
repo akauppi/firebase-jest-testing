@@ -1,5 +1,5 @@
 /*
-* fns-test/matchers/toContainObject.js
+* test-fns/matchers/toContainObject.js
 *
 * From -> https://medium.com/@andrei.pfeiffer/jest-matching-objects-in-array-50fe2f4d6b98
 *   (but against a single object, not array)
