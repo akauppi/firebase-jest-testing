@@ -36,8 +36,6 @@ steps:
 # --- Timeout
 #
 # Takes:
-#   local runs:   1m16s, 1m22s
-#   CI (default): 1m42s, 1m34s
-#   CI (e2-highcpu-8): 1m12s    <-- ~ -25% speed effect, compared to 1 core runs (free tier)
+#   CI: 1m48s
 #
 timeout: 240s

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euf -o pipefail
 
 # tools/active-project.sh
 #
@@ -22,6 +23,13 @@ FIREBASE_CONFIG=~/.config/configstore/firebase-tools.json
   #
   # Is this the same for all supported systems? (Linux, WSL2)?
 
+# No config file? Best to fail.
+#
+[[ -f $FIREBASE_CONFIG ]] || (
+  >&2 echo "No Firebase config file: ${FIREBASE_CONFIG}"
+  exit -2
+)
+
 cat $FIREBASE_CONFIG | grep -q \"$(pwd)\"
 if [[ $? -eq 0 ]] ; then
   # has active project
@@ -29,6 +37,6 @@ if [[ $? -eq 0 ]] ; then
 elif [[ $? -eq 1 ]] ; then
   exit 1
 else
-  echo 2&>1 "ERROR in detection of Firebase CLI active project"
+  >&2 echo "ERROR in detection of Firebase CLI active project"
   exit -2
 fi

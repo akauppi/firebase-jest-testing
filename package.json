@@ -17,15 +17,16 @@
     "test": "npm run -s ci",
     "ci": "npm run ci:seq",
     "---": "",
-    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_seq\"",
+    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run -s ci:start\" \"wait-for 4000 && npm run -s _ci_seq\"",
     "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
-    "ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s start\" \"wait-for 4000 && npm run -s _ci_par\"",
-    "_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
-    "_ci_fns": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
+    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s ci:start\" \"wait-for 4000 && npm run -s _ci_par\"",
+    "//_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
+    "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
     "---  ": "",
     "start": "firebase emulators:start --project=fns-test | $(filter-emulators)",
-    "test:fns:callables": "NODE_OPTIONS=\"--experimental-vm-modules --experimental-json-modules\" jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
+    "ci:start": "firebase emulators:start --project=fns-test",
+    "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
     "---   ": "",
@@ -38,10 +39,8 @@
     "--- -": "",
     "postinstall": "npm --prefix sample/functions install",
     "--- - ": "",
-    "preci:seq": "npm run -s _checkNoActive",
-    "preci:par": "npm run -s _checkNoActive",
     "prestart": "npm run -s _checkNoActive",
-    "_checkNoActive": "(! active-project) || ( >&2 echo \"You are currently logged into a Firebase project. That's not necessary for running the tests, and we recommend you to log out ('npx firebase-tools use --clear').\"; echo \"This is to make sure cloud instances are not affected.\"; echo \"\"; false )",
+    "_checkNoActive": "[[ $BUILD_ID ]] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "--- --": "",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
@@ -70,6 +69,14 @@
     "devDependencies": {
       "@local/self": [
         "Allows us to use the 'bin' section to alias commands."
+      ]
+    },
+    "scripts": {
+      "ci:start": [
+        "This is a work-around, since Alpine Linux (that we use in the CI Docker image) gets 'concurrently' (6.2.0)",
+        "stuck, if a pipe is used in a command.",
+        "",
+        "Ideally, Firebase Emulators would warn more sensibly at the source."
       ]
     }
   }

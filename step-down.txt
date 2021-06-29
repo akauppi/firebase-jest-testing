@@ -1,0 +1,8 @@
+# Error message
+  Politely REFUSING to run the tests since there is an active Firebase project around.
+  The author is NOT quite sure of the interplay between the cloud project and a local one,
+  and in order not to disturb your cloud project, please:
+
+  'npm firebase-tools use --clear'
+
+#

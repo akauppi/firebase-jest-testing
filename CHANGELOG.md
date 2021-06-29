@@ -6,7 +6,7 @@
 - **BIG CHANGE:** using the "modular API" Admin SDK (still in alpha)
 - Docs revised (root and `ci`).
 - **CHANGE (API):** Removed `eventually` - was too specific and can be done in tests.
-- **CHANGE (SAMPLE):** No launch of emulators if there is an active Firebase project (security; paranoia).
+- **CHANGE (SAMPLE):** No launch of emulators if there is an active Firebase project.
 
 ## 13-Jun-21 (0.0.3-beta.3)
 

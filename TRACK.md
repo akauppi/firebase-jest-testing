@@ -188,3 +188,8 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
 
    Once that's deployed, we can try changing `sample/functions/package.json` to be `type: "module"`.
    
+## Concurrently
+
+- [SIGINT is sent twice when pressing Ctrl-C, causing dirty shutdown](https://github.com/kimmobrunfeldt/concurrently/issues/283)
+
+   Have seen this. Not sure it's `concurrently`, though.
