@@ -1,5 +1,9 @@
 # Changelog
 
+## 30-Jun-21 (0.0.3-beta.4b)
+
+- **BUG FIX**: Resolver fixed so `firestoreAdmin` works, from customer project.
+
 ## 29-Jun-21 (0.0.3-beta.4)
 
 - **REWORK:** `preheat_EXP` replaces `listener_EXP` (same thing, more focused role, reduced implementation)

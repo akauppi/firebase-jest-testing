@@ -29,17 +29,16 @@ describe("userInfo shadowing", () => {
     await collection("userInfo").doc("abc").set(william);
 
     // Style 1:
-    //  - 'eventually' only passes when the right kind of object is there.
+    //  - 'waitForIt' only passes when the right kind of object is there.
     //
     //await expect( waitForIt("projects/1/userInfo/abc", shallowEqualsGen(william)) ).resolves.not.toThrow();
 
     // Style 2:
-    //  - 'eventually' passes on first valid doc, checking is done outside of 'expect'.
+    //  - 'waitForIt' passes on first valid doc, checking is done outside of 'expect'.
     //
     await expect( waitForIt("projects/1/userInfo/abc") ).resolves.toContainObject(william);
   });
 
-  // Variant that works with Jest 27
   test('Central user information is not distributed to a project where the user is not a member', async () => {
 
     // Write in 'userInfo' -> should NOT turn up in project 1.
@@ -50,24 +49,21 @@ describe("userInfo shadowing", () => {
     await expect( doc("projects/1/userInfo/xyz").get().then( ss => ss.exists ) ).resolves.toBe(false);
   }, 9999);
 
-  /*
-  test.ideally('Central user information is not distributed to a project where the user is not a member', async () => {
+  // ideally:
+  //await expect(prom).not.toComplete;    // ..but with cancelling such a promise
 
-    // Write in 'userInfo' -> should NOT turn up in project 1.
-    //
-    await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
-
-    await expect( waitForIt("projects/1/userInfo/xyz") ).timesOut;   // tbd. needs Jest extension or mod!
-  });*/
+  // ..or:
+  //await expect(prom).timesOut;    // ..but with cancelling such a promise
 });
 
+/**
 /*
 * Generates a function that returns 'true' if the two objects have same values; shallow.
-*/
+*_/
 function shallowEqualsGen(o2) {   // (obj) => (obj) => boolean
   return o1 => Object.keys(o1).length === Object.keys(o2).length &&
     Object.keys(o1).every(k => o1[k] === o2[k]);
-}
+}*/
 
 /*
 * Provide a Promise that resolves, if the right kind of change takes place in the watched doc.

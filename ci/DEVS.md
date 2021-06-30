@@ -23,7 +23,7 @@ This is needed for debugging, if e.g. the Firebase Emulators get stuck.
 ```
 $ docker run -it --rm -v $(pwd)/..:/workspace -w workspace firebase-ci-builder:9.12.1-node16-npm7 /bin/bash
 
-# BUILD_ID=1 npm test
+# BUILD_ID=1 npm ci
 ```
 
 Note: The files are mounted; making changes within Docker affects the host directory.

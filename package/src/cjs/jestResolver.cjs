@@ -1,7 +1,7 @@
 /*
 * src/cjs/jestResolver.cjs
 *
-* To be used by application projects, to resolve 'firebase-jest-testing' within Jest.
+* To be used by application projects, to resolve 'firebase-jest-testing' and 'firebase-admin/...', within Jest.
 *
 * The problem is that Jest 27 resolver (aka browserify resolver) does not treat a module with 'exports'
 * field correctly. Once it does, we abandon this.
@@ -26,6 +26,8 @@ const pkgName = fjtPkg.name;   // "firebase-jest-testing"
 
 assert( pkgName == 'firebase-jest-testing' );
 
+function fail(msg) { throw new Error(msg); }
+
 const exps = fjtPkg.exports;
 
 const tmp = Object.entries(exps).map( ([k,v]) => {
@@ -34,18 +36,30 @@ const tmp = Object.entries(exps).map( ([k,v]) => {
     v.replace(/^\.\//, `${pkgName}/`)
   ];
 });
+  // [['firebase-jest-testing/firestoreAdmin', 'firebase-jest-testing/src/firestoreAdmin/index.js'], ...]
 
-const lookup = new Map(tmp);
+// Support for 'firebase-admin' (alpha)
+//
+const moreEntries = Object.entries({
+  "firebase-admin/app": "./lib/esm/app/index.js",
+  //"firebase-admin/auth": "./lib/esm/auth/index.js",
+  //"firebase-admin/firestore": "./lib/esm/firestore/index.js"
+}).map( ([k,v]) => {
+  const arr = k.match(/(.+?)\//);   // pick the node_modules name
+  const name = arr[1] || fail("No '/' in key");
+  return [
+    k,
+    v.replace(/^\.\//, `${name}/`)
+  ]
+});
+
+const lookup = new Map([...tmp, ...moreEntries]);
   // e.g. 'firebase-jest-testing' -> 'firebase-jest-testing/src/index.js'
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
-  if (request.startsWith(pkgName)) {
-    const hit = lookup.get(request);
-    //console.debug("Transfer:", request+" -> "+hit);
-
-    if (!hit) throw new Error("No 'exports' lookup for: "+ request);    // better than assert (causes the right module to be mentioned in the error message)
-
+  const hit = lookup.get(request);
+  if (hit) {
     return options.defaultResolver( hit, options );   // turned to requiring the file
   } else {
     return options.defaultResolver( request, options );
