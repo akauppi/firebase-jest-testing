@@ -40,7 +40,7 @@ The files used for managing the Firebase project and running tests are at the ro
 Developed with:
 - macOS 11.4
 - node 16.2
-- npm 7.13
+- npm 7.19
 -->
 
 ## Getting started

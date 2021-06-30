@@ -18,7 +18,7 @@
     "//test": "npm run -s ci",
     "---": "",
     "ci": "npm run ci:seq",
-    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run -s _ci_start\" \"wait-for 4000 && npm run -s _ci_seq\"",
+    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run _ci_start > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
     "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
     "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _ci_start\" \"wait-for 4000 && npm run -s _ci_par\"",
     "//_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
