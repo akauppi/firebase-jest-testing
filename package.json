@@ -18,15 +18,15 @@
     "//test": "npm run -s ci",
     "---": "",
     "ci": "npm run ci:seq",
-    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run start > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
+    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
     "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
-    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _ci_start\" \"wait-for 4000 && npm run -s _ci_par\"",
+    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _start_pipeless\" \"wait-for 4000 && npm run -s _ci_par\"",
     "//_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
     "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
     "---  ": "",
     "start": "firebase emulators:start --project=demo-1 | $(filter-emulators)",
-    "//start:pipeless": "firebase emulators:start --project=demo-1",
+    "_start_pipeless": "firebase emulators:start --project=demo-1",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
@@ -73,9 +73,9 @@
       ]
     },
     "scripts": {
-      "_ci_start": [
-        "This (and separating 'test' from 'ci') is a work-around, since Alpine Linux (that we use in the CI Docker image) gets 'concurrently' (6.2.0)",
-        "stuck, if a pipe is used in a command. See TRACK.md"
+      "_start_pipeless": [
+        "Alpine Linux (which we use in the CI Docker image) gets 'concurrently' (6.2.0) stuck, if a pipe is involved.",
+        "We would like to use the normal 'start', if possible. See 'TRACK.md'"
       ]
     }
   }
