@@ -4,7 +4,19 @@
 
 - [ ] [Weird hanging bug with --kill-others](https://github.com/kimmobrunfeldt/concurrently/issues/104)
 
-If solved, could enable emulator output filtering also for CI.
+This can be replicated locally:
+
+```
+$ docker run -it --rm -v $(pwd):/work -w /work firebase-ci-builder:9.12.1-node16-npm7 /bin/bash
+
+# passwd user    # give eg.123
+# login user
+
+$ npm test    # gets stuck at the end (uses a pipe)
+$ npm run ci  # passes (no pipe)
+```
+
+If fixed, we could retire the `_start_pipeless` target.
  
 
 ## Jest cannot handle package `exports` ⚠️
