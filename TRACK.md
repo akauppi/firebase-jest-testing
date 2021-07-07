@@ -204,3 +204,12 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
 - [SIGINT is sent twice when pressing Ctrl-C, causing dirty shutdown](https://github.com/kimmobrunfeldt/concurrently/issues/283)
 
    Have seen this. Not sure it's `concurrently`, though.
+
+
+## Jest: tapping to timeouts
+
+- [Better timeout errors through deadline checking](https://github.com/facebook/jest/issues/10895)
+
+   That issue has a proposal for tapping to the Jest timeouts. 
+
+   Would it be possible to get a `beforeTimeout` callback?
