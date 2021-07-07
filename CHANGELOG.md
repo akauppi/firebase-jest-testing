@@ -1,5 +1,11 @@
 # Changelog
 
+## 7-Jul-21 (unpublished)
+
+- **FIX**: Clean up remaining `doc` listeners, allowing Jest to return to OS prompt. Counteracts [Jest #11464](https://github.com/facebook/jest/issues/11464) Unfortunately no Firebase Admin SDK issue, though the root cause is likely there.
+- **CHANGE**: Limiting API exposure of `DocumentReferenceLike` to only:  `set`, `get`, `onSnapshot`.
+- **CLEANUP**: Removed old (commented out) `eventually` code
+
 ## 30-Jun-21 (0.0.3-beta.4b)
 
 - **BUG FIX**: Resolver fixed so `firestoreAdmin` works, from customer project.

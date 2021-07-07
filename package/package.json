@@ -34,7 +34,7 @@
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^27.0.5"
+    "jest": "^27.0.6"
   },
   "dependencies": {
     "firebase-admin": "^9.100.0-alpha.1",
