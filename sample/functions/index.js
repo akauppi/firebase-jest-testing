@@ -12,6 +12,7 @@ const admin = require('firebase-admin');
 //import * as admin from 'firebase-admin';
 
 admin.initializeApp();
+const db = admin.firestore();
 
 // Sad that the default region needs to be in the code. There is no configuration for it. 😢
 //
@@ -48,9 +49,6 @@ exports.userInfoShadow = regionalFunctions.firestore
   .document('/userInfo/{uid}')
   .onWrite( async (change, context) => {
     const [before,after] = [change.before, change.after];   // [QueryDocumentSnapshot, QueryDocumentSnapshot]
-
-    const db = admin.firestore();
-
     const uid = change.after.id;
 
     const newValue = after.data();      // { ... } | undefined

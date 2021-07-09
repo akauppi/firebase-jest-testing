@@ -29,14 +29,14 @@ describe("userInfo shadowing", () => {
     await collection("userInfo").doc("abc").set(william);
 
     // Style 1:
-    //  - 'waitForIt' only passes when the right kind of object is there.
+    //  - 'docListener' only passes when the right kind of object is there.
     //
-    //await expect( waitForIt("projects/1/userInfo/abc", shallowEqualsGen(william)) ).resolves.not.toThrow();
+    //await expect( docListener("projects/1/userInfo/abc", shallowEqualsGen(william)) ).resolves.toBeDefined();
 
     // Style 2:
-    //  - 'waitForIt' passes on first valid doc, checking is done outside of 'expect'.
+    //  - 'eventually.doc' passes on first valid doc, checking is done outside of 'expect'.
     //
-    await expect( waitForIt("projects/1/userInfo/abc") ).resolves.toContainObject(william);
+    await expect( docListener("projects/1/userInfo/abc") ).resolves.toContainObject(william);
   });
 
   test('Central user information is not distributed to a project where the user is not a member', async () => {
@@ -56,29 +56,24 @@ describe("userInfo shadowing", () => {
   //await expect(prom).timesOut;    // ..but with cancelling such a promise
 });
 
-/**
 /*
 * Generates a function that returns 'true' if the two objects have same values; shallow.
-*_/
-function shallowEqualsGen(o2) {   // (obj) => (obj) => boolean
-  return o1 => Object.keys(o1).length === Object.keys(o2).length &&
-    Object.keys(o1).every(k => o1[k] === o2[k]);
-}*/
-
-/*
-* Provide a Promise that resolves, if the right kind of change takes place in the watched doc.
 */
-function waitForIt(docPath, predicate) {    // (string, ((object) => any)? ) => Promise of {...Firestore document }
+function shallowEqualsGen(o) {   // (obj) => (obj) => boolean
+  return o1 => Object.keys(o1).length === Object.keys(o).length &&
+    Object.keys(o1).every(k => o1[k] === o[k]);
+}
+
+function docListener(docPath, filter) {   // (string, ((object) => falsy|object)?) => Promise of object
+
   return new Promise( (resolve) => {
 
     const unsub = doc(docPath).onSnapshot( ss => {
-      const o = ss.exists ? ss.data() : null;
+      const o = ss.exists ? (filter || (o => o))( ss.data() ) : null;
       if (!o) return;
 
-      if (!predicate || predicate(o)) {
-        resolve(o);
-        unsub();
-      }
+      resolve(o);
+      unsub();
     });
   });
 }
