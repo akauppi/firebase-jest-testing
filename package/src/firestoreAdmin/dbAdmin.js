@@ -8,7 +8,7 @@ import { strict as assert } from 'assert'
 import {PRIME_ROUND} from '../config.js'
 assert(!PRIME_ROUND);
 
-import { initializeApp } from 'firebase-admin/app'    // "modular API" (in alpha)
+import { initializeApp } from 'firebase-admin/app'    // "modular API" (alpha)
 //import { default as admin } from 'firebase-admin';    // stable API
 //function initializeApp(a,b) { return admin.initializeApp(a,b) }
 

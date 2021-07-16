@@ -46,9 +46,9 @@ const pkgEntries = Object.entries(pkgExports).map( ([k,v]) => {
 //    Jest will support 'exports' for real. Also, we've narrowed down to only those entries that we need.
 //
 const moreEntries = Object.entries({
-  "firebase-admin/app": "./lib/app/index.js",
-  //"firebase-admin/auth": "./lib/auth/index.js",
-  //"firebase-admin/firestore": "./lib/firestore/index.js"
+  "firebase-admin/app": "./lib/esm/app/index.js",
+  //"firebase-admin/auth": "./lib/esm/auth/index.js",
+  "firebase-admin/firestore": "./lib/esm/firestore/index.js"
 }).map( ([k,v]) => {
   const arr = k.match(/(.+?)\//);   // pick the node_modules name
   const name = arr[1] || fail("No '/' in key");

@@ -32,7 +32,6 @@ expect.extend( {
 });
 
 function myFmt(expectedAllowed,reason) {   // (boolean, string | undefined) => string
-  const lookup = { false: "denied", true: "allowed" };
   const a = lookup[expectedAllowed];
   const b = lookup[!expectedAllowed];
 
@@ -41,4 +40,4 @@ function myFmt(expectedAllowed,reason) {   // (boolean, string | undefined) => s
   return `Expected ${a} but the Firebase operation was ${b.toUpperCase()}.` + (reason ? ` [${reason.trimStart()}]`:'');
 }
 
-export { }
+const lookup = { false: "denied", true: "allowed" };
