@@ -23,7 +23,7 @@ expect.extend({
       message: () => `expected not to time out in ${ms}ms`,
       pass: true
     } : {
-      message: () => `${ error }`, //`expected to time out in ${ms}ms, but ${ error ? `rejected with ${error}`:`resolved with ${resolved}` }`,
+      message: () => `expected to time out in ${ms}ms, but ${ error ? `rejected with ${error}`:`resolved with ${resolved}` }`,
       pass: false
     }
   }

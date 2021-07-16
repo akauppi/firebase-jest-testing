@@ -193,12 +193,6 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
   See detailed description in [Jest problems](./Jest%20problems.md).
 
 
-## Cloud Functions: allow functions to be defined as ESM
-
-- [ ] [Add support for parsing function triggers from ES modules](https://github.com/firebase/firebase-tools/pull/3485) (pr)
-
-   Once that's deployed, we can try changing `sample/functions/package.json` to be `type: "module"`.
-   
 ## Concurrently
 
 - [SIGINT is sent twice when pressing Ctrl-C, causing dirty shutdown](https://github.com/kimmobrunfeldt/concurrently/issues/283)
