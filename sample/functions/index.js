@@ -5,11 +5,11 @@
 *
 * Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, ~Aug 2020~ May 2021).
 */
-const functions = require('firebase-functions');
-//import * as functions from 'firebase-functions';
+//const functions = require('firebase-functions');
+import functions from 'firebase-functions';   // 3.14.1 not ready for this (with '@google-cloud/functions-framework' 1.9.0, it is)
 
-const admin = require('firebase-admin');
-//import * as admin from 'firebase-admin';
+//const admin = require('firebase-admin');
+import admin from 'firebase-admin';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -21,7 +21,8 @@ const regionalFunctions = functions.region("mars-central2");
 /*
 * { msg: string } -> string
 */
-exports.greet = regionalFunctions.https
+//exports.greet = regionalFunctions.https
+export const greet = regionalFunctions.https
   .onCall((msg, context) => {
 
     /*** KEEP
@@ -45,7 +46,8 @@ exports.greet = regionalFunctions.https
 //  - shows picking document id (following all docs in a collection)
 //  - shows behaviour based on template data (i.e. testing Cloud Functions may need primed data).
 //
-exports.userInfoShadow = regionalFunctions.firestore
+//exports.userInfoShadow = regionalFunctions.firestore
+export const userInfoShadow = regionalFunctions.firestore
   .document('/userInfo/{uid}')
   .onWrite( async (change, context) => {
     const [before,after] = [change.before, change.after];   // [QueryDocumentSnapshot, QueryDocumentSnapshot]

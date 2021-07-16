@@ -13,10 +13,18 @@ import { afterAll } from '@jest/globals'
 const autoUnsubs = new Set();    // Set of () => ()
 
 /*
-* Note: Just doing 'const { collection, doc } = dbAdmin' does not work.
 */
 function collection(path) {
-  return dbAdmin.collection(path);
+  const ref = dbAdmin.collection(path);
+
+  assert(ref.listDocuments && ref.doc && ref.onSnapshot );
+
+  // Not really wanting to limit the API much, but at the same time we should provide 'afterAll' cleanup, regardless
+  // the API used. I.e. not to leak unwrapped 'DocumentReference' - that would be confusing.
+  //
+  return {
+    doc: (subPath) => doc(`${path}/${subPath}`)     // (string) => DocumentReference -like
+  }
 }
 
 /*

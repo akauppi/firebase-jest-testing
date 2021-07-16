@@ -7,6 +7,7 @@
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
 import './matchers/toContainObject'
+import './matchers/timesOut'
 import { collection, doc, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
 
 describe("userInfo shadowing", () => {
@@ -45,15 +46,15 @@ describe("userInfo shadowing", () => {
     //
     await collection("userInfo").doc("xyz").set({ displayName: "blah", photoURL: "https://no-such.png" });
 
-    await sleepMs(300);   // give time
-    await expect( doc("projects/1/userInfo/xyz").get().then( ss => ss.exists ) ).resolves.toBe(false);
+    await expect( docListener("projects/1/userInfo/xyz" )).timesOut(300);
+
   }, 9999);
 
-  // ideally:
-  //await expect(prom).not.toComplete;    // ..but with cancelling such a promise
+  // ^-- ideally, using the Jest test's timeout:
+  //await expect(prom).not.toComplete;
 
   // ..or:
-  //await expect(prom).timesOut;    // ..but with cancelling such a promise
+  //await expect(prom).timesOut;
 });
 
 /*
@@ -73,9 +74,7 @@ function docListener(docPath, filter) {   // (string, ((object) => falsy|object)
       if (!o) return;
 
       resolve(o);
-      unsub();
+      /*await*/ unsub();
     });
   });
 }
-
-const sleepMs = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });

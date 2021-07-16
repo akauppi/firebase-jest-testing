@@ -1,9 +1,9 @@
 # Changelog
 
-## 7-Jul-21 (unpublished)
+## 7-Jul-21 (unpublished; 0.0.4-alpha.1)
 
 - **FIX**: Clean up remaining `doc` listeners, allowing Jest to return to OS prompt. Counteracts [Jest #11464](https://github.com/facebook/jest/issues/11464) Unfortunately no Firebase Admin SDK issue, though the root cause is likely there.
-- **CHANGE**: Limiting API exposure of `DocumentReferenceLike` to only:  `set`, `get`, `onSnapshot`.
+- **CHANGE**: No more leaking through Firebase Admin SDK APIs, but exposing only selected methods, deemed useful for testing.
 - **CLEANUP**: Removed old (commented out) `eventually` code
 
 ## 30-Jun-21 (0.0.3-beta.4b)
