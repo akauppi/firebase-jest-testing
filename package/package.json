@@ -53,8 +53,7 @@
     ],
     "peerDependencies": {
       "": [
-        "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different)",
-        "version.",
+        "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different version).",
         "",
         "'firebase-admin', on the contrary, is now seen as an implementation detail, since the using application does not",
         "need to touch it, or even be aware of it."

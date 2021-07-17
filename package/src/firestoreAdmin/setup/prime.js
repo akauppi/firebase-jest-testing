@@ -7,6 +7,7 @@
 *   JEST Global Setup
 */
 import { strict as assert } from 'assert'
+
 import {PRIME_ROUND, FIRESTORE_HOST} from '../../config.js'
 assert(PRIME_ROUND);
 
@@ -27,6 +28,7 @@ import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in a
 //function initializeApp(a,b) { return admin.initializeApp(a,b) }
 
 import { wipe } from './wipe.js'
+import { writeTemp } from '../../intercom/index.js'
 
 /*
 * Prime a database with data
@@ -62,6 +64,11 @@ async function prime(projectId, data) {    // ({ <docPath>: { <field>: <value> }
     }
     await batch.commit();
   });
+
+  // Write a temporary file under 'node_modules/', with a naming pattern common to the 'firestoreRules' test side.
+  // The file will be automatically removed.
+  //
+  await writeTemp(projectId, data);
 }
 
 /*
