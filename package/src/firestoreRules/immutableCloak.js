@@ -11,8 +11,7 @@ import { readTemp } from '../intercom/index'
 // A: Read from database, cache
 // B: Read from disk, prepared by 'intercom'
 //
-// B is slightly faster (~3.4s vs. ~3.7s for 'npm run test:rules:all'), but also scales better by the size of the
-// _test cases_ (which ultimately matters).
+// B is slightly faster (~3.4s vs. ~3.7s for 'npm run test:rules:all'), and also scales better (no additional locking).
 //
 const USE_B = true;
 

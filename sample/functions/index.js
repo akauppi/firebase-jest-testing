@@ -2,11 +2,9 @@
 * functions/index.js
 *
 * Cloud Functions so we have something to test against.
-*
-* Note: Using CommonJS ('require') until Cloud Functions supports native ES modules (not yet, ~Aug 2020~ May 2021).
 */
 //const functions = require('firebase-functions');
-import functions from 'firebase-functions';   // 3.14.1 not ready for this (with '@google-cloud/functions-framework' 1.9.0, it is)
+import functions from 'firebase-functions';
 
 //const admin = require('firebase-admin');
 import admin from 'firebase-admin';

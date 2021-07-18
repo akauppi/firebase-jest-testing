@@ -13,17 +13,12 @@
   "//": {
     "dependencies": {
       "@google-cloud/functions-framework": [
-        "Needed at least initially, to have functions as ESM."
+        "Needed at least initially ('firebase-functions' 3.14.1), to have functions as ESM."
       ]
     },
     "engines.node": [
       "Firebase Cloud Functions only supports LTS versions (12,14,...) and the string must be '12','14', ...",
       "We get away with '14 || ...' since this is not being deployed. Plain '14' would give warnings in development."
-    ],
-    "firebase-admin": [
-      "Cannot test the 'modular' alpha, because of firebase-functions peer dependency:",
-      "| npm ERR! Could not resolve dependency:",
-      "| npm ERR! peer firebase-admin@\"^8.0.0 || ^9.0.0\" from firebase-functions@3.14.1"
     ]
   }
 }
