@@ -1,7 +1,7 @@
 /*
 * sample/test-rules/visitedC.test.js
 */
-import { describe, expect, beforeAll } from '@jest/globals'
+import { test, describe, expect, beforeAll } from '@jest/globals'
 
 import { collection, serverTimestamp } from 'firebase-jest-testing/firestoreRules'
 

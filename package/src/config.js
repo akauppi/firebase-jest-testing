@@ -15,7 +15,7 @@ const fn = process.env["FIREBASE_JSON"] || './firebase.json';
 
 function fail(msg) { throw new Error(msg); }
 
-const PRIME_ROUND = !global.afterAll;   // are we imported from 'globalSetup', or from the tests?
+const PRIME_ROUND = ! process.env.JEST_WORKER_ID;
 
 const firebaseJson = JSON.parse(
   readFileSync(fn, 'utf8')
