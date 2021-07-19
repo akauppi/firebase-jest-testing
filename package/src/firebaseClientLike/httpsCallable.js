@@ -7,7 +7,7 @@
 */
 import fetch from 'node-fetch'
 
-import { FUNCTIONS_URL, projectId } from '../config'
+import { FUNCTIONS_URL, projectId } from '../config.js'
 
 let functionsRegion = "us-central1";
 
