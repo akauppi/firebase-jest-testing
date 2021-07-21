@@ -13,20 +13,6 @@ assert(PRIME_ROUND);
 
 import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
 
-// To successfully load 'firebase-admin' (9.x), you DO IT PRECISELY LIKE HERE!
-//
-// DO NOT:
-//    - spread the 'admin' open (not in module root; not within functions).
-//        >> const { initializeApp } = admin    // gives "Cannot read property 'INTERNAL' of undefined"
-//    - assign to a value
-//        >> const initializeApp = admin.initializeApp;   // ..same error
-//
-// The official "ES2015" way of "import * as admin from ..." does not work with native ES modules.
-//
-//import admin from 'firebase-admin'; const initializeApp = admin.initializeApp;
-//import { default as admin } from 'firebase-admin';   // WORKS
-//function initializeApp(a,b) { return admin.initializeApp(a,b) }
-
 import { wipe } from './wipe.js'
 import { writeTemp } from '../../intercom/index.js'
 

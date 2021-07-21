@@ -80,13 +80,6 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
     }
 
     const resJson = await res.json();
-
-    // NOTE!!!
-    //    Unlike what the documentation[1] states, the return value for a successful call is _not_ in '.data' but in
-    //    '.result' ('firebase-tools' 9.10.2).
-    //
-    // [1]: https://firebase.google.com/docs/functions/callable-reference#response_body
-
     const { result, error } = resJson;
 
     // "If [the error] field is present, then the request is considered failed, regardless of the HTTP status code or

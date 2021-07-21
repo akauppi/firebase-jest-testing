@@ -27,7 +27,7 @@
     "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
-    "node": "^14.3 || ^16",
+    "node": "^14.3 || >=16",
     "npm": ">= 7.7.0"
   },
   "publishConfig": {
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "firebase-admin": "^9.100.0-alpha.1",
-    "node-fetch": "^3.0.0-beta.9"
+    "node-fetch": "^3.0.0-beta.10"
   },
   "//": {
     "exports": [
