@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^14.3 || ^16",
+    "node": "^14.3 || >=16 < 16.6 || >=16.6.1",
     "npm": ">= 7.7.0"
   },
   "bin": {
@@ -62,7 +62,9 @@
     ],
     "engines.node": [
       ">=14.3: has --harmony-top-level-await",
-      ">=13.2: native ES module support"
+      ">=13.2: native ES module support",
+      "",
+      "Avoid 16.6.0 due to: https://github.com/facebook/jest/issues/11708"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
