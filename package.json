@@ -47,9 +47,9 @@
   },
   "devDependencies": {
     "@local/self": "file:.",
-    "concurrently": "^6.2.0",
+    "concurrently": "^6.2.1",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.16.0",
+    "firebase-tools": "^9.16.2",
     "jest": "^27.0.6"
   },
   "//": {
