@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.3-beta.4b",
+  "version": "0.0.4-alpha.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -27,24 +27,25 @@
     "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
-    "node": "^14.3 || ^16",
+    "node": "^14.3 || >=16 <16.6 || >= 16.6.1",
     "npm": ">= 7.7.0"
   },
   "publishConfig": {
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^27.0.5"
+    "jest": "^27.0.6"
   },
   "dependencies": {
     "firebase-admin": "^9.100.0-alpha.1",
-    "node-fetch": "^3.0.0-beta.9"
+    "node-fetch": "^3.0.0-beta.10"
   },
   "//": {
     "exports": [
       "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."
     ],
     "engines.node": [
+      "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)",
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
     ],
@@ -53,8 +54,7 @@
     ],
     "peerDependencies": {
       "": [
-        "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different)",
-        "version.",
+        "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different version).",
         "",
         "'firebase-admin', on the contrary, is now seen as an implementation detail, since the using application does not",
         "need to touch it, or even be aware of it."

@@ -78,3 +78,10 @@ It looks to the author that the source code is the main culprit, though. Once ab
 For `firebase.json`, command line overrides for **all** (or most) of the config entries would take away the need to have two config files in one's project[^1]. There'd only be the main file (at root) and commands such as starting an emulator could override the fields they need.
 
 [^1]: We got away from that :)
+
+
+## Firebase Admin SDK client prevents Jest from exiting, if listeners are open
+
+There should be an issue in the *Firebase Admin SDK* about this, but there isn't. There is [one in Jest](https://github.com/facebook/jest/issues/11464).
+
+We crafted a work-around for this, so it's not an acute problem, any more.

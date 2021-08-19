@@ -1,5 +1,17 @@
 # Changelog
 
+## 18-Aug-21 (0.0.4-alpha.3)
+
+- **ADD**: Ability to set emulator host via `EMUL_HOST` env.var. Needed for use under Docker Compose.
+
+
+## 17-Jul-21 (0.0.4-alpha.2)
+
+- **FIX**: Clean up remaining `doc` listeners, allowing Jest to return to OS prompt. Counteracts [Jest #11464](https://github.com/facebook/jest/issues/11464) Unfortunately no Firebase Admin SDK issue, though the root cause is likely there.
+- **CHANGE**: No more leaking through Firebase Admin SDK APIs, but exposing only selected methods, deemed useful for testing.
+- **CLEANUP**: Removed old (commented out) `eventually` code
+- **OPTIMIZATION**: 10..20% speed improvement on rules tests, due to transferring primed data via "intercom" temporary files.
+
 ## 30-Jun-21 (0.0.3-beta.4b)
 
 - **BUG FIX**: Resolver fixed so `firestoreAdmin` works, from customer project.

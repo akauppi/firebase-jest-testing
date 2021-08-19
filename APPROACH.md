@@ -2,16 +2,15 @@
 
 ## One-stop shop
 
-The user of the library is not expected to know about `firebase-admin` or Firebase JS SDK details. We do follow the `firebase-admin` API as closely as it makes sense, or leak aspects of it in the implementation, but don't expect the user to need to read the corresponding documentation, to be able to create tests.
+The user of the library is not expected to know about `firebase-admin` or Firebase JS SDK details (or the differences between the "alpha" and 9.x APIs). We do follow the `firebase-admin` API as closely as it makes sense, but don't expect the user to need to read the corresponding documentation.
 
-If the test developer wants, they can bring in `firebase-admin` or `firebase` JS SDK into their tests, but they need to take care of the configuration, in that case.
+>Note: The version of `firebase-admin` in the parent application is constrained by our (semi-internal) use of it. This matters especially within the transition from 9.x to "modular" Node.js admin library.
+>
+>This should not matter, since the idea is that the test project would not need to import `firebase-admin` directly, at all.
 
->Note: The version of `firebase-admin` in the parent application is constrained by our (semi-internal) use of it. This matters especially within the transition from 9.x to "modular" Node.js admin library. The client JS SDK is free to choose, since we don't use one (but rely on REST APIs).
 
-
+<!-- phasing out...
 ## Where to prime the data
-
-<!-- tbd. Consider removing this? -->
 
 This is very self-evident, in hindsight.
 
@@ -23,7 +22,7 @@ Now, tests themselves prime the data as part of their setup. This means:
 - one can change the dataset (this happens rarely, but..) and not need to restart the emulators
 
 You probably should stick with this setup.
-
+-->
 
 ## Where to set the project id(s)
 
@@ -57,18 +56,19 @@ The name of the env.var. is completely internal to the implementation. It's nice
 
 ## Immutability cloaking
 
-<!-- can be removed, once we're stable with the read-all-database-at-import approach -->
-
 >Immutability cloaking means the act of making Firestore data look (to the tests) like it wouldn't change, when in fact it does.
 
 Immutability cloaking needs to know the original contents of the data.
 
 We tried a couple of approaches to this:
 
-- reading before each potentially mutating operation (takes 12..32 per operation)
-- passing the data from prime to cloak, via file system (unnecessarily burdens also runs not intended for testing Security Rules)
+- reading before each potentially mutating operation (takes 12..32 ms per operation)
+- reading only once, per doc, then keeping in cache (~20..45 ms per operation) <!-- no idea why the timing is different than above -->
+- reading *all* primed data at the launch (~400 ms initial delay)
 
-.. before settling on reading the whole database at the loading of the immutability cloak module (not implemented, yet / Jun 2021).
+None of these approaches is very good. Access to the emulated Firestore is *really slow*, pushing us towards:
+
+- reading the data directly from disk, also in the tests
 
 
 ## Firebase vs. our approach?

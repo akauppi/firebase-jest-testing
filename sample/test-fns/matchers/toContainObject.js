@@ -11,6 +11,8 @@
 *     expect(state).not.toContainObject({ data: 'bar' })
 *   <<
 */
+import { expect } from '@jest/globals'
+
 expect.extend({
   toContainObject(received, expected) {   // (any, object) => { message: () => string, pass: boolean }
     const { printReceived, printExpected } = this.utils;

@@ -15,12 +15,11 @@
   },
   "scripts": {
     "test": "concurrently --kill-others --success=first --prefix none \"npm run start > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
-    "//test": "npm run -s ci",
     "---": "",
     "ci": "npm run ci:seq",
     "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
     "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
-    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _start_pipeless\" \"wait-for 4000 && npm run -s _ci_par\"",
+    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_par\"",
     "//_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
     "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
     "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
@@ -47,9 +46,9 @@
   },
   "devDependencies": {
     "@local/self": "file:.",
-    "concurrently": "^6.2.0",
+    "concurrently": "^6.2.1",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.14.0",
+    "firebase-tools": "^9.16.5",
     "jest": "^27.0.6"
   },
   "//": {
@@ -76,8 +75,11 @@
     },
     "scripts": {
       "_start_pipeless": [
-        "Alpine Linux (which we use in the CI Docker image) gets 'concurrently' (6.2.0) stuck, if a pipe is involved.",
-        "We would like to use the normal 'start', if possible. See 'TRACK.md'"
+        "Needed because:",
+        "- when run in the 'firebase-ci-builder' image, a pipe in the command causes 'concurrently' (6.2.0) to get stuck,",
+        "  and the CI task never finishes.",
+        "",
+        "We would like to use the normal 'start', if possible. See 'TRACK.md'."
       ]
     }
   }

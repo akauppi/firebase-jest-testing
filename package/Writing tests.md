@@ -178,9 +178,16 @@ See `sample/test-fns/userInfo.test.js` for an example.
 
 ### `collection`, `doc`
 
-These are the `firebase-admin` `CollectionRef` and `DocumentRef` handles, and can be used in any way you like. 
+These are the `CollectionReference` and `DocumentReference` -*like* handles, and have only some of their methods exposed:
+
+||methods|
+|---|---|
+|`CollectionReference`-like|`.doc`|
+|`DocumentReference`-like|`.get`, `.set`, `.onSnapshot`|
 
 The library has configured them for emulator access, and will do cleanup for you.
+
+>If you need some further methods, contact the author with the use case.
 
 
 ## Testing Cloud Functions > callables

@@ -13,19 +13,26 @@ import { readFileSync } from 'fs'
 
 const fn = process.env["FIREBASE_JSON"] || './firebase.json';
 
+// Needed for working with Docker Compose.
+//
+// Note: TRIED desperately to have this provided through some other means. Chiefly, Jest config doesn't allow custom
+//    entries (tried), and even if it did, the given globals are not reflected in Global Setup, only in test environment (Jest 27.0.6).
+//
+const host = process.env["EMUL_HOST"] || 'localhost';
+
 function fail(msg) { throw new Error(msg); }
 
-const PRIME_ROUND = !global.afterAll;   // are we imported from 'globalSetup', or from the tests?
+const PRIME_ROUND = ! process.env.JEST_WORKER_ID;
 
 const firebaseJson = JSON.parse(
   readFileSync(fn, 'utf8')
 );
 
-const FIRESTORE_HOST = process.env["FIRESTORE_EMULATOR_HOST"] || (() => {
+const FIRESTORE_HOST = (() => {
   const port = firebaseJson?.emulators?.firestore?.port
     || fail(`Unable to get Firestore emulator port from '${fn}'`);
 
-  return `localhost:${port}`;
+  return `${host}:${port}`;
 })();
 
 const FUNCTIONS_URL = (() => {
@@ -35,7 +42,7 @@ const FUNCTIONS_URL = (() => {
     console.warning(`No 'emulators.functions.port' in '${fn}': using default (${port}).`);
   }
 
-  return `http://localhost:${port}`;
+  return `http://${host}:${port}`;
 })();
 
 // If Global Setup, pass
