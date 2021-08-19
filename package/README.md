@@ -57,10 +57,24 @@ resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
 
 >Note: This is needed because the Jest 27 resolver does not treat modules with `exports` appropriately. Eventually, this will become unnecessary.
 
+### Using with Docker Compose
 
-## Sample project
+With Docker Compose, your emulators are likely running under another host than the one running the Jest tests.
 
-See the [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package.json` and `sample` folder for practical examples.
+Set the `EMUL_HOST` env.var. to indicate the host name.
+
+```
+services:
+  sample:
+    ...
+    environment: ['EMUL_HOST=emul']
+```
+
+
+## Sample project(s)
+
+- [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package.json` and `sample` folder.
+- [GroundLevel-firebase-es](http://github.com/akauppi/GroundLevel-firebase-es) `packages/backend` subpackage (branch `next` for using with Docker Compose).
 
 
 ## Reference documentation

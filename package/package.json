@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.4-alpha.2",
+  "version": "0.0.4-alpha.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -27,7 +27,7 @@
     "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
-    "node": "^14.3 || >=16",
+    "node": "^14.3 || >=16 <16.6 || >= 16.6.1",
     "npm": ">= 7.7.0"
   },
   "publishConfig": {
@@ -45,6 +45,7 @@
       "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."
     ],
     "engines.node": [
+      "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)",
       ">=14.3: has --harmony-top-level-await",
       ">=13.2: native ES module support"
     ],

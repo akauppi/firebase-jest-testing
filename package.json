@@ -15,7 +15,6 @@
   },
   "scripts": {
     "test": "concurrently --kill-others --success=first --prefix none \"npm run start > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
-    "//test": "npm run -s ci",
     "---": "",
     "ci": "npm run ci:seq",
     "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
@@ -49,7 +48,7 @@
     "@local/self": "file:.",
     "concurrently": "^6.2.1",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.16.2",
+    "firebase-tools": "^9.16.5",
     "jest": "^27.0.6"
   },
   "//": {
