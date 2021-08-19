@@ -82,6 +82,6 @@ For `firebase.json`, command line overrides for **all** (or most) of the config 
 
 ## Firebase Admin SDK client prevents Jest from exiting, if listeners are open
 
-These should be an issue in the *Firebase Admin SDK* about this, but there isn't. There is [one in Jest](https://github.com/facebook/jest/issues/11464).
+There should be an issue in the *Firebase Admin SDK* about this, but there isn't. There is [one in Jest](https://github.com/facebook/jest/issues/11464).
 
 We crafted a work-around for this, so it's not an acute problem, any more.
