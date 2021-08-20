@@ -21,12 +21,25 @@ steps:
 #  entrypoint: bash
 #  args: ['-c', 'env']
 
-- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+# Node 14
+#
+# Passes if timeouts are 5000ms (2655 ms for fns; 2414 for rules)
+#
+- name: node:14-alpine
   entrypoint: npm
   args: ['install']
-- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-  entrypoint: npm
-  args: ['run','ci']
+- name: docker/compose:${_DOCKER_COMPOSE_TAG}
+  args: ['run', 'test']
+  env: [
+    'CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
+    'NODE=14'
+  ]
+
+# Node 16
+# ...
+# Have problems running with Node 16, under Docker Compose, so left for #later.
+#
+# Ideally, it would be nice to run CI jobs on both versions. `#contribute`?
 
 # --- Timeout
 #
@@ -36,4 +49,5 @@ steps:
 timeout: 240s
 
 substitutions:
-  _BUILDER_TAG: 9.12.1-node16-npm7
+  _BUILDER_TAG: 9.16.0-node16-npm7
+  _DOCKER_COMPOSE_TAG: 1.29.2

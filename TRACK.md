@@ -1,24 +1,5 @@
 # Track
 
-## Concurrently: piping 
-
-- [ ] [Weird hanging bug with --kill-others](https://github.com/kimmobrunfeldt/concurrently/issues/104)
-
-This can be replicated locally:
-
-```
-$ docker run -it --rm -v $(pwd):/work -w /work firebase-ci-builder:9.12.1-node16-npm7 /bin/bash
-
-# passwd user    # give eg.123
-# login user
-
-$ npm test    # gets stuck at the end (uses a pipe)
-$ npm run ci  # passes (no pipe)
-```
-
-If fixed, we could retire the `_start_pipeless` target.
- 
-
 ## Jest cannot handle package `exports` ⚠️
 
 - [Support package exports in `jest-resolve`](https://github.com/facebook/jest/issues/9771) (Jest #9771)
@@ -97,18 +78,19 @@ Cons:
 Turning off the `resolver` in Jest config is enough to see whether it's still required.
 
 
+<!-- don't care
 ## firebase-js-sdk #2895 ☠️
 
 - [FR: Immutability when testing Firestore Security Rules](https://github.com/firebase/firebase-js-sdk/issues/2895) 
    - let's see what Firebase authors reply
-		- not a reply in 14 <!--was: 13,4--> months #sniff 😢
+		- not a reply in 14 <_!--was: 13,4--_> months #sniff 😢
 
 >Note: The issue is clearly in a wrong project - it should be in `firebase-tools`.
 
 The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` flag in the URL. If this were to be used, all behaviour would be as-normal (delete, update, set), but no changes would actually be placed in the data.
 
 We've already built a stable work-around. The benefit would be simplified code (and a ~5% speed improvement).
-
+-->
 
 ## `node-fetch` v3
 
@@ -193,12 +175,13 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
   See detailed description in [Jest problems](./Jest%20problems.md).
 
 
+<!-- hidden
 ## Concurrently
 
 - [SIGINT is sent twice when pressing Ctrl-C, causing dirty shutdown](https://github.com/kimmobrunfeldt/concurrently/issues/283)
 
    Have seen this. Not sure it's `concurrently`, though.
-
+-->
 
 ## Jest: tapping to timeouts
 

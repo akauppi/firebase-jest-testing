@@ -10,38 +10,34 @@
   },
   "bin": {
     "active-project": "./tools/active-project.sh",
-    "filter-emulators": "./tools/filter-emulators.sh",
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
-    "test": "concurrently --kill-others --success=first --prefix none \"npm run start > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
-    "---": "",
-    "ci": "npm run ci:seq",
-    "ci:seq": "concurrently --kill-others --success=first --prefix none \"npm run _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_seq\"",
-    "_ci_seq": "npm run -s _ci_fns && npm run -s _ci_rules",
-    "//ci:par": "concurrently --kill-others --success=first --prefix none \"npm run -s _start_pipeless > /dev/null\" \"wait-for 4000 && npm run -s _ci_par\"",
-    "//_ci_par": "concurrently -n test-fns,test-rules \"npm run -s _ci_fns\" \"npm run -s _ci_rules\"",
-    "_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles",
-    "_ci_rules": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles",
-    "---  ": "",
-    "start": "firebase emulators:start --project=demo-1 | $(filter-emulators)",
-    "_start_pipeless": "firebase emulators:start --project=demo-1",
+    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && npm run -s _test1\"",
+    "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "-- ": "",
+    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not signed in to the Firebase CLI|You are not currently authenticated\"",
+    "-- -": "",
+    "//ci:test": "NODE=14 docker compose run test",
+    "-- - ": "",
+    "test:all": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "--  -": "",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
     "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
-    "---   ": "",
+    "-- --": "",
     "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
     "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
     "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f symbolsC.test.js --verbose --detectOpenHandles --all",
     "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f userInfoC.test.js --verbose --detectOpenHandles --all",
     "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f visitedC.test.js --verbose --detectOpenHandles --all",
     "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js --verbose --detectOpenHandles --all",
-    "--- -": "",
+    "--   -": "",
     "postinstall": "npm --prefix sample/functions install",
-    "--- - ": "",
+    "-- - -": "",
     "prestart": "npm run -s _checkNoActive",
     "_checkNoActive": "[[ $BUILD_ID ]] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
-    "--- --": "",
+    "--  --": "",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
@@ -74,12 +70,12 @@
       ]
     },
     "scripts": {
-      "_start_pipeless": [
-        "Needed because:",
-        "- when run in the 'firebase-ci-builder' image, a pipe in the command causes 'concurrently' (6.2.0) to get stuck,",
-        "  and the CI task never finishes.",
-        "",
-        "We would like to use the normal 'start', if possible. See 'TRACK.md'."
+      "wait-for 6767": [
+        "The Firebase Emulator responds by 200 (OK) to a GET at its port. THIS IS GREAT - it allows us to know when",
+        "it's up. However, it is likely undocumented."
+      ],
+      "NODE_OPTIONS=--experimental-vm-modules": [
+        "Still needed on both Node.js 14 and 16. (not knowing where to track it's removal)"
       ]
     }
   }

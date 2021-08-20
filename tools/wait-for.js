@@ -3,13 +3,13 @@
 /*
 * Usage:
 *   <<
-*     $ wait-for <port-int>
+*     $ wait-for [<host>:]<port-int>
 *   <<
 *
 * Waits until the named port becomes available.
 *
-* Used to use 'wait-on' but it misbehaves with Firebase Hosting, starting some version (of emulation, or the tool,
-* not sure).
+* Used 'wait-on' npm package earlier, but it misbehaves with Firebase Hosting, starting some version (of emulation,
+* or the tool, not sure).
 *
 * - Firebase Hosting DOES NOT PROVIDE 'HEAD' (but gives 404), for paths where 'GET' gives 200. This is the main cause.
 * - 'wait-on' uses Axios (or something) that, EVEN WITH 'http-get://' still checks with a 'HEAD' first (this is wait-on's
@@ -17,17 +17,17 @@
 *
 * It seems faster to do a simple tool, than push for the fix upstream, or find tools. :S
 */
-
 import fetch from 'node-fetch'
 
-const [port] = process.argv.slice(2);
+const url = (() => {
+  const arg = process.argv.slice(2) || failExit("Missing '[host:]port' param.");
 
-if (!port) {
-  console.error("No 'port' parameter!");
-  process.exit(-2);
-}
-
-const url = `http://localhost:${port}`;
+  const [_,c1,c2] = /^(?:(.+):)?(\d+)$/.exec(arg) || [];
+  if (!c2) {
+    failExit( `Bad param (expecting '[host:]port'): ${arg}`);
+  }
+  return `http://${c1 || 'localhost'}:${c2}`;
+})();
 
 //console.log('Waiting for GET to succeed (2xx) on:', url);
 
@@ -59,3 +59,8 @@ function areWeThereYet() {
 }
 
 areWeThereYet();
+
+function failExit(msg) {    // () => never
+  console.error( `ERROR: ${msg}` );
+  process.exit(-2);
+}

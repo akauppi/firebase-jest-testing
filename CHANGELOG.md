@@ -4,7 +4,6 @@
 
 - **ADD**: Ability to set emulator host via `EMUL_HOST` env.var. Needed for use under Docker Compose.
 
-
 ## 17-Jul-21 (0.0.4-alpha.2)
 
 - **FIX**: Clean up remaining `doc` listeners, allowing Jest to return to OS prompt. Counteracts [Jest #11464](https://github.com/facebook/jest/issues/11464) Unfortunately no Firebase Admin SDK issue, though the root cause is likely there.
