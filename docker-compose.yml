@@ -9,9 +9,11 @@
 # Context:
 #   - Cloud Build, with 'firebase-ci-builder' image in the Container Registry
 #
-# Environment values (from Cloud Build):
+# Environment values (Cloud Build):
 #   - 'CI_BUILDER_IMAGE'
-#   - 'NODE_TAG' (either "14" or "16")
+#   - 'NODE': "14"
+#
+#   - pwd: /workspace
 #
 # Intentions:
 #   - Test with Node 14
@@ -52,7 +54,7 @@ services:
   # Note: CI has already done 'npm install'.
   #
   test:
-    image: node:${NODE:-16}-alpine
+    image: node:${NODE-16}-alpine
     volumes:
       - .:/work
     working_dir: /work

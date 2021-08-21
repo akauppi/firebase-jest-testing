@@ -16,7 +16,7 @@
     "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && npm run -s _test1\"",
     "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
     "-- ": "",
-    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not signed in to the Firebase CLI|You are not currently authenticated\"",
+    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project\"",
     "-- -": "",
     "//ci:test": "NODE=14 docker compose run test",
     "-- - ": "",
