@@ -1,8 +1,10 @@
 #
 # cloudbuild.yaml
 #
-# Builder image:
-#   https://github.com/akauppi/firebase-ci-builder
+# Intention:
+#   Check that the project installs and runs the tests, using
+#     - Node 14; npm 6
+#     - Node 16; npm 7 (not currently enabled)
 #
 # Runtime environment:
 #   - Current directory is '/workspace'
@@ -14,6 +16,9 @@
 #   - functional changes to 'master' branch
 #     - changes only affecting '.md' files are excluded
 #
+# BIG NOTE!!!
+#   ONLY use the 'docker-compose' (custom) image using its default entrypoint. It NOT ONLY starts 'docker compose'
+#   but ALSO moves the plugin under '/builder/home', suitable for CI.
 
 steps:
   # DEBUG
@@ -21,13 +26,35 @@ steps:
 #  entrypoint: bash
 #  args: ['-c', 'env']
 
-# Node 14
+#--- Node 14 ---
 #
-# Passes if timeouts are 5000ms (2655 ms for fns; 2414 for rules)
+# As of Aug-21:
+#   - node 14.17.5
+#   - npm 6.14.14
 #
 - name: node:14-alpine
   entrypoint: npm
   args: ['install']
+    #
+    # CI gives these warnings:
+    #   <<
+    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace/node_modules/@local/self)
+    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace)
+    #     Step #0: npm notice created a lockfile as package-lock.json. You should commit this file.
+    #   <<
+    #
+    # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
+    #
+    # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
+
+# Remedy for the above
+- name: node:14-alpine
+  entrypoint: npm
+  args: ['install']
+  dir: sample/functions
+
+# Stock image, but only 1 series
+#
 - name: docker/compose:${_DOCKER_COMPOSE_TAG}
   args: ['run', 'test']
   env: [
@@ -35,7 +62,7 @@ steps:
     'NODE=14'
   ]
 
-# Node 16
+#--- Node 16 ---
 # ...
 # Have problems running with Node 16, under Docker Compose, so left for #later.
 #
@@ -44,7 +71,7 @@ steps:
 # --- Timeout
 #
 # Takes:
-#   CI: 1m48s, 1m53s
+#   CI: 1m48s, 1m53s (Node 14 only)
 #
 timeout: 240s
 

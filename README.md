@@ -32,13 +32,15 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- node >= 14.3
-- npm >= 7.7.0
+- node >= 14.3 or 16.x
+- npm 6 or >= 7.7.0
 - Jest >= 27
+
+>Note: The author would like to drop `npm` 6 support, but it's the default for Node 14 images. Kept somewhat grudgingly, for now. (CI runs `npm` 6; all development is run with `npm` 7)
 
 <!--
 Developed with:
-- macOS 11.4
+- macOS 11.5
 - node 16.2
 - npm 7.19
 -->
