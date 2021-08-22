@@ -16,7 +16,7 @@
     "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && npm run -s _test1\"",
     "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
     "-- ": "",
-    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project\"",
+    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
     "-- -": "",
     "//ci:test": "NODE=14 docker compose run test",
     "-- - ": "",
@@ -36,7 +36,7 @@
     "postinstall": "npm --prefix sample/functions install",
     "-- - -": "",
     "prestart": "npm run -s _checkNoActive",
-    "_checkNoActive": "[[ $BUILD_ID ]] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
+    "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "--  --": "",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
@@ -76,6 +76,10 @@
       ],
       "NODE_OPTIONS=--experimental-vm-modules": [
         "Still needed on both Node.js 14 and 16. (not knowing where to track it's removal)"
+      ],
+      "no [[": [
+        "Don't use '[[' (bash syntax). Though Windows 10+WSL2 would be using bash, the npm commands",
+        "seem to be passed to plain 'sh'. '[' works."
       ]
     }
   }
