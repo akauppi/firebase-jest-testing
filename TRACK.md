@@ -190,3 +190,12 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
    That issue has a proposal for tapping to the Jest timeouts. 
 
    Would it be possible to get a `beforeTimeout` callback?
+
+
+## Firebase CLI: cribs about npm version
+
+- [Unnecessary [...] warning if multiple sets of versions](https://github.com/firebase/firebase-tools/issues/3699)
+
+   Finally reported that.
+   
+   Let's see when we get the initial comment. ⏱ Aug 2021.
