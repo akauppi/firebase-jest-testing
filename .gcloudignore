@@ -32,7 +32,9 @@
 /.idea/
 .DS_Store
 
-/ci/
+/ci/firebase-ci-builder.sub/
+/ci/cloudbuild.yaml
+# /ci/n14-user/ is allowed through
 
 # Others irrelevant for the build
 #

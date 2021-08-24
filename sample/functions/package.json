@@ -6,16 +6,10 @@
     "node": "14 || ^16"
   },
   "dependencies": {
-    "@google-cloud/functions-framework": "^1.9.0",
-    "firebase-admin": "^9.11.0",
+    "firebase-admin": "^9.11.1",
     "firebase-functions": "^3.15.4"
   },
   "//": {
-    "dependencies": {
-      "@google-cloud/functions-framework": [
-        "Needed at least initially ('firebase-functions' 3.14.1), to have functions as ESM."
-      ]
-    },
     "engines.node": [
       "Firebase Cloud Functions only supports LTS versions (12,14,...) and the string must be '12','14', ...",
       "We get away with '14 || ...' since this is not being deployed. Plain '14' would give warnings in development."

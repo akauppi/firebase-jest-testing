@@ -51,10 +51,10 @@ async function prime(projectId, data) {    // ({ <docPath>: { <field>: <value> }
     await batch.commit();
   });
 
-  // Write a temporary file under 'node_modules/', with a naming pattern common to the 'firestoreRules' test side.
-  // The file will be automatically removed.
+  // Write a self-destructing temporary file under 'node_modules/', with a naming pattern common to the 'firestoreRules'
+  // test side.
   //
-  await writeTemp(projectId, data);
+  await writeTemp(null, data);
 }
 
 /*

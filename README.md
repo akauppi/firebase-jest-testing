@@ -10,11 +10,9 @@ Tools for testing Firebase back-end features, using Jest.
 
 This repo provides a "one stop", opinionated approach to testing Firebase projects. Using it may save you from reading countless pages of documentation and evaluating different testing strategies and libraries.
 
-Also, the tools handle configuring emulation for you. In all, this tries to give a simpler development experience than the current (May 2021) Firebase tooling does.
+Also, the tools handle configuring emulation for you. In all, this tries to give a simpler development experience than the current (Aug 2021) Firebase tooling does.
 
-Only admin-side JS SDKs are used. For client interaction, this uses REST API.
-
-The idea is that you don't have to pull in either `firebase-admin` nor `firebase` in your own project, but get all the tools through here.
+The idea is that you don't have to pull in either `firebase-admin` nor `firebase` in your own testing project, but get all the tools through here.
 
 
 ## Folder structure
@@ -32,15 +30,17 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- node >= 14.3
-- npm >= 7.7.0
+- node >= 14.3 or 16.x
+- npm 6 or >= 7.7.0
 - Jest >= 27
+
+>Note: `npm` 6 support is there, because it's the default for Node 14 Docker images. Kept somewhat grudgingly, for now. CI runs `npm` 6; all development is done with `npm` 7.
 
 <!--
 Developed with:
-- macOS 11.4
-- node 16.2
-- npm 7.19
+- macOS 11.5
+- node 16.7
+- npm 7.21
 -->
 
 ## Getting started
@@ -65,6 +65,7 @@ Let's start with the simpler one.
 
 ### CI: Run all the tests
 
+<!-- hidden; took away `ci:par`
 The `npm` targets in this flow:
 
 |target|what it does|
@@ -78,12 +79,12 @@ The sequential runs provide easier-to-follow logs, but `ci:par` provides ~2s fas
 >Depending on your tests, the difference may be starker, so `ci:par` is kept in the repo as a sample.
 
 [^1-faster]: Faster on a desktop (multicore) machine, which you might not have in CI/CD.
-
+-->
 
 Launching the tests is this easy:
 
 ```
-$ npm run ci
+$ npm test
 ...
 Test Suites: 2 passed, 2 total
 Tests:       3 passed, 3 total
@@ -97,14 +98,14 @@ Snapshots:   0 total
 Time:        5.389 s
 ```
 
-Note that the results for Cloud Functions tests and Security Rules tests are provided separately. It could be possible to merge these but the author currently thinks it's not carrying real benefits.
+There are two separate Jest test suites run here, one after the other. One for Cloud Functions and another for Security Rules tests. It is possible to merge these but the author currently thinks it's best to keep them separate.
 
-The downside of "CI mode" is that each run launches a new emulator. This takes ~5s that we can spare, by using the "dev" mode.
+In "CI mode", each run launches the emulators anew. This takes ~5s that we can spare, by using the "dev" mode.
 
 
 ### Dev mode
 
-In dev mode, a server runs continuously on the background so repeated runs of the tests are a bit faster.
+In dev mode, a server runs continuously on the background so repeated runs of the tests are a bit faster. This same server can be used for both Cloud Functions and Security Rules testing - even in parallel.
 
 **Starting the emulator**
 
@@ -140,14 +141,14 @@ Sure you get the gist of it. 🤓
 
 These are prepared for you in `package.json`. When developing something, it's meaningful to run only one suite, at a time.
 
-Once you think things are rolling fine, run `npm run ci` to confirm.
+Once you think things are rolling fine, run `npm test` to confirm.
 
->Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm run ci` while the emulator is running. Shut it down by Ctrl-C.
+>Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm test` while the emulator is running. Shut it down by Ctrl-C.
 
 
 ## CI setup
 
-CI is set up for pull requests, using Cloud Build.
+Continuous Integration uses Docker Compose, to run the same tests.
 
 See [`ci/README`](ci/README.md) for details.
 
@@ -157,6 +158,7 @@ See [`ci/README`](ci/README.md) for details.
 - [Approach](APPROACH.md)
 - [Developer notes](DEVS.md)
 - [Known issues](KNOWN.md)
+- [Tracked issues](TRACK.md)
 
 ## References
 

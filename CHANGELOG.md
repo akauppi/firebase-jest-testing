@@ -1,9 +1,14 @@
 # Changelog
 
+## 22-Aug-21 (packaging/testing changes)
+
+- Brought back support for `npm` 6.
+- CI scripts with help of Docker Compose (`docker/compose` image 1.29.2).
+- moved temporary files to use `/tmp`
+
 ## 18-Aug-21 (0.0.4-alpha.3)
 
 - **ADD**: Ability to set emulator host via `EMUL_HOST` env.var. Needed for use under Docker Compose.
-
 
 ## 17-Jul-21 (0.0.4-alpha.2)
 

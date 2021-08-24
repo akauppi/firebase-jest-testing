@@ -125,3 +125,116 @@ This would be clearer than the existing definition, yet fully compatible with it
 To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule can be scrapped, later.[^3]
 
 [^3]: It feels awkward to be call tests "demo", since they obviously aren't...
+
+
+## Docker Compose only for CI (for now...)
+
+In the repo, Docker Compose (DC) is used only for CI runs. 
+
+This is intentional. While DC is awesome, it adds complexities that a regular `npm` developer can do without.
+
+Also, stability and testing speed (developer experience as a whole) are better, with the `npm` and `concurrently` (native) approach. 
+
+You can try it out with:
+
+```
+$ npm run //ci:test
+```
+
+### Speed
+
+As you can see, the setup is not 1-to-1. But let's see...
+
+**native (macOS):** Firebase CLI 9.16.5; Node 16; npm 7
+
+```
+$ time npm test
+...
+real	0m18.000s
+user	0m8.551s
+sys  	0m1.834s
+
+real	0m19.091s
+user	0m8.870s
+sys 	0m1.867s
+```
+
+**DC:** Docker Desktop for Mac 3.6.0; Firebase CLI 9.16.0 (in the builder image); Node 14; npm 6
+
+```
+$ time npm run //ci:test
+...
+real	0m52.152s
+user	0m0.621s
+sys 	0m0.363s
+
+real	0m50.685s
+user	0m0.644s
+sys 	0m0.266s
+```
+
+The real world timing matters for DX. 18..19 s vs. 51..52 s. Brain free choise.
+
+Also individual test execution times are better in the native approach (Firebase Emulators seem faster that way, at least on a Mac).
+
+See [this comment](https://github.com/akauppi/firebase-jest-testing/issues/25#issuecomment-904027683) (GitHub Issues).
+
+
+### Stability
+
+Running Docker Compose in the development machine seems to leave port 5002 open, frequently. This is *not* a problem with CI, where any build step is independent from the earlier ones.
+
+This doesn't happen with the native `npm test` workflow.
+
+>Note: It's not necessarily DC to blame. It can quite well be Firebase CLI as well, not closing processes reliably. Or just the interplay of the two.
+
+<p />
+>Recovery note: `$ NODE=14 docker compose down` properly closes the port 5002.
+
+---
+
+DC is also known to give timeouts (from 5000 ms) in the Rules tests (run locally, not in CI).
+
+
+## CI using a custom `n14-user` image
+
+This is a story.
+
+There are three tiers we could go. Tried them all.
+
+- have commands in the `docker-compose.yml` and use stock `node:14-alpine`
+- use `builds: ../n14` from `docker-compose.yml`
+- have a separate file that needs to be pushed to the Container Registry
+
+All of these work.
+
+### Stock `node:14-alpine`
+
+|||
+|---|---|
+|**Pros:**|
+||Cloud Build would nicely reuse the stock image (load only once).|
+|**Cons:**|
+||Non test-related commands (eg. tuning `npm`) in the `docker-compose.yml`.|
+
+### `builds:`
+
+|||
+|---|---|
+|**Pros:**|
+||Doesn't need pushing to Container Registry; yet removes complexity from `docker-compose.yml`|
+|**Cons:**|
+||Gets re-built at each CI run, slowing them down.|
+
+### Custom image
+
+|||
+|---|---|
+|**Pros:**|
+||Fast for execution|
+|**Cons:**|
+||Needs to be pushed before use|
+|**Potential:**|
+||Using same image for multiple (all) projects of the same author|
+
+

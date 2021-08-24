@@ -1,8 +1,10 @@
 #
 # cloudbuild.yaml
 #
-# Builder image:
-#   https://github.com/akauppi/firebase-ci-builder
+# Intention:
+#   Check that the project installs and runs the tests, using
+#     - Node 14; npm 6
+#     - Node 16; npm 7 (not currently enabled)
 #
 # Runtime environment:
 #   - Current directory is '/workspace'
@@ -14,6 +16,9 @@
 #   - functional changes to 'master' branch
 #     - changes only affecting '.md' files are excluded
 #
+# BIG NOTE!!!
+#   ONLY use the 'docker-compose' (custom) image using its default entrypoint. It NOT ONLY starts 'docker compose'
+#   but ALSO moves the plugin under '/builder/home', suitable for CI.
 
 steps:
   # DEBUG
@@ -21,19 +26,62 @@ steps:
 #  entrypoint: bash
 #  args: ['-c', 'env']
 
-- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+#--- Node 14 ---
+#
+# As of Aug-21:
+#   - node 14.17.5
+#   - npm 6.14.14
+#
+# Note:
+#   Warnings on 'fsevents' (optional dependency; not needed in Linux) *only* happen with npm 6. 'npm install -f'
+#   removes them, but adds its own. REMOVE THESE NOTES once not supporting ´npm@6', any more.
+#
+#   See:
+#     "How to solve npm install throwing fsevents warning on non-MAC OS?" (SO)
+#       -> https://stackoverflow.com/questions/46929196/how-to-solve-npm-install-throwing-fsevents-warning-on-non-mac-os
+#
+- name: node:14-alpine
   entrypoint: npm
   args: ['install']
-- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
+    #
+    # CI gives these warnings:
+    #   <<
+    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace/node_modules/@local/self)
+    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace)
+    #     Step #0: npm notice created a lockfile as package-lock.json. You should commit this file.
+    #   <<
+    #
+    # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
+    #
+    # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
+    #
+- name: node:14-alpine
   entrypoint: npm
-  args: ['run','ci']
+  args: ['install']
+  dir: sample/functions
+
+# Stock image, but only 1 series
+#
+- name: docker/compose:${_DOCKER_COMPOSE_TAG}
+  args: ['run', 'test']
+  env: [
+    'CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
+    'NODE=14'
+  ]
+
+#--- Node 16 ---
+# ...
+# Have problems running with Node 16, under Docker Compose, so left for #later.
+#
+# Ideally, it would be nice to run CI jobs on both versions. `#contribute`?
 
 # --- Timeout
 #
 # Takes:
-#   CI: 1m48s, 1m53s
+#   CI: 1m48s, 1m53s (Node 14 only)
 #
 timeout: 240s
 
 substitutions:
-  _BUILDER_TAG: 9.12.1-node16-npm7
+  _BUILDER_TAG: 9.16.0-node16-npm7
+  _DOCKER_COMPOSE_TAG: 1.29.2
