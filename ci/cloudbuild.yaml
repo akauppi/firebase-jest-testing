@@ -32,6 +32,14 @@ steps:
 #   - node 14.17.5
 #   - npm 6.14.14
 #
+# Note:
+#   Warnings on 'fsevents' (optional dependency; not needed in Linux) *only* happen with npm 6. 'npm install -f'
+#   removes them, but adds its own. REMOVE THESE NOTES once not supporting ´npm@6', any more.
+#
+#   See:
+#     "How to solve npm install throwing fsevents warning on non-MAC OS?" (SO)
+#       -> https://stackoverflow.com/questions/46929196/how-to-solve-npm-install-throwing-fsevents-warning-on-non-mac-os
+#
 - name: node:14-alpine
   entrypoint: npm
   args: ['install']
@@ -46,8 +54,7 @@ steps:
     # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
     #
     # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
-
-# Remedy for the above
+    #
 - name: node:14-alpine
   entrypoint: npm
   args: ['install']
