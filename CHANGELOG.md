@@ -4,6 +4,7 @@
 
 - Brought back support for `npm` 6.
 - CI scripts with help of Docker Compose (`docker/compose` image 1.29.2).
+- moved temporary files to use `/tmp`
 
 ## 18-Aug-21 (0.0.4-alpha.3)
 

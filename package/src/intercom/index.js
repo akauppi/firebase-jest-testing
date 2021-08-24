@@ -26,8 +26,10 @@ import { PRIME_ROUND, projectId as testProjectId } from '../config.js'
 *
 * Note: Date objects are serialized so that they can be retrieved back as dates.
 */
-async function writeTemp(projectId, data) {   // (string, { <docPath>: { <field>: <value> } }) => Promise of ()
+async function writeTemp(_ /*projectId*/, data) {   // (string, { <docPath>: { <field>: <value> } }) => Promise of ()
   assert(PRIME_ROUND);
+
+  const projectId = process.env["PROJECT_ID"] || fail("INTERNAL ERROR: 'PROJECT_ID' env.var. should be set.");
 
   const path = fn(projectId);
   await writeFile( path, JSON.stringify(data) )
@@ -51,11 +53,16 @@ async function readTemp() {   // () => Promise of object
 }
 
 /*
-* Craft a (temporary) file name for exchanging data from setup to tests.
-*/
+* Craft a temporary file name for exchanging data from setup to tests.
+*
+* Note:
+*   Do NOT use 'node_modules'. CI may have installed the dependencies as 'root' and the current user only has read
+*   access there.
+**/
 function fn(projectId) {    // (string?) => path
+  const path = '/tmp';   // tbd. or '.'
 
-  return `node_modules/.${projectId}.data.tmp`;
+  return `${path}/.${projectId}.data.tmp`;
 }
 
 /*
@@ -83,6 +90,8 @@ function deserialize(x) {   // (Array|object|string|number|boolean) => Array|obj
 }
 
 const ReIsoDate = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/;
+
+function fail(msg) { throw new Error(msg) }
 
 export {
   writeTemp,

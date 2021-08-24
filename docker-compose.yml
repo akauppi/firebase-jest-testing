@@ -4,7 +4,7 @@
 # FOR CI ONLY.
 #
 #   Using Docker Compose helps us test the library on both Node 14 and Node 16. The purpose is _not_ to burden the
-#   developer experience (and documentation) with Docker - this file is only used by the CI runs.
+#   developer experience (and documentation) with Docker. This file is only used for CI.
 #
 # Context:
 #   - Cloud Build, with 'firebase-ci-builder' image in the Container Registry
@@ -47,14 +47,14 @@ services:
       'echo "Launching Docker... 🐳" &&
       firebase emulators:start --project=demo-1
         | grep -v -E "Detected demo project ID|You are not signed in to the Firebase CLI|You are not currently authenticated"'
-      # Keep project ID synced with 'package.json' and 'sample/test-fns/setup.jest.js'
+      # Keep project ID in sync with 'package.json' and 'sample/test-fns/setup.jest.js'
 
   # Test with any supported Node version
   #
-  # Note: CI has already done 'npm install'.
+  # Note: CI has already done 'npm install' (it likely did so as root; we only have read access).
   #
   test:
-    build: dc-tools/n${NODE-16}/
+    build: ci/n${NODE-16}-user/
     volumes:
       - .:/work
     working_dir: /work
@@ -65,39 +65,4 @@ services:
     environment: ['EMUL_HOST=emul']
       #
     depends_on: ['emul']
-    profiles: ['manual']
-
-## DEPRECATED (without using 'build:')
-#  test:
-#    image: node:${NODE-16}-alpine
-#    volumes:
-#      - .:/work
-#    working_dir: /work
-#    entrypoint: /bin/sh
-#    command: -o pipefail -c
-#      'npm config set update-notifier false &&
-#      npx wait-for emul:6767 &&
-#      npm run test:all
-#      '
-#    environment: ['EMUL_HOST=emul']
-#      #
-#    depends_on: ['emul']
-#    profiles: ['manual']
-
-  # Versions (Aug 2021):
-  #
-  # image   | Node version | npm version
-  # ---     | ---          | ---
-  # node:16 | v16.7.0      | 7.20.3
-  # node:14 | v14.17.5     | 6.14.14
-  #
-  debug:
-    image: node:${NODE}
-    #volumes:
-    #  - .:/work
-    #working_dir: /work
-    command: bash -o pipefail -c
-      'node --version &&
-      npm --version
-      '
     profiles: ['manual']

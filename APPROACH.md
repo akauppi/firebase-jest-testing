@@ -194,3 +194,47 @@ This doesn't happen with the native `npm test` workflow.
 ---
 
 DC is also known to give timeouts (from 5000 ms) in the Rules tests (run locally, not in CI).
+
+
+## CI using a custom `n14-user` image
+
+This is a story.
+
+There are three tiers we could go. Tried them all.
+
+- have commands in the `docker-compose.yml` and use stock `node:14-alpine`
+- use `builds: ../n14` from `docker-compose.yml`
+- have a separate file that needs to be pushed to the Container Registry
+
+All of these work.
+
+### Stock `node:14-alpine`
+
+|||
+|---|---|
+|**Pros:**|
+||Cloud Build would nicely reuse the stock image (load only once).|
+|**Cons:**|
+||Non test-related commands (eg. tuning `npm`) in the `docker-compose.yml`.|
+
+### `builds:`
+
+|||
+|---|---|
+|**Pros:**|
+||Doesn't need pushing to Container Registry; yet removes complexity from `docker-compose.yml`|
+|**Cons:**|
+||Gets re-built at each CI run, slowing them down.|
+
+### Custom image
+
+|||
+|---|---|
+|**Pros:**|
+||Fast for execution|
+|**Cons:**|
+||Needs to be pushed before use|
+|**Potential:**|
+||Using same image for multiple (all) projects of the same author|
+
+
