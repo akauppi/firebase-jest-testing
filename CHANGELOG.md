@@ -1,6 +1,6 @@
 # Changelog
 
-## 22-Aug-21 (packaging/testing changes)
+## 22-Aug-21 (0.0.4-alpha.4)
 
 - Brought back support for `npm` 6.
 - CI scripts with help of Docker Compose (`docker/compose` image 1.29.2).
