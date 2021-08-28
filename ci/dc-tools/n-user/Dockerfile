@@ -2,10 +2,12 @@
 # Using Firebase Emulators, from Docker Compose
 #
 # Provides:
-#   - node.js (14) and npm 6
+#   - node.js (14 or 16) and npm (6 or 7)
 #   - bash
 #   - 'wait-for-it'       // from: https://github.com/vishnubob/wait-for-it/blob/master/wait-for-it.sh
 #     The de-facto shell script standard for waiting a port, available eg. in Debian/Ubuntu by `apt-get install`.
+#   - 'ack-trigger' and 'ack-await'
+#     CLIs for synchronizing between multiple Docker containers.
 #
 # Context:
 #   - user 'user' created
@@ -15,7 +17,8 @@
 #   - Best practices for writing Dockerfiles
 #       -> https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
 #
-FROM node:14-alpine
+ARG NODE
+FROM node:${NODE:-16}-alpine
 
 ENV USER user
 

@@ -18,10 +18,9 @@
     "-- ": "",
     "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
     "-- -": "",
-    "//ci:test": "NODE=14 docker compose run test",
-    "//preci:test": "NODE=14 docker compose build test",
-    "-- - ": "",
-    "test:all": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "//ci runs -->": "NODE=14 docker compose run test",
+    "ci:test": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "ci:warm-up": "WARM_UP_TIMEOUT=9000 concurrently -n fns,rules \"npm run test:fns:userInfo\" \"npm run test:rules:projects\"",
     "--  -": "",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
@@ -39,14 +38,18 @@
     "prestart": "npm run -s _checkNoActive",
     "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "--  --": "",
+    "timings:1": "npm run test:fns:userInfo",
+    "timings:2": "npm run test:rules:projects",
+    "//timings:2": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js -t 'unauthenticated access should fail' --verbose --detectOpenHandles --all",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
     "@local/self": "file:.",
     "concurrently": "^6.2.1",
+    "debug": "^4.3.2",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.16.5",
-    "jest": "^27.0.6"
+    "firebase-tools": "^9.16.6",
+    "jest": "^27.1.0"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -68,6 +71,9 @@
     "devDependencies": {
       "@local/self": [
         "Allows us to use the 'bin' section to alias commands."
+      ],
+      "debug": [
+        "For timing the steps and seeing where Firebase Emulators are sluggish."
       ]
     },
     "scripts": {
