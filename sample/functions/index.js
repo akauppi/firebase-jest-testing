@@ -17,18 +17,18 @@ const dUIS = debug.extend("userInfoShadow");
 // NOTE: Normally the caller would do 'DEBUG=sample:*' but that activates _all_ of Firebase Emulator's own (unrelated)
 //    debugging output. This is a work-around, not needing to set 'DEBUG'.
 //
-enable('sample:*');
+//enable('sample:*');
 
 debug("Loading 'functions/index.js'");
 
 admin.initializeApp();          debug("Firebase app initialized");
-const db = admin.firestore();   debug("Firestore handle initialized");
+const db = admin.firestore();   debug("Firestore handle initialized");    // 35, 17, 49, 15 ms
 
 // Sad that the default region needs to be in the code. There is no configuration for it. 😢
 //
 const regionalFunctions = functions.region("mars-central2");
 
-debug("Have 'regionalFunctions'");
+//debug("Have 'regionalFunctions'");
 
 /*
 * { msg: string } -> string
@@ -71,7 +71,7 @@ export const userInfoShadow = regionalFunctions.firestore
     const newValue = after.data();      // { ... } | undefined
     console.debug(`Global userInfo/${uid} change detected: `, newValue);
 
-    dUIS("change logged");
+    dUIS("change logged");    // 2ms (native); 7ms (DC)
 
     // Removal of userInfo is not propagated. Only tests do it, as 'beforeAll'.
     //
@@ -84,7 +84,7 @@ export const userInfoShadow = regionalFunctions.firestore
         .select()   // don't ship the fields, just matching ref
         .get();
 
-      dUIS("documents to write found: %d", qss.size);
+      dUIS("documents to write found: %d", qss.size);   // 544 ms (native); 1559 (51) ms (DC)
 
       if (qss.size === 0) {
         console.debug(`User '${uid}' not found in any of the projects.`);
@@ -98,7 +98,7 @@ export const userInfoShadow = regionalFunctions.firestore
         });
         await Promise.all(proms);
 
-        dUIS("documents updated");
+        dUIS("documents updated");  // 1015ms (native) !!!; 88 (79) ms (DC)
       }
     }
   });
