@@ -166,16 +166,12 @@ $ docker compose down    # so service launch time is included
 
 $ time docker compose run test
 ...
-real	0m52.152s
-user	0m0.621s
-sys 	0m0.363s
-
-real	0m50.685s
-user	0m0.644s
-sys 	0m0.266s
+real	0m48.236s
+user	0m0.222s
+sys 	0m0.254s
 ```
 
-The real world timing matters for DX. 18..19 s vs. 51..52 s. Brain free choise.
+The real world timing matters for DX. 18..19 s vs. ~48 s. Brain free choice.
 
 Also individual test execution times are better in the native approach (Firebase Emulators seem faster that way, at least on a Mac).
 
