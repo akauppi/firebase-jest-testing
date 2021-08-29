@@ -20,7 +20,7 @@
     "-- -": "",
     "//ci runs -->": "NODE=14 docker compose run test",
     "ci:test": "npm run -s test:fns:all && npm run -s test:rules:all",
-    "ci:warm-up": "WARM_UP_TIMEOUT=9000 concurrently -n fns,rules \"npm run test:fns:userInfo\" \"npm run test:rules:projects\"",
+    "ci:warm-up": "npm run test:fns:userInfo",
     "--  -": "",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",

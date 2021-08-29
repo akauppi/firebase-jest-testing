@@ -138,7 +138,7 @@ Also, stability and testing speed (developer experience as a whole) are better, 
 You can try it out with:
 
 ```
-$ npm run //ci:test
+$ docker compose run test
 ```
 
 ### Speed
@@ -162,7 +162,9 @@ sys 	0m1.867s
 **DC:** Docker Desktop for Mac 3.6.0; Firebase CLI 9.16.0 (in the builder image); Node 14; npm 6
 
 ```
-$ time npm run //ci:test
+$ docker compose down    # so service launch time is included
+
+$ time docker compose run test
 ...
 real	0m52.152s
 user	0m0.621s
@@ -182,18 +184,15 @@ See [this comment](https://github.com/akauppi/firebase-jest-testing/issues/25#is
 
 ### Stability
 
-Running Docker Compose in the development machine seems to leave port 5002 open, frequently. This is *not* a problem with CI, where any build step is independent from the earlier ones.
+Use of `socat` for the warming up seems to have introduced a trouble for `docker compose down`.
 
-This doesn't happen with the native `npm test` workflow.
+This is not a concern in the CI, where a machine is one-time-used. It would, however, need to be fixed in order to use DC for development (or we could skip the warming up in development; it has value mostly in CI).
 
->Note: It's not necessarily DC to blame. It can quite well be Firebase CLI as well, not closing processes reliably. Or just the interplay of the two.
+Anyways, complications...
 
-<p />
->Recovery note: `$ NODE=14 docker compose down` properly closes the port 5002.
+>Earlier, port 5002 (Cloud Functions) was left open by DC, but haven't seen that for a while..
 
----
-
-DC is also known to give timeouts (from 5000 ms) in the Rules tests (run locally, not in CI).
+The native `npm test` workflow doesn't suffer from these issues.
 
 
 ## CI using a custom `n14-user` image
@@ -238,3 +237,34 @@ All of these work.
 ||Using same image for multiple (all) projects of the same author|
 
 
+## Warm-up is essential!!! 🏃‍♀️
+
+We finally have reliable, sub-2000 ms, timings, in CI!
+
+This is due to the `warm-up` service, added in `docker-compose.yml`. It waits for the emulators to have started (port 6767 = Firestore), then exercises a run of Cloud Functions tests, where a) timeouts are way higher than normally, b) the results are ignored (unless the tests fail).
+
+This preceding round is like the warm-up before a race.
+
+`warmed-up` then opens a TCP port (with `socat`, but anything would do) to inform `test` to go further.
+
+### Alternatives
+
+Tried file-based synchronization, briefly. It works, but the temporary files would need to be cleaned up *outside* of `docker-compose.yml` (if any left overs were to be there), in order not to have race conditions. So it's more risky than the port approach.
+
+Tried Firestore synchronization, way back. It works, but needed an explicit dependency to eg. `firebase-admin` that we otherwise don't need (it does come via `firebase-jest-testing`, but that's beside the point). It felt like over-complexity.
+
+### Problems
+
+At the same time `socat` was added, these started to show up:
+
+```
+$ docker compose down
+[+] Running 1/1
+ ⠿ Container firebase-jest-testing_emul_1  Removed                                                                                                                                                                                         10.3s
+ ⠿ Network firebase-jest-testing_default   Error                                                                                                                                                                                            0.0s
+failed to remove network 9d8b09047e85d335a5a2dea7da467873eb20dd0a05714ef3691dfc903396976a: Error response from daemon: error while removing network: network firebase-jest-testing_default id 9d8b09047e85d335a5a2dea7da467873eb20dd0a05714ef3691dfc903396976a has active endpoints
+```
+
+Keep an eye on it.
+
+>If it ever is a real problem, launch an ultra-simple Node.js server, instead of opening a port with `socat`.

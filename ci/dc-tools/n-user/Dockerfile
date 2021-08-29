@@ -4,10 +4,9 @@
 # Provides:
 #   - node.js (14 or 16) and npm (6 or 7)
 #   - bash
+#   - socat
 #   - 'wait-for-it'       // from: https://github.com/vishnubob/wait-for-it/blob/master/wait-for-it.sh
 #     The de-facto shell script standard for waiting a port, available eg. in Debian/Ubuntu by `apt-get install`.
-#   - 'ack-trigger' and 'ack-await'
-#     CLIs for synchronizing between multiple Docker containers.
 #
 # Context:
 #   - user 'user' created
@@ -22,10 +21,7 @@ FROM node:${NODE:-16}-alpine
 
 ENV USER user
 
-# Suppress npm update announcements
-RUN npm config set update-notifier false
-
-RUN apk --no-cache add bash
+RUN apk --no-cache add bash socat
 
 # 'wait-for-it'
 #
@@ -53,5 +49,9 @@ WORKDIR /home/${USER}
 USER ${USER}
    # $ whoami
    # user
+
+# Suppress npm update announcements (creates '~/.npmrc' with 'update-notifier=false')
+#
+RUN npm config set update-notifier false
 
 # No entrypoint

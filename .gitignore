@@ -9,3 +9,7 @@ ui-debug.log
 
 # npm pack output
 /*.tgz
+
+# temporary files
+/.ack.*
+

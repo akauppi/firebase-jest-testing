@@ -1,14 +1,11 @@
-# `ci/n14-user`
+# `ci/dc-tools/n-user`
 
 Docker image for using with the CI `docker-compose.yml`.
 
-- `n14-user`
+Provides means for synchronizing the DC steps:
 
-   Provides:
+- `wait-for-it` for waiting on ports (eg. Firebase emulator)
 
-   - Node 14; npm 6
-   - `wait-for-it` CLI
-   - user `user`
+Context:
 
-   Configured so that there's no version upgrade announcements.
-
+- user `user`

@@ -20,6 +20,10 @@ beforeAll(  () => {
   abc_projectsC = coll.as({uid:'abc'});
   def_projectsC = coll.as({uid:'def'});
   ghi_projectsC = coll.as({uid:'ghi'});
+
+  // Warm up the client so first test won't take > 2000 ms  (drops from 2337 -> 282 ms on DC (macOS))
+  //
+  unauth_projectsC.get();
 });
 
 describe("'/projects' rules", () => {

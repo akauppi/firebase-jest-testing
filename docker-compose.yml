@@ -22,6 +22,13 @@
 # Docker Compose (v3) note:
 #   BE CAREFUL with use of pipe ('|') or '&&' in the commands! See -> https://stackoverflow.com/a/68590318/14455
 #
+# Note:
+#   Outside entity is responsible for not having '.ack.*' files lying around, when started. The reason: we cannot clean
+#   them in here, without causing a race condition ('test' can launch right when 'emul' and 'blanket' are started, and
+#   could cut in before a command in them clears the state).
+#
+#   THIS IS ONLY A CONCERN FOR DEVELOPMENT, since CI would anyways start without such temporary files.
+#
 # References:
 #   Overview of Docker Compose (Docker docs)
 #     -> https://docs.docker.com/compose/
@@ -51,26 +58,33 @@ services:
     environment:
       - DEBUG_COLOR=1
 
-  # Wrap 'emul' in a blanket, to Warm it UP!
+  # WARM UP the engines!!!
   #
   # Firebase Emulators are SLOW to wake. This part runs a minimal set of tests (the results of which are not used),
   # to wake up the necessary subsystems server-side. This should result in more dependable test times in the actual
   # tests.
   #
-  blanket:
+  # Once warmed up, 'socat' is used to open a TCP connection. Just the existence of this connection is enough to
+  # signal to the tests that they can be started.
+  #
+  warm-up:
     build:
       context: ci/dc-tools/n-user/
       args:
         - NODE=${NODE:-16}
+    ports:
+      - "6768:6768"
     volumes:
       - .:/work
     working_dir: /work
     command: sh -o pipefail -c
       'wait-for-it emul:6767 &&
       npm run ci:warm-up &&
-      ack-trigger 1
+      socat TCP-LISTEN:6768,fork TCP:emul:6767
       '
-    environment: ['EMUL_HOST=emul']
+    environment:
+      - EMUL_HOST=emul
+      - WARM_UP_TIMEOUT=15000
     #
     depends_on: ['emul']
     profiles: ['manual']     # could also be automatic (then it'll launch with 'docker compose up')
@@ -89,10 +103,10 @@ services:
       - .:/work
     working_dir: /work
     command: sh -o pipefail -c
-      'ack-await 1 &&
+      'wait-for-it warm-up:6768 --timeout=60 &&
       npm run ci:test
       '
     environment: ['EMUL_HOST=emul']
       #
-    depends_on: ['emul', 'blanket']
+    depends_on: ['emul', 'warm-up']
     profiles: ['manual']
