@@ -1,7 +1,5 @@
 #
-# docker-compose.yml
-#
-# FOR CI ONLY.
+# docker-compose.ci.yml
 #
 #   Using Docker Compose helps us test the library on both Node 14 and Node 16. The purpose is _not_ to burden the
 #   developer experience (and documentation) with Docker. This file is only used for CI.
@@ -11,7 +9,7 @@
 #
 # Environment values (Cloud Build):
 #   - 'CI_BUILDER_IMAGE'
-#   - 'NODE': "14"
+#   - 'NODE_V': "14"|"16"
 #
 #   - pwd: /workspace
 #
@@ -34,7 +32,7 @@ services:
   # Launch Firebase Emulators, with certain warning and info messages suppressed.
   #
   emul:
-    image: ${CI_BUILDER_IMAGE:-firebase-ci-builder:9.16.0-node16-npm7}
+    image: ${CI_BUILDER_IMAGE:-firebase-ci-builder:9.17.0-node16-npm7}
     ports:
       - "4000:4000"
       - "5002:5002"
@@ -50,28 +48,32 @@ services:
       # Keep project ID in sync with 'package.json' and 'sample/test-fns/setup.jest.js'
     environment:
       - DEBUG_COLOR=1
+    #
+    # Note: The rest ensures the ports are visible in Cloud Build. It keeps launched DC services running, for the
+    #   duration of the build. Disabled these for local testing!
+    #
+    network_mode: cloudbuild
+    container_name: emul
 
-  # WARM UP the engines!!!
+  # WARM UP the engines
   #
   # Firebase Emulators are SLOW to wake. This part runs a minimal set of tests (the results of which are not used),
   # to wake up the necessary subsystems server-side. This results in more dependable test times in the actual tests.
-  #
-  # Once warmed up, 'socat' is used to open a TCP connection. Just the existence of this connection is enough to
-  # signal to the tests that they can be started.
   #
   warm-up:
     build:
       context: ci/dc-tools/n-user/
       args:
-        - NODE=${NODE:-16}
+        - NODE=${NODE_V:-16}
     ports:
       - "6768:6768"
     volumes:
-      - .:/work
+      - .:/work:ro
     working_dir: /work
     command: sh -o pipefail -c
       'wait-for-it emul:6767 &&
-      npm run ci:warm-up &&
+      wait-for-it emul:5002 &&
+      npm run dc:warm-up &&
       socat TCP-LISTEN:6768,fork TCP:emul:6767
       '
     environment:
@@ -79,26 +81,25 @@ services:
       - WARM_UP_TIMEOUT=15000
     #
     depends_on: ['emul']
-    profiles: ['manual']     # could also be automatic (then it'll launch with 'docker compose up')
+    #profiles: ['manual']     # enable manual launch to debug 'emul' launch (if problems)
+    #
+    network_mode: cloudbuild
+    container_name: warm-up
 
-  # Test with any supported Node version
+  # Used via 'docker compose run --rm warmed-up'.
   #
-  # Note:
-  #   CI has already done 'npm install'. It did so as root; we only have read access.
+  # A separate target to proceed 'npm run ci:test' - and so it does not [...]
   #
-  test:
+  warmed-up:
     build:
       context: ci/dc-tools/n-user/
       args:
-        - NODE=${NODE:-16}
-    volumes:
-      - .:/work
-    working_dir: /work
+        - NODE=${NODE_V:-16}
     command: sh -o pipefail -c
-      'wait-for-it warm-up:6768 --timeout=60 &&
-      npm run ci:test
+      'wait-for-it warm-up:6768 --timeout=26
       '
-    environment: ['EMUL_HOST=emul']
-      #
-    depends_on: ['emul', 'warm-up']
+        # times observed (Cloud Build): 13s
+    depends_on: ['warm-up']
     profiles: ['manual']
+    #
+    network_mode: cloudbuild

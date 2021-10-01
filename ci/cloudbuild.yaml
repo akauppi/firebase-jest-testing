@@ -40,48 +40,54 @@ steps:
 #     "How to solve npm install throwing fsevents warning on non-MAC OS?" (SO)
 #       -> https://stackoverflow.com/questions/46929196/how-to-solve-npm-install-throwing-fsevents-warning-on-non-mac-os
 #
-- name: node:14-alpine
-  entrypoint: npm
-  args: ['install']
-    #
-    # CI gives these warnings:
-    #   <<
-    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace/node_modules/@local/self)
-    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace)
-    #     Step #0: npm notice created a lockfile as package-lock.json. You should commit this file.
-    #   <<
-    #
-    # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
-    #
-    # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
-    #
-- name: node:14-alpine
-  entrypoint: npm
-  args: ['install']
-  dir: sample/functions
-
-# Stock image, but only 1 series
-#
-- name: docker/compose:${_DOCKER_COMPOSE_TAG}
-  args: ['run', 'test']
-  env: [
-    'CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
-    'NODE=14'
-  ]
+#!- name: node:14-alpine
+#!  entrypoint: npm
+#!  args: ['install']
+#!    #
+#!    # CI gives these warnings:
+#!    #   <<
+#!    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace/node_modules/@local/self)
+#!    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace)
+#!    #     Step #0: npm notice created a lockfile as package-lock.json. You should commit this file.
+#!    #   <<
+#!    #
+#!    # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
+#!    #
+#!    # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
+#!    #
+#!- name: node:14-alpine
+#!  entrypoint: npm
+#!  args: ['install']
+#!  dir: sample/functions
 
 #--- Node 16 ---
-# ...
-# Have problems running with Node 16, under Docker Compose, so left for #later.
 #
-# Ideally, it would be nice to run CI jobs on both versions. `#contribute`?
+- name: node:16-alpine
+  entrypoint: npm
+  args: ['install']
+
+# Launch emul/warm-up in DC, keeps them running in the background.
+#
+- name: docker/compose:${_DOCKER_COMPOSE_TAG}
+  args: ['-f', 'docker-compose.ci.yml', 'run', 'warmed-up']
+  env:
+    - CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
+    - NODE_V=16
+
+- name: node:16-alpine
+  entrypoint: npm
+  args: ['run', 'ci:test']
+  env:
+    - EMUL_HOST=emul
 
 # --- Timeout
 #
-# Takes:
-#   CI: 1m48s, 1m53s (Node 14 only)
+# Cloud Build (node 16):  2m7s, 2m9s
+#             (node 14):  1m48s, 1m53s, 2m25s
 #
 timeout: 240s
 
 substitutions:
-  _BUILDER_TAG: 9.16.0-node16-npm7
+  _BUILDER_TAG: 9.17.0-node16-npm7
   _DOCKER_COMPOSE_TAG: 1.29.2
+    # https://hub.docker.com/r/docker/compose/tags?page=1&ordering=last_updated

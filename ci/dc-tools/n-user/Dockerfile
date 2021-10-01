@@ -43,12 +43,17 @@ RUN echo "b7a04f38de1e51e7455ecf63151c8c7e405bd2d45a2d4e16f6419db737a125d6  /usr
 
 RUN adduser --disabled-password ${USER}
 
-WORKDIR /home/${USER}
-
-# Now changing to user (no more root)
-USER ${USER}
-   # $ whoami
-   # user
+# Remain running as root.
+#
+# Running as user works in CI (and Docker Desktop for Mac), but would cause problems on Docker Desktop for Windows.
+# Since there is no benefit from running as a user, keep it commented out (but the user created).
+#
+#|# Now changing to user (no more root)
+#|USER ${USER}
+#|   # $ whoami
+#|   # user
+#|
+#|WORKDIR /home/${USER}
 
 # Suppress npm update announcements (creates '~/.npmrc' with 'update-notifier=false')
 #
