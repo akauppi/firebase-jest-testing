@@ -22,13 +22,6 @@
 # Docker Compose (v3) note:
 #   BE CAREFUL with use of pipe ('|') or '&&' in the commands! See -> https://stackoverflow.com/a/68590318/14455
 #
-# Note:
-#   Outside entity is responsible for not having '.ack.*' files lying around, when started. The reason: we cannot clean
-#   them in here, without causing a race condition ('test' can launch right when 'emul' and 'blanket' are started, and
-#   could cut in before a command in them clears the state).
-#
-#   THIS IS ONLY A CONCERN FOR DEVELOPMENT, since CI would anyways start without such temporary files.
-#
 # References:
 #   Overview of Docker Compose (Docker docs)
 #     -> https://docs.docker.com/compose/
@@ -61,8 +54,7 @@ services:
   # WARM UP the engines!!!
   #
   # Firebase Emulators are SLOW to wake. This part runs a minimal set of tests (the results of which are not used),
-  # to wake up the necessary subsystems server-side. This should result in more dependable test times in the actual
-  # tests.
+  # to wake up the necessary subsystems server-side. This results in more dependable test times in the actual tests.
   #
   # Once warmed up, 'socat' is used to open a TCP connection. Just the existence of this connection is enough to
   # signal to the tests that they can be started.

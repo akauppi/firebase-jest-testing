@@ -1,5 +1,9 @@
 # Changelog
 
+## 2-Sep-21 (unreleased)
+
+- Updating dependency: `node-fetch@3.0.0`
+
 ## 29-Aug-21
 
 - Proper warming up of Cloud Functions **finally** implemented. With DC.
@@ -160,7 +164,7 @@ This means we can now comfortably use a 2000 ms timeout for all tests, in the CI
 
 **Internal changes**
 
-- Using `@firebase/rules-unit-testing` 
+- Using `@firebase/rules-unit-testing`
 - Using `firebase-admin` directly, instead of `.initializeAdminApp`
 - Using REST API `DELETE` directly, instead of `@firebase/rules-unit-testing`
 

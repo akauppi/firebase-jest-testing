@@ -50,7 +50,7 @@ describe("'/projects' rules", () => {
 
   //--- ProjectsC create rules ---
 
-  test('any authenticated user may create a project, but must include themselves as an author', async () => {
+  test('any authenticated user may create a project, but must include themselves as an author', () => {
     // implies: unauthenticated users cannot create a project, since they don't have a uid.
 
     const p3_valid = {
@@ -65,7 +65,7 @@ describe("'/projects' rules", () => {
     const p3_badTime = {...p3_valid, created: anyDate };
     const p3_alreadyRemoved = {...p3_valid, removed: SERVER_TIMESTAMP };
 
-    await Promise.all([
+    return Promise.all([
       expect( abc_projectsC.doc("3-fictional").set(p3_valid) ).toAllow(),
       expect( abc_projectsC.doc("3-fictional").set(p3_withoutAuthor) ).toDeny(),
 

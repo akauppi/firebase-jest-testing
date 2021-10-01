@@ -5,7 +5,7 @@
 /*
 * Allow sluggishness of Firebase Emulators on a warm-up run.
 */
-const sluggishTimeout = parseInt( process.env["WARM_UP_TIMEOUT"] ) || null;
+const warmUpTimeoutMs = parseInt( process.env["WARM_UP_TIMEOUT"] ) || null;
 
 export default {
   // Recommended for native ES6 use (Aug-20):
@@ -13,7 +13,7 @@ export default {
 
   // Default is 5000. None of our tests take that long; fail fast.
   //
-  testTimeout: sluggishTimeout || 2000,
+  testTimeout: warmUpTimeoutMs || 2000,
 
   // Resolves the subpackage paths using the package's 'exports' (until Jest does...).
   resolver: "../hack-jest/self-resolver.cjs"

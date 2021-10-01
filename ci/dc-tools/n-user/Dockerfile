@@ -2,7 +2,7 @@
 # Using Firebase Emulators, from Docker Compose
 #
 # Provides:
-#   - node.js (14 or 16) and npm (6 or 7)
+#   - node.js (14 or 16) and npm (6 or >= 7.7)
 #   - bash
 #   - socat
 #   - 'wait-for-it'       // from: https://github.com/vishnubob/wait-for-it/blob/master/wait-for-it.sh
