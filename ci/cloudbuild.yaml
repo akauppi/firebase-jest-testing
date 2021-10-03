@@ -3,8 +3,7 @@
 #
 # Intention:
 #   Check that the project installs and runs the tests, using
-#     - Node 14; npm 6
-#     - Node 16; npm 7 (not currently enabled)
+#     - Node 16; npm 7
 #
 # Runtime environment:
 #   - Current directory is '/workspace'
@@ -16,49 +15,15 @@
 #   - functional changes to 'master' branch
 #     - changes only affecting '.md' files are excluded
 #
-# BIG NOTE!!!
-#   ONLY use the 'docker-compose' (custom) image using its default entrypoint. It NOT ONLY starts 'docker compose'
-#   but ALSO moves the plugin under '/builder/home', suitable for CI.
+# Note:
+#   Wasn't able to use the 'PWD' env.var. in 'docker run' ('$$PWD' does not cut it), so setting it as a substitute,
+#   instead.
 
 steps:
   # DEBUG
 #- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
 #  entrypoint: bash
 #  args: ['-c', 'env']
-
-#--- Node 14 ---
-#
-# As of Aug-21:
-#   - node 14.17.5
-#   - npm 6.14.14
-#
-# Note:
-#   Warnings on 'fsevents' (optional dependency; not needed in Linux) *only* happen with npm 6. 'npm install -f'
-#   removes them, but adds its own. REMOVE THESE NOTES once not supporting ´npm@6', any more.
-#
-#   See:
-#     "How to solve npm install throwing fsevents warning on non-MAC OS?" (SO)
-#       -> https://stackoverflow.com/questions/46929196/how-to-solve-npm-install-throwing-fsevents-warning-on-non-mac-os
-#
-#!- name: node:14-alpine
-#!  entrypoint: npm
-#!  args: ['install']
-#!    #
-#!    # CI gives these warnings:
-#!    #   <<
-#!    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace/node_modules/@local/self)
-#!    #     Step #0: npm WARN lifecycle @local/root@~postinstall: cannot run in wd @local/root@ npm --prefix sample/functions install (wd=/workspace)
-#!    #     Step #0: npm notice created a lockfile as package-lock.json. You should commit this file.
-#!    #   <<
-#!    #
-#!    # This DOES NOT happen with same npm version, locally (at least, not on that version on macOS).
-#!    #
-#!    # The outcome is that 'sample/functions' doesn't get installed. We remedy that with the extra step below.
-#!    #
-#!- name: node:14-alpine
-#!  entrypoint: npm
-#!  args: ['install']
-#!  dir: sample/functions
 
 #--- Node 16 ---
 #
@@ -68,18 +33,35 @@ steps:
 
 # Launch emul, keeps running in the background.
 #
-- name: gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
+# Note: It's vital to wrap the command in Docker. This allows it to remain running for the rest of the steps.
+#
+- name: gcr.io/cloud-builders/docker
+  args: [
+    'run',
+      '-d',
+      '-p', '6767:6767', '-p', '5002:5002',
+      '-v', '${_PWD}:/work', '-w', '/work',
+      '--name', 'emul',
+      '--network', 'cloudbuild',    # needed for showing the ports in the other steps
+      'gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
+    'npm', 'run', 'start'
+  ]
+
+- name: node:16-alpine
   entrypoint: npm
   args: ['run', 'ci:test']
+  env:
+    - EMUL_HOST=emul
 
 # --- Timeout
 #
 # Cloud Build
-#   (node 16):  1m48s
+#   (node 16):  1m53s, 1m58s
 #   (node 16, DC):  2m7s, 2m9s
-#   (node 14):  1m48s, 1m53s, 2m25s
+#   (node 14):  1m48s, 1m53s
 #
 timeout: 240s
 
 substitutions:
   _BUILDER_TAG: 9.17.0-node16-npm7
+  _PWD: /workspace

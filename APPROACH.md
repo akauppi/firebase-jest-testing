@@ -124,23 +124,35 @@ This would be clearer than the existing definition, yet fully compatible with it
 To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule be scrapped.
 
 
-## CI: no need for Docker Compose
+## Warm-up
 
-Docker Compose (DC) is needed for Cloud Build, if one wants to start a service (emulators), run them in the background during the following steps. This allows building the CI pipeline from multiple Docker images, and is necessary for eg. running Cypress tests (front end).
+All the tests are expected to pass in a relatively tight (2000 ms) window.
 
-We don't need that.
+This is not necessarily true for the cold start scenario that CI runs always are. Therefore, certain tests[^1] are run twice, first with a wider timeout and ignoring their output.
 
-The `firebase-ci-builder` Docker image provides `npm` and we can both launch the emulators and run all the tests during the same CI step.
+The purpose is to provide results more akin to the normal developer experience (not the initial cold run), and to catch tests that would truly (repeatedly) run slow.
 
-Pros:
+[^1]: We have varied this set, depending on which parts don't run within the 2s.
 
-- faster than using DC (1m48s vs. 2m8s)
-- less complexity
+### Note
 
-Cons:
+Whether warm-up is needed is dependent on individual CI runs (time of day; who knows what). Here's one:
 
-- not as easy to vary test environment, eg. supporting also Node 14 (since the `firebase-ci-builder` is fixed on Node 16).
+```
+Step #2:   '/symbols' rules
+Step #2:     ✓ unauthenticated access should fail (1166 ms)
+Step #2:     ✓ user who is not part of the project shouldn't be able to read (81 ms)
+Step #2:     ✓ project members may read all symbols (328 ms)
+Step #2:     ✓ all members may create; creator needs to claim the symbol to themselves (754 ms)
+Step #2:     ✓ members may claim a non-claimed symbol (362 ms)
+Step #2:     ✓ members may do changes to an already claimed (by them) symbol (151 ms)
+Step #2:     ✓ members may revoke a claim (143 ms)
+Step #2:     ✓ claim cannot be changed (e.g. extended) (131 ms)
+Step #2:     ✓ members may delete a symbol claimed to themselves (130 ms)
+Step #2: 
+```
 
-Note to you. This repo is probably going at the limits of what non-DC Cloud Build should be used for.
+Note that all is under 2s (no warm-up would be needed).
 
->Request: If you know of a way to run `npm run start &` and have the launched processes still running in the following Cloud Build steps, let the author know. This would allow testing with Node 14.
+Other times, you do.
+

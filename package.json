@@ -18,10 +18,9 @@
     "-- ": "",
     "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
     "-- -": "",
-    "ci:test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && wait-for 5002 && npm run -s _test1\"",
-    "_ci_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
-    "//ci:test": "(npm run start &) && wait-for 6767 && wait-for 5002 && npm run -s _ci_test1",
-    "//_ci_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "ci:test": "wait-for emul:6767 && wait-for emul:5002 && npm run -s _ci_warm-up && npm run -s _test1",
+    "//_ci_warm-up": "true",
+    "_ci_warm-up": "WARM_UP_TIMEOUT=4000 npm run -s test:rules:symbols 2&> /dev/null",
     "--  -": "",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
@@ -80,6 +79,9 @@
     "scripts": {
       "NODE_OPTIONS=--experimental-vm-modules": [
         "Still needed on both Node.js 14 and 16. (not knowing where to track it's removal)"
+      ],
+      "_ci_warm-up": [
+        "Warm-up is used to guarantee normal tests run within the 2000 ms timeout."
       ],
       "no [[": [
         "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
