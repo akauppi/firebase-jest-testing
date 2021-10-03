@@ -84,10 +84,9 @@ These are both tools for unit testing. The first one tests Cloud Functions and t
 
 The approach taken by this repo differs from that provided by Firebase. We...
 
-1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to their app
+1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to test their app
 2. take a more integration testing approach than Firebase's libraries 
-3. prefer normal clients (or a similar API) over test specific APIs
-4. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
+3. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
 
 For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase approach leans on snapshot-like binary files, instead.
 
@@ -122,145 +121,26 @@ This would be clearer than the existing definition, yet fully compatible with it
 
 ---
 
-To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule can be scrapped, later.[^3]
-
-[^3]: It feels awkward to be call tests "demo", since they obviously aren't...
+To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule be scrapped.
 
 
-## Docker Compose only for CI (for now...)
+## CI: no need for Docker Compose
 
-In the repo, Docker Compose (DC) is used only for CI runs. 
+Docker Compose (DC) is needed for Cloud Build, if one wants to start a service (emulators), run them in the background during the following steps. This allows building the CI pipeline from multiple Docker images, and is necessary for eg. running Cypress tests (front end).
 
-This is intentional. While DC is awesome, it adds complexities that a regular `npm` developer can do without.
+We don't need that.
 
-Also, stability and testing speed (developer experience as a whole) are better, with the `npm` and `concurrently` (native) approach. 
+The `firebase-ci-builder` Docker image provides `npm` and we can both launch the emulators and run all the tests during the same CI step.
 
-You can try it out with:
+Pros:
 
-```
-$ docker compose run test
-```
+- faster than using DC (1m48s vs. 2m8s)
+- less complexity
 
-### Speed
+Cons:
 
-As you can see, the setup is not 1-to-1. But let's see...
+- not as easy to vary test environment, eg. supporting also Node 14 (since the `firebase-ci-builder` is fixed on Node 16).
 
-**native (macOS):** Firebase CLI 9.16.5; Node 16; npm 7
+Note to you. This repo is probably going at the limits of what non-DC Cloud Build should be used for.
 
-```
-$ time npm test
-...
-real	0m18.000s
-user	0m8.551s
-sys  	0m1.834s
-
-real	0m19.091s
-user	0m8.870s
-sys 	0m1.867s
-```
-
-**DC:** Docker Desktop for Mac 3.6.0; Firebase CLI 9.16.0 (in the builder image); Node 14; npm 6
-
-```
-$ docker compose down    # so service launch time is included
-
-$ time docker compose run test
-...
-real	0m48.236s
-user	0m0.222s
-sys 	0m0.254s
-```
-
-The real world timing matters for DX. 18..19 s vs. ~48 s. Brain free choice.
-
-Also individual test execution times are better in the native approach (Firebase Emulators seem faster that way, at least on a Mac).
-
-See [this comment](https://github.com/akauppi/firebase-jest-testing/issues/25#issuecomment-904027683) (GitHub Issues).
-
-
-### Stability
-
-Use of `socat` for the warming up seems to have introduced a trouble for `docker compose down`.
-
-This is not a concern in the CI, where a machine is one-time-used. It would, however, need to be fixed in order to use DC for development (or we could skip the warming up in development; it has value mostly in CI).
-
-Anyways, complications...
-
->Earlier, port 5002 (Cloud Functions) was left open by DC, but haven't seen that for a while..
-
-The native `npm test` workflow doesn't suffer from these issues.
-
-
-## CI using a custom `n14-user` image
-
-This is a story.
-
-There are three tiers we could go. Tried them all.
-
-- have commands in the `docker-compose.yml` and use stock `node:14-alpine`
-- use `builds: ../n14` from `docker-compose.yml`
-- have a separate file that needs to be pushed to the Container Registry
-
-All of these work.
-
-### Stock `node:14-alpine`
-
-|||
-|---|---|
-|**Pros:**|
-||Cloud Build would nicely reuse the stock image (load only once).|
-|**Cons:**|
-||Non test-related commands (eg. tuning `npm`) in the `docker-compose.yml`.|
-
-### `builds:`
-
-|||
-|---|---|
-|**Pros:**|
-||Doesn't need pushing to Container Registry; yet removes complexity from `docker-compose.yml`|
-|**Cons:**|
-||Gets re-built at each CI run, slowing them down.|
-
-### Custom image
-
-|||
-|---|---|
-|**Pros:**|
-||Fast for execution|
-|**Cons:**|
-||Needs to be pushed before use|
-|**Potential:**|
-||Using same image for multiple (all) projects of the same author|
-
-
-## Warm-up is essential!!! 🏃‍♀️
-
-We finally have reliable, sub-2000 ms, timings, in CI!
-
-This is due to the `warm-up` service, added in `docker-compose.yml`. It waits for the emulators to have started (port 6767 = Firestore), then exercises a run of Cloud Functions tests, where a) timeouts are way higher than normally, b) the results are ignored (unless the tests fail).
-
-This preceding round is like the warm-up before a race.
-
-`warmed-up` then opens a TCP port (with `socat`, but anything would do) to inform `test` to go further.
-
-### Alternatives
-
-Tried file-based synchronization, briefly. It works, but the temporary files would need to be cleaned up *outside* of `docker-compose.yml` (if any left overs were to be there), in order not to have race conditions. So it's more risky than the port approach.
-
-Tried Firestore synchronization, way back. It works, but needed an explicit dependency to eg. `firebase-admin` that we otherwise don't need (it does come via `firebase-jest-testing`, but that's beside the point). It felt like over-complexity.
-
-### Problems
-
-At the same time `socat` was added, these started to show up:
-
-```
-$ docker compose down
-[+] Running 1/1
- ⠿ Container firebase-jest-testing_emul_1  Removed                                                                                                                                                                                         10.3s
- ⠿ Network firebase-jest-testing_default   Error                                                                                                                                                                                            0.0s
-failed to remove network 9d8b09047e85d335a5a2dea7da467873eb20dd0a05714ef3691dfc903396976a: Error response from daemon: error while removing network: network firebase-jest-testing_default id 9d8b09047e85d335a5a2dea7da467873eb20dd0a05714ef3691dfc903396976a has active endpoints
-```
-
-Keep an eye on it.
-
->If it ever is a real problem, launch an ultra-simple Node.js server, instead of opening a port with `socat`.
+>Request: If you know of a way to run `npm run start &` and have the launched processes still running in the following Cloud Build steps, let the author know. This would allow testing with Node 14.

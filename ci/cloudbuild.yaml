@@ -66,28 +66,20 @@ steps:
   entrypoint: npm
   args: ['install']
 
-# Launch emul/warm-up in DC, keeps them running in the background.
+# Launch emul, keeps running in the background.
 #
-- name: docker/compose:${_DOCKER_COMPOSE_TAG}
-  args: ['-f', 'docker-compose.ci.yml', 'run', 'warmed-up']
-  env:
-    - CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
-    - NODE_V=16
-
-- name: node:16-alpine
+- name: gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
   entrypoint: npm
   args: ['run', 'ci:test']
-  env:
-    - EMUL_HOST=emul
 
 # --- Timeout
 #
-# Cloud Build (node 16):  2m7s, 2m9s
-#             (node 14):  1m48s, 1m53s, 2m25s
+# Cloud Build
+#   (node 16):  1m48s
+#   (node 16, DC):  2m7s, 2m9s
+#   (node 14):  1m48s, 1m53s, 2m25s
 #
 timeout: 240s
 
 substitutions:
   _BUILDER_TAG: 9.17.0-node16-npm7
-  _DOCKER_COMPOSE_TAG: 1.29.2
-    # https://hub.docker.com/r/docker/compose/tags?page=1&ordering=last_updated

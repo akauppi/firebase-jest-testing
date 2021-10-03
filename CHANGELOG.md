@@ -1,6 +1,12 @@
 # Changelog
 
-## 2-Sep-21 (unreleased)
+## 3-Oct-21
+
+- CI changes:
+  - running tests native, no Docker Compose
+  - warm-up removed: wasn't needed any more; not sure why (< 2s)
+
+## 2-Sep-21
 
 - Updating dependency: `node-fetch@3.0.0`
 
