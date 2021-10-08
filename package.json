@@ -13,15 +13,14 @@
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
-    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && npm run -s _test1\"",
+    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && wait-for 5002 && npm run -s _test1\"",
     "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
     "-- ": "",
     "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
     "-- -": "",
-    "//ci:test": "NODE=14 docker compose run test",
-    "//preci:test": "NODE=14 docker compose build test",
-    "-- - ": "",
-    "test:all": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "ci:test": "wait-for emul:6767 && wait-for emul:5002 && npm run -s _ci_warm-up && npm run -s _test1",
+    "//_ci_warm-up": "true",
+    "_ci_warm-up": "WARM_UP_TIMEOUT=4000 npm run -s test:rules:symbols 2&> /dev/null",
     "--  -": "",
     "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
     "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
@@ -39,14 +38,18 @@
     "prestart": "npm run -s _checkNoActive",
     "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "--  --": "",
+    "timings:1": "npm run test:fns:userInfo",
+    "timings:2": "npm run test:rules:projects",
+    "//timings:2": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js -t 'unauthenticated access should fail' --verbose --detectOpenHandles --all",
     "//clean": "rm -rf node_modules package/node_modules sample/functions/node_modules"
   },
   "devDependencies": {
     "@local/self": "file:.",
-    "concurrently": "^6.2.1",
+    "concurrently": "^6.2.2",
+    "debug": "^4.3.2",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.16.5",
-    "jest": "^27.0.6"
+    "firebase-tools": "^9.19.0",
+    "jest": "^27.2.4"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -68,22 +71,20 @@
     "devDependencies": {
       "@local/self": [
         "Allows us to use the 'bin' section to alias commands."
+      ],
+      "debug": [
+        "For timing the steps and seeing where Firebase Emulators are sluggish."
       ]
     },
     "scripts": {
-      "wait-for 6767": [
-        "The Firebase Emulator responds by 200 (OK) to a GET at its port. THIS IS GREAT - it allows us to know when",
-        "it's up. However, it is likely undocumented."
-      ],
       "NODE_OPTIONS=--experimental-vm-modules": [
         "Still needed on both Node.js 14 and 16. (not knowing where to track it's removal)"
       ],
-      "no [[": [
-        "Don't use '[[' (bash syntax). Though Windows 10+WSL2 would be using bash, the npm commands",
-        "seem to be passed to plain 'sh'. '[' works."
+      "_ci_warm-up": [
+        "Warm-up is used to guarantee normal tests run within the 2000 ms timeout."
       ],
-      "//ci:test": [
-        "This is just for commentary purposes, and to help develop CI workflow."
+      "no [[": [
+        "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
       ]
     }
   }

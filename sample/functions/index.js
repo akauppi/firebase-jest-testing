@@ -3,26 +3,40 @@
 *
 * Cloud Functions so we have something to test against.
 */
-//const functions = require('firebase-functions');
 import functions from 'firebase-functions';
-
-//const admin = require('firebase-admin');
 import admin from 'firebase-admin';
 
-admin.initializeApp();
-const db = admin.firestore();
+//import { debug as debugGen, enable } from 'debug'   // ESM API (fictional)
+const { debug: /*as*/ debugGen, enable } = await import('debug').then( mod => mod.default );    // CommonJS API only
+
+const debug = debugGen('sample:functions');
+
+const dGreet = debug.extend("greet");
+const dUIS = debug.extend("userInfoShadow");
+
+// NOTE: Normally the caller would do 'DEBUG=sample:*' but that activates _all_ of Firebase Emulator's own (unrelated)
+//    debugging output. This is a work-around, not needing to set 'DEBUG'.
+//
+enable('sample:*');
+
+debug("Loading 'functions/index.js'");
+
+admin.initializeApp();          debug("Firebase app initialized");
+const db = admin.firestore();   debug("Firestore handle initialized");
 
 // Sad that the default region needs to be in the code. There is no configuration for it. 😢
 //
 const regionalFunctions = functions.region("mars-central2");
 
+debug("Have 'regionalFunctions'");
+
 /*
 * { msg: string } -> string
 */
-//exports.greet = regionalFunctions.https
 export const greet = regionalFunctions.https
   .onCall((msg, context) => {
 
+    dGreet("called");
     /*** KEEP
     // If you need to signal errors, this is the way. Use codes only from 'FunctionsErrorCode' selection:
     //  -> https://firebase.google.com/docs/reference/functions/providers_https_#functionserrorcode
@@ -33,6 +47,7 @@ export const greet = regionalFunctions.https
     return `Greetings, ${msg}.`;
   });
 
+debug("'greet' declared");
 
 // UserInfo shadowing
 //
@@ -44,15 +59,19 @@ export const greet = regionalFunctions.https
 //  - shows picking document id (following all docs in a collection)
 //  - shows behaviour based on template data (i.e. testing Cloud Functions may need primed data).
 //
-//exports.userInfoShadow = regionalFunctions.firestore
 export const userInfoShadow = regionalFunctions.firestore
   .document('/userInfo/{uid}')
   .onWrite( async (change, context) => {
+
+    dUIS("onWrite called");
+
     const [before,after] = [change.before, change.after];   // [QueryDocumentSnapshot, QueryDocumentSnapshot]
     const uid = change.after.id;
 
     const newValue = after.data();      // { ... } | undefined
     console.debug(`Global userInfo/${uid} change detected: `, newValue);
+
+    dUIS("change logged");
 
     // Removal of userInfo is not propagated. Only tests do it, as 'beforeAll'.
     //
@@ -65,6 +84,8 @@ export const userInfoShadow = regionalFunctions.firestore
         .select()   // don't ship the fields, just matching ref
         .get();
 
+      dUIS("documents to write found: %d", qss.size);
+
       if (qss.size === 0) {
         console.debug(`User '${uid}' not found in any of the projects.`);
 
@@ -76,7 +97,10 @@ export const userInfoShadow = regionalFunctions.firestore
           return qdss.ref.collection("userInfo").doc(uid).set(newValue);    // Promise of WriteResult
         });
         await Promise.all(proms);
+
+        dUIS("documents updated");
       }
     }
   });
 
+debug("'userInfoShadow' declared");

@@ -62,8 +62,6 @@ const lookup = new Map([ ...pkgEntries, ...moreEntries ]);
 
 const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 
-  //if (request.startsWith('firebase-admin')) console.log("!!! Requesting:", request, lookup.get(request));
-
   const hit = lookup.get(request);
   if (hit) {
     return options.defaultResolver( hit, options );   // turned to requiring the file

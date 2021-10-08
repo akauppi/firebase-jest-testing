@@ -16,8 +16,14 @@
 *   part of the miss).
 *
 * It seems faster to do a simple tool, than push for the fix upstream, or find tools. :S
+*
+* NOTE!!!
+*   The author recommends 'wait-for-it' command line tool, if Docker (Compose) is used for development/testing.
+*   Here, we are not requiring developers to have Docker; thus the self-made tool.
 */
 import fetch from 'node-fetch'
+
+const t0 = Date.now();
 
 const url = (() => {
   const arg = process.argv.slice(2) || failExit("Missing '[host:]port' param.");
@@ -29,14 +35,14 @@ const url = (() => {
   return `http://${c1 || 'localhost'}:${c2}`;
 })();
 
-//console.log('Waiting for GET to succeed (2xx) on:', url);
-
-const POLL_INTERVAL_MS = 300;
+const POLL_INTERVAL_MS = 150;
 
 function areWeThereYet() {
   fetch(url).then( res => {
-    if (res.status >= 200 && res.status < 300) {  // :)
+    if ((res.status >= 200 && res.status < 300) || (res.status === 404)) {    // ':5002' (Functions end point) provides 404 when up
+      console.log(`${url} open after ${ ( (Date.now()-t0)/1000 ).toFixed(1) }s`);
       process.exit(0);
+
     } else {
       console.error("Returned status:", res.status);    // 300..5xx
       process.exit(4);
@@ -47,9 +53,11 @@ function areWeThereYet() {
     if (err.code === 'ECONNREFUSED') {    // port not open (yet)
       setTimeout(areWeThereYet, POLL_INTERVAL_MS);
 
+    /*** trying without it! Could be because we did not wait for Functions end point, then.
     } else if (err.code === 'ECONNRESET') {   // "request to http://localhost:4000/ failed, reason: socket hang up" (type: 'system'; errno: 'ECONNRESET', code: 'ECONNRESET')
       // This came when Firebase is running under Docker, and getting ready for action (but not quite, yet..)
       setTimeout(areWeThereYet, POLL_INTERVAL_MS);
+    ***/
 
     } else {
       console.error("Unexpected error:", err);

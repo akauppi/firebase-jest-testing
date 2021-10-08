@@ -84,10 +84,9 @@ These are both tools for unit testing. The first one tests Cloud Functions and t
 
 The approach taken by this repo differs from that provided by Firebase. We...
 
-1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to their app
+1. try to give a unified approach to Firebase testing, so developers don't need to bring in multiple dependencies to test their app
 2. take a more integration testing approach than Firebase's libraries 
-3. prefer normal clients (or a similar API) over test specific APIs
-4. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
+3. focus on a specific testing framework (Jest), allowing us to fluff the pillows better than an agnostic library can
 
 For priming data, we use `firebase-admin` internally, and take data from human-editable JSON files. Firebase approach leans on snapshot-like binary files, instead.
 
@@ -122,119 +121,39 @@ This would be clearer than the existing definition, yet fully compatible with it
 
 ---
 
-To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule can be scrapped, later.[^3]
-
-[^3]: It feels awkward to be call tests "demo", since they obviously aren't...
+To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule be scrapped.
 
 
-## Docker Compose only for CI (for now...)
+## Warm-up (CI)
 
-In the repo, Docker Compose (DC) is used only for CI runs. 
+All the tests are expected to pass in a relatively tight (2000 ms) window.
 
-This is intentional. While DC is awesome, it adds complexities that a regular `npm` developer can do without.
+This is not necessarily the case for CI, using Docker, rather limited machine resources and always a cold start. To provide comparable results to those on a development machine (where the services may be running continuously in the background), CI runs warm up certain parts of the emulation by executing tests twice, first with a wider timeout and ignoring their output.
 
-Also, stability and testing speed (developer experience as a whole) are better, with the `npm` and `concurrently` (native) approach. 
+>Note: The set of tests needing warm-up has varied, over time (and Firebase Emulator versions). 
+>
+>Ideally, the author would like Firebase Emulators to start always warmed up.
 
-You can try it out with:
+The purpose is to provide results more akin to the normal developer experience (not the initial cold run), and to catch tests that would truly (repeatedly) run slow.
 
-```
-$ npm run //ci:test
-```
+### Fluctuations
 
-### Speed
-
-As you can see, the setup is not 1-to-1. But let's see...
-
-**native (macOS):** Firebase CLI 9.16.5; Node 16; npm 7
+Whether warm-up is needed is dependent on individual CI runs (time of day; who knows what). Here's one:
 
 ```
-$ time npm test
-...
-real	0m18.000s
-user	0m8.551s
-sys  	0m1.834s
-
-real	0m19.091s
-user	0m8.870s
-sys 	0m1.867s
+Step #2:   '/symbols' rules
+Step #2:     ✓ unauthenticated access should fail (1166 ms)
+Step #2:     ✓ user who is not part of the project shouldn't be able to read (81 ms)
+Step #2:     ✓ project members may read all symbols (328 ms)
+Step #2:     ✓ all members may create; creator needs to claim the symbol to themselves (754 ms)
+Step #2:     ✓ members may claim a non-claimed symbol (362 ms)
+Step #2:     ✓ members may do changes to an already claimed (by them) symbol (151 ms)
+Step #2:     ✓ members may revoke a claim (143 ms)
+Step #2:     ✓ claim cannot be changed (e.g. extended) (131 ms)
+Step #2:     ✓ members may delete a symbol claimed to themselves (130 ms)
+Step #2: 
 ```
 
-**DC:** Docker Desktop for Mac 3.6.0; Firebase CLI 9.16.0 (in the builder image); Node 14; npm 6
+Note that all is under 2s (no warm-up would be needed).
 
-```
-$ time npm run //ci:test
-...
-real	0m52.152s
-user	0m0.621s
-sys 	0m0.363s
-
-real	0m50.685s
-user	0m0.644s
-sys 	0m0.266s
-```
-
-The real world timing matters for DX. 18..19 s vs. 51..52 s. Brain free choise.
-
-Also individual test execution times are better in the native approach (Firebase Emulators seem faster that way, at least on a Mac).
-
-See [this comment](https://github.com/akauppi/firebase-jest-testing/issues/25#issuecomment-904027683) (GitHub Issues).
-
-
-### Stability
-
-Running Docker Compose in the development machine seems to leave port 5002 open, frequently. This is *not* a problem with CI, where any build step is independent from the earlier ones.
-
-This doesn't happen with the native `npm test` workflow.
-
->Note: It's not necessarily DC to blame. It can quite well be Firebase CLI as well, not closing processes reliably. Or just the interplay of the two.
-
-<p />
->Recovery note: `$ NODE=14 docker compose down` properly closes the port 5002.
-
----
-
-DC is also known to give timeouts (from 5000 ms) in the Rules tests (run locally, not in CI).
-
-
-## CI using a custom `n14-user` image
-
-This is a story.
-
-There are three tiers we could go. Tried them all.
-
-- have commands in the `docker-compose.yml` and use stock `node:14-alpine`
-- use `builds: ../n14` from `docker-compose.yml`
-- have a separate file that needs to be pushed to the Container Registry
-
-All of these work.
-
-### Stock `node:14-alpine`
-
-|||
-|---|---|
-|**Pros:**|
-||Cloud Build would nicely reuse the stock image (load only once).|
-|**Cons:**|
-||Non test-related commands (eg. tuning `npm`) in the `docker-compose.yml`.|
-
-### `builds:`
-
-|||
-|---|---|
-|**Pros:**|
-||Doesn't need pushing to Container Registry; yet removes complexity from `docker-compose.yml`|
-|**Cons:**|
-||Gets re-built at each CI run, slowing them down.|
-
-### Custom image
-
-|||
-|---|---|
-|**Pros:**|
-||Fast for execution|
-|**Cons:**|
-||Needs to be pushed before use|
-|**Potential:**|
-||Using same image for multiple (all) projects of the same author|
-
-
+Other times, you do.
