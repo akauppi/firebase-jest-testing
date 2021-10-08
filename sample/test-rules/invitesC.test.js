@@ -1,9 +1,9 @@
 /*
 * sample/test-rules/invitesC.test.js
 */
-import { collection, serverTimestamp } from 'firebase-jest-testing/firestoreRules'
-
 import { test, expect, describe, beforeAll } from '@jest/globals'
+
+import { collection, serverTimestamp } from 'firebase-jest-testing/firestoreRules'
 
 const anyDate = new Date();   // a non-server date
 

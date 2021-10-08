@@ -1,5 +1,22 @@
 # Changelog
 
+## 3-Oct-21
+
+- CI changes:
+  - running tests with Docker, but not Docker Compose
+  - warm-up remains for CI: sometimes needed (see `APPROACH.md`)
+
+## 2-Sep-21
+
+- Updating dependency: `node-fetch@3.0.0`
+
+## 29-Aug-21
+
+- Proper warming up of Cloud Functions **finally** implemented. With DC.
+- CI test time of the first Rules test reduced, by running it first in `beforeAll`.
+
+This means we can now comfortably use a 2000 ms timeout for all tests, in the CI, and they will pass.
+
 ## 22-Aug-21 (0.0.4-alpha.4)
 
 - Brought back support for `npm` 6.
@@ -153,7 +170,7 @@
 
 **Internal changes**
 
-- Using `@firebase/rules-unit-testing` 
+- Using `@firebase/rules-unit-testing`
 - Using `firebase-admin` directly, instead of `.initializeAdminApp`
 - Using REST API `DELETE` directly, instead of `@firebase/rules-unit-testing`
 
