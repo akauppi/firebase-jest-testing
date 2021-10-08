@@ -15,9 +15,6 @@
 #   - functional changes to 'master' branch
 #     - changes only affecting '.md' files are excluded
 #
-# Note:
-#   Wasn't able to use the 'PWD' env.var. in 'docker run' ('$$PWD' does not cut it), so setting it as a substitute,
-#   instead.
 
 steps:
   # DEBUG
@@ -56,7 +53,9 @@ steps:
 # --- Timeout
 #
 # Cloud Build
-#   (node 16):  1m53s, 1m58s
+#   (node 16):  1m53s, 1m58s (x2)
+#
+# Earlier versions
 #   (node 16, DC):  2m7s, 2m9s
 #   (node 14):  1m48s, 1m53s
 #
@@ -65,3 +64,4 @@ timeout: 240s
 substitutions:
   _BUILDER_TAG: 9.17.0-node16-npm7
   _PWD: /workspace
+    # tbd. How to escape and use the 'PWD' env.var. in a command? #SO #help

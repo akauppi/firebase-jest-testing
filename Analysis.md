@@ -103,12 +103,7 @@ Time it takes to relay change to another document:
 
 Comparison between first-time and n:th time speeds clearly shows the problem.
 
-- [ ] How to tune Emulators so that everything is hot-started, instead of cold-started?  Running the test twice would do??? (with humongous timeouts for the first run)
-
-
-
-
-
-
-
+<!--
+- [x] How to tune Emulators so that everything is hot-started, instead of cold-started?  Running the test twice would do??? (with humongous timeouts for the first run)
+-->
 

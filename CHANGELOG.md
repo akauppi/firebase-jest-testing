@@ -3,8 +3,8 @@
 ## 3-Oct-21
 
 - CI changes:
-  - running tests native, no Docker Compose
-  - warm-up removed: wasn't needed any more; not sure why (< 2s)
+  - running tests with Docker, but not Docker Compose
+  - warm-up remains for CI: sometimes needed (see `APPROACH.md`)
 
 ## 2-Sep-21
 

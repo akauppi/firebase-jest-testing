@@ -124,17 +124,19 @@ This would be clearer than the existing definition, yet fully compatible with it
 To be compatible with the current state of affairs, the `fns-test` project id was changed to `demo-1`, with the hope that the naming rule be scrapped.
 
 
-## Warm-up
+## Warm-up (CI)
 
 All the tests are expected to pass in a relatively tight (2000 ms) window.
 
-This is not necessarily true for the cold start scenario that CI runs always are. Therefore, certain tests[^1] are run twice, first with a wider timeout and ignoring their output.
+This is not necessarily the case for CI, using Docker, rather limited machine resources and always a cold start. To provide comparable results to those on a development machine (where the services may be running continuously in the background), CI runs warm up certain parts of the emulation by executing tests twice, first with a wider timeout and ignoring their output.
+
+>Note: The set of tests needing warm-up has varied, over time (and Firebase Emulator versions). 
+>
+>Ideally, the author would like Firebase Emulators to start always warmed up.
 
 The purpose is to provide results more akin to the normal developer experience (not the initial cold run), and to catch tests that would truly (repeatedly) run slow.
 
-[^1]: We have varied this set, depending on which parts don't run within the 2s.
-
-### Note
+### Fluctuations
 
 Whether warm-up is needed is dependent on individual CI runs (time of day; who knows what). Here's one:
 
@@ -155,4 +157,3 @@ Step #2:
 Note that all is under 2s (no warm-up would be needed).
 
 Other times, you do.
-

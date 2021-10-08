@@ -64,10 +64,6 @@ You can make this nicer in a Docker Compose file, but that implies an additional
 
 The services get launched. Their ports are exposed to further steps with the container's name (eg. `emul:6767`).
 
-**References:**
-
-- [this SO answer](https://stackoverflow.com/a/69098030/14455)
-
 [^1]: In fact, it's **essential** for the expressiveness and usefulness of Cloud Build. Too bad [none of the official samples](https://github.com/GoogleCloudPlatform/cloud-build-samples) showcase this!
 
 
