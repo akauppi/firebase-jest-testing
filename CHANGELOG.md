@@ -1,5 +1,11 @@
 # Changelog
 
+## 19-Oct-21
+
+- Updated sample to `firebase-admin` 10.0 (modular)
+- Updated to Jest `27.3.1`
+- Removed `debug` use, for simplicity
+
 ## 3-Oct-21
 
 - CI changes:
