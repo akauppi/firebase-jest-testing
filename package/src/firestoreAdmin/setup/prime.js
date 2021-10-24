@@ -11,7 +11,8 @@ import { strict as assert } from 'assert'
 import {PRIME_ROUND, FIRESTORE_HOST} from '../../config.js'
 assert(PRIME_ROUND);
 
-import { initializeApp } from 'firebase-admin/app'    // for "modular API" (in alpha)
+import { initializeApp } from 'firebase-admin/app'    // "modular API" (10.x)
+import { getFirestore } from 'firebase-admin/firestore'
 
 import { wipe } from './wipe.js'
 import { writeTemp } from '../../intercom/index.js'
@@ -67,7 +68,7 @@ async function withDbAdmin(projectId, f) {  // ( string, (Firestore) => Promise 
     projectId
   }, `prime-${Date.now()}`);    // unique from other "apps"
 
-  const dbAdmin = appAdmin.firestore();
+  const dbAdmin = getFirestore(appAdmin);   // was: appAdmin.firestore() (9.x)
   dbAdmin.settings({
     host: FIRESTORE_HOST,
     ssl: false

@@ -60,9 +60,6 @@
       "construction of the URL for the callable."
     ],
     "engines.node": [
-      ">=14.3: has --harmony-top-level-await",
-      ">=13.2: native ES module support",
-      "",
       "Avoid 16.6.0 due to: https://github.com/facebook/jest/issues/11708"
     ],
     "engines.npm": [

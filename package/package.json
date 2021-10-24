@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.4-alpha.4",
+  "version": "0.0.4-alpha.5",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -17,7 +17,7 @@
   ],
   "homepage": "https://github.com/akauppi/firebase-jest-testing#readme",
   "files": [
-    "src/**",
+    "src/",
     "Writing tests.md"
   ],
   "exports": {
@@ -37,7 +37,7 @@
     "jest": "^27.0.6"
   },
   "dependencies": {
-    "firebase-admin": "^9.100.0-alpha.1",
+    "firebase-admin": "^10.0.0",
     "node-fetch": "^3.0.0"
   },
   "//": {
@@ -45,9 +45,7 @@
       "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."
     ],
     "engines.node": [
-      "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)",
-      ">=14.3: has --harmony-top-level-await",
-      ">=13.2: native ES module support"
+      "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834",
