@@ -35,7 +35,7 @@ describe("userInfo shadowing", () => {
     //await expect( docListener("projects/1/userInfo/abc", shallowEqualsGen(william)) ).resolves.toBeDefined();
 
     // Style 2:
-    //  - 'eventually.doc' passes on first valid doc, checking is done outside of 'expect'.
+    //  - passes on first valid doc, checking is done outside of 'expect'.
     //
     await expect( docListener("projects/1/userInfo/abc") ).resolves.toContainObject(william);
   });

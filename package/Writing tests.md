@@ -1,8 +1,5 @@
 # Writing Tests
 
-<!-- tbd. See if we can link to this from the `npmjs` package page.
--->
-
 **Contents:**
 
 - [Testing Security Rules](#testing-security-rules)
@@ -130,8 +127,7 @@ describe("'/invites' rules", () => {
   test('only a member of a project can invite', () => {
     const d = { email: "aa@b.com", project: "1", by: "abc", at: serverTimestamp() };
 
-    return expect( abc_invitesC.doc("aa@b.com:1").set(d).toAllow(),   // author can invite
-	]);
+    return expect( abc_invitesC.doc("aa@b.com:1").set(d).toAllow() )   // author can invite
   })	
 });
 ```
@@ -151,7 +147,7 @@ These are Jest extensions, and they are automatically enabled by importing `fire
 
 Their use is self-explanatory. You have a Promise that should pass the security rules? `expect` it `.toAllow()`. It should not? `.toDeny()`.
 
->Note: The extensions were introduced by Jeff Delaney in Oct 2018: [Testing Firestore Security Rules With the Emulator](https://fireship.io/lessons/testing-firestore-security-rules-with-the-emulator/)
+>Note: The extensions were introduced by Jeff Delaney in Oct 2018: [Testing Firestore Security Rules With the Emulator](https://fireship.io/lessons/testing-firestore-security-rules-with-the-emulator/). The implementation here is different, but the API style is retained.
 
 ### `Promise.all` or sequencial `await`s?
 
@@ -159,12 +155,11 @@ You can use either fashion. `Promise.all` may increase the level of parallelism 
 
 >If you have lots of tests, and do performance comparisons between `Promise.all` vs. sequential `await`s, let the author know how it went.
 
-
-## Testing Cloud Functions > events
+## Testing Cloud Function Events
 
 `firebase-jest-testing` does not provide function-level testing tools for Cloud Functions. Instead, the aim is at end-to-end testing, where the tests set some aspect of the Firestore database, and remain listening whether changes are propagated elsewhere, as expected.
 
-This part of the library uses `firebase-admin` library (you are provided a properly configured handle for it), which means Security Rules are not involved. It's enough to test the Security Rules, separately.
+This part of the library uses `firebase-admin`, which means Security Rules are not involved. The approach of the library is to test Security Rules separately, and forget about them even existing in other kinds of tests.
 
 ```
 import { 
@@ -173,7 +168,32 @@ import {
 } from 'firebase-jest-testing/firestoreAdmin'
 ```
 
-See `sample/test-fns/userInfo.test.js` for an example.
+Sample:
+
+```
+describe("userInfo shadowing", () => {
+
+  beforeAll( () => {
+    preheat_EXP("projects/1/userInfo");
+  })
+
+  test('Central user information is distributed to a project where the user is a member', async () => {
+    const william = {
+      displayName: "William D.",
+      photoURL: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Dalton_Bill-edit.png"
+    };
+
+    // Write in 'userInfo' -> causes a Cloud Function to update 'projectC/{project-id}/userInfo/{uid}'
+    //
+    await collection("userInfo").doc("abc").set(william);
+
+    await expect( docListener("projects/1/userInfo/abc") ).resolves.toContainObject(william);
+  });
+
+...
+```
+
+The full example can be seen in `sample/test-fns/userInfo.test.js`.
 
 
 ### `collection`, `doc`
@@ -190,11 +210,11 @@ The library has configured them for emulator access, and will do cleanup for you
 >If you need some further methods, contact the author with the use case.
 
 
-## Testing Cloud Functions > callables
+## Testing Cloud Function Callables
 
 Cloud Functions provide [callable functions](https://firebase.google.com/docs/functions/callable) that are "similar but not identical to HTTP functions".
 
-To exercise these callables, one normally requires a client-side JS SDK. `firebase-admin` does not provide access to callables - it's not its thing.
+To exercise these callables, one normally needs a client-side SDK. `firebase-admin` does not provide access to callables - it's not its thing.
 
 `firebase-jest-testing` uses the REST API and ducks the need for pulling in a client dependency. Its `firebaseClientLike` interface tries to be *close to* that of the JS SDK, but it's not 100% the same.
 
@@ -248,7 +268,7 @@ These statements lead us to the following advice, with regard to testing callabl
 
 This should cover most of the use cases.
 
->If you have *different implementations* in different regions, and wish to test them separately, be in touch with the author. You can still use `setRegion` by calling it multiple times, but must take care of the execution order of such tests; `setRegion` influences *all* `httpsCallable` tests following it as a global setting. As a fallback, you can of course always use the normal JS SDK client instead of `firebaseClientLike` API (just remember to configure it for emulation).
+>If you have *different implementations* in different regions, and wish to test them separately, you can still use `setRegion` by calling it multiple times, but must take care of the execution order of such tests; `setRegion` influences *all* `httpsCallable` tests following it as a global setting.
 
 
 ### `httpsCallable`
@@ -261,9 +281,9 @@ httpsCallable(name)   // (string) => ((data) => Promise of { data: any|undefined
 
 Give the name of the callable, and then call the returned function with input data.
 
-The returned promise should work as the JS SDK client. If there are communication level problems (e.g. the named callable is not reached), the promise rejects.
+The returned promise should work as with the JS SDK client. If there are communication level problems (e.g. the named callable is not reached), the promise rejects.
 
->Note: Roles are not currently implemented, but can be. It would be like: `httpsCallable(name).as({ uid: "you" })` - but this is not implemented
+>Note: Roles are not currently implemented, but can be. It would be like: `httpsCallable(name).as({ uid: "you" })`. Let the author know (with a testable use case) if you need it.
 
 ### `setRegion`
 
@@ -273,11 +293,11 @@ Call this to set the region where your callables are running, under emulation.
 setRegion(region)    // (string) => ()
 ```
 
-Only needed if one of the regions is not the Firebase default, or if your implementations vary between regions, and you wish to separately test them (see above for comments).
+Only needed if one of the regions is not the Firebase default, or if your implementations vary between regions, and you wish to separately test them.
 
 ## Priming with JSON data
 
-To run tests - even testing Security Rules - you need some seed data in Firestore. Such data is often hand crafted alongside the tests, and `firebase-jest-testing` provides the means to read it from a JSON / `.js` file.
+To run tests you need some seed data in Firestore. Such data is often hand crafted alongside the tests, and `firebase-jest-testing` provides the means to read it from a JSON / `.js` file.
 
 Add this to your Jest configuration:
 
@@ -289,16 +309,12 @@ In the `setup.jest.js`:
 
 ```
 /*
-* sample/test-rules/setup.jest.js
-*
 * Sets the (immutable) data for the Rules tests.
 */
 import { docs } from './docs.js'
-
 import { prime } from 'firebase-jest-testing/firestoreAdmin/setup'
 
-const projectId = "rules-test";
-
+const projectId = "rules-test"
 async function setup() {
   await prime(projectId, docs);
 }
@@ -306,7 +322,7 @@ async function setup() {
 export default setup;
 ```
 
-This is where you define a project ID for the tests (`rules-test` in the above sample). The project id's keep unrelated tests apart in Firestore. The specific id does not really matter (must be lower case, without spaces).
+The project id (`rules-test`) keeps unrelated tests apart in Firestore. The specific id does not really matter (but must be lower case, without spaces).
 
 ### `prime`
 
@@ -337,6 +353,7 @@ As a particular case to watch for, create timestamps with `new Date()` (or `serv
 Cloud Functions are *not* currently deactivated during the priming (we'll change that if it's needed).
 
 
+<!-- hyss
 ## Why immutability matters (..and a bit about implementation)
 
 In the core of this library is the Security Rules testing, with immutable operations.
@@ -526,3 +543,4 @@ If a set, update or delete operation is successful, `firebase-jest-testing` rest
 
 All of this is profiled, and coding decisions were made based on observed real time behaviour. The outcome should be ultra fast testing for you.
 
+-->

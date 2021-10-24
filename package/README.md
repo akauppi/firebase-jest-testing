@@ -18,26 +18,24 @@ Offers:
 
 - 🥫Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate!
 
-- 🪶Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required. Add only `firebase-admin` and it's ready to be served!
+- 🪶Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required.
 
 - ⚡️Fast. Optimized for multithreading and Node.js. You'll likely max out your cores.
 
 - ‖‖‖ Security Rules are tested **immutably** - a passing write or delete operation does not change the data, and cannot disturb other tests. This is why we can parallelize the tests so much. No flaky tests.
 
-- ⏲For testing Cloud Functions at the integration level, `.eventually` extension is added to the Jest arsenal.
-
 - ﹛﹜Help functions for priming Firestore with *JSON data*.
 
-- `+` Means for testing callables.
+- `+` Means for testing callables <sub>(without a client SDK)</sub>.
 
-Only to be used with Jest 27.
+Only to be used with Jest 27 and above.
 
 
 ## Requires
 
 - Jest 27
 
-   The module is built with ES modules in mind. Transitioning your project to Jest 27 is likely more meaningful than forking and backporting this code to Jest 26 and CommonJS.
+   The module is built with ES modules in mind.
 
 ## Using in your project
 
@@ -50,12 +48,64 @@ $ npm install --save-dev firebase-jest-testing@beta
 Add this to the `jest.config.js`:
 
 ```
-// Without this, the modules are not correctly loaded, due to being declared using 'exports'.
+// Needed until Jest supports ESM's with multiple entry points (Jest 28?).
 //
-resolver: "firebase-jest-testing/src/cjs/jestResolver.cjs"
+resolver: "hack-jest/jestResolver.cjs"
 ```
 
->Note: This is needed because the Jest 27 resolver does not treat modules with `exports` appropriately. Eventually, this will become unnecessary.
+Create the custom Jest resolver. 
+
+<details><summary>Sample `jestResolver.cjs`</summary>
+<pre>
+/*
+* hack-jest/jestResolver.cjs
+*
+* Note: It's really CHEAP that we don't use the 'exports' in the package itself, but this works, and eventually
+*    Jest will support 'exports' for real. Also, we've narrowed down to only those entries that we need.
+*
+* References:
+*   - Configuring Jest > resolver (Jest docs)
+*     -> https://jestjs.io/docs/en/configuration#resolver-string [1]
+*/
+
+// Add mappings to any libraries you use which 'export' more than the default ('.') entry point (Jest 27 takes care of that).
+//
+const entries = Object.entries({
+  // firebase-jest-testing
+  "firebase-jest-testing/firestoreAdmin": "./src/firestoreAdmin/index.js",
+  "firebase-jest-testing/firestoreAdmin/setup": "./src/firestoreAdmin/setup/index.js",
+  "firebase-jest-testing/firestoreRules": "./src/firestoreRules/index.js",
+  "firebase-jest-testing/firebaseClientLike": "./src/firebaseClientLike/index.js",
+
+  // firebase-admin
+  "firebase-admin/app": "./lib/esm/app/index.js",
+  "firebase-admin/firestore": "./lib/esm/firestore/index.js"
+
+}).map( ([k,v]) => {
+  const arr = k.match(/(.+?)\//);   // pick the node_modules name
+  const name = arr[1] || fail("No '/' in key");
+  return [
+    k,
+    v.replace(/^\.\//, `${name}/`)
+  ]
+});
+
+const lookup = new Map(entries);
+
+const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
+
+  const hit = lookup.get(request);
+  if (hit) {
+    return options.defaultResolver( hit, options );
+  } else {
+    return options.defaultResolver( request, options );
+  }
+};
+
+module.exports = res;
+</pre>
+</details>
+
 
 ### Using with Docker Compose
 
@@ -65,6 +115,8 @@ Set the `EMUL_HOST` env.var. to indicate the host name.
 
 ```
 services:
+  emul:
+    ...
   sample:
     ...
     environment: ['EMUL_HOST=emul']
@@ -73,13 +125,14 @@ services:
 
 ## Sample project(s)
 
-- [GitHub repo](https://github.com/akauppi/firebase-jest-testing) `package.json` and `sample` folder.
-- [GroundLevel-firebase-es](http://github.com/akauppi/GroundLevel-firebase-es) `packages/backend` subpackage (branch `next` for using with Docker Compose).
+- [GroundLevel-firebase-es](http://github.com/akauppi/GroundLevel-firebase-es) `packages/backend` subpackage is customer #0.
+
+>If you find the library useful, you may file a PR for adding a link to your project here. 😊
 
 
 ## Reference documentation
  
-The contents are described in [Writing tests](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md) (GitHub `HEAD`):
+[Writing tests](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md) walks you through the API.
 
 - [Testing Security Rules](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-security-rules)
 - Testing Cloud Functions [events](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-cloud-functions-events) and [callables](https://github.com/akauppi/firebase-jest-testing/blob/master/package/Writing%20tests.md#testing-cloud-functions-callables)
@@ -94,21 +147,8 @@ The only solutions are:
 - bring all that text here? (..which may be good? :) - then rename this "Writing tests" )
 -->
 
-## Troubleshooting
-
-Launching Jest 27 needs certain Node flags. See [ECMAScript Modules](https://jestjs.io/docs/next/ecmascript-modules) (Jest docs).
-
-In `package.json`:
-
-```
-"test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
-```
-
-Does your testing project have `type: "module"`? 
-
-- This tool hasn't been tested in a Common-JS / mixed ESM + Common-JS project. Let the author know if it works for you.
-
 
 ## Support
 
 If you wish to support the development of this software, be in touch with the author. We'll figure out something nice! ;)
+

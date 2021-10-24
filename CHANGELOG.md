@@ -1,5 +1,9 @@
 # Changelog
 
+## 24-Oct-21
+
+- Removed `cjs` resolver provided by the package; instead asking users to copy-paste (and modify) a sample.
+
 ## 24-Oct-21 (0.0.4-alpha.5)
 
 - Updated to `firebase-admin` 10.0.0

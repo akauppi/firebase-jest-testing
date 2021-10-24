@@ -41,9 +41,6 @@
     "node-fetch": "^3.0.0"
   },
   "//": {
-    "exports": [
-      "CommonJS require doesn't check exports, so there's no point having the 'cjs' folder there."
-    ],
     "engines.node": [
       "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)"
     ],
@@ -52,11 +49,16 @@
       "6 support kept only because it's the Node.js 14 default"
     ],
     "peerDependencies": {
-      "": [
+      "jest": [
         "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different version).",
-        "",
-        "'firebase-admin', on the contrary, is now seen as an implementation detail, since the using application does not",
-        "need to touch it, or even be aware of it."
+        "The author is NOT SURE WHETHER the library really works down to mentioned version. If you have problems,",
+        "please raise an Issue (and/or update to latest Jest)."
+      ]
+    },
+    "dependencies": {
+      "firebase-admin": [
+        "Seen as an implementation detail (not peer dependency), since the using application does not need to touch it,",
+        "or even be aware of it."
       ]
     }
   }
