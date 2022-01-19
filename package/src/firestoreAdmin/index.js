@@ -15,16 +15,16 @@ const autoUnsubs = new Set();    // Set of () => ()
 /*
 */
 function collection(path) {
-  const ref = dbAdmin.collection(path);
+  return dbAdmin.collection(path);
 
-  assert(ref.listDocuments && ref.doc && ref.onSnapshot );
+  // assert(ref.listDocuments && ref.doc && ref.onSnapshot );
 
-  // Not really wanting to limit the API much, but at the same time we should provide 'afterAll' cleanup, regardless
-  // the API used. I.e. not to leak unwrapped 'DocumentReference' - that would be confusing.
-  //
-  return {
-    doc: (subPath) => doc(`${path}/${subPath}`)     // (string) => DocumentReference -like
-  }
+  // // Not really wanting to limit the API much, but at the same time we should provide 'afterAll' cleanup, regardless
+  // // the API used. I.e. not to leak unwrapped 'DocumentReference' - that would be confusing.
+  // //
+  // return {
+  //   doc: (subPath) => doc(`${path}/${subPath}`)     // (string) => DocumentReference -like
+  // }
 }
 
 /*
@@ -34,32 +34,32 @@ function collection(path) {
 * Also, this allows us to fix some known problems.
 */
 function doc(docPath) {   // (string) => DocumentReference like
-  const ref = dbAdmin.doc(docPath);
+  return dbAdmin.doc(docPath);
 
-  assert(ref.set && ref.get && ref.onSnapshot);
+  // assert(ref.set && ref.get && ref.onSnapshot);
 
-  // Wrap us into the 'unsub' chain, so we can release resources if they are still listened to, once Jest times out.
-  //
-  function onSnapshot(handler) {    // ((...) => ...) => () => Promise of ()   // returned function is 'unsub'
-    let unsub = ref.onSnapshot(handler);
+  // // Wrap us into the 'unsub' chain, so we can release resources if they are still listened to, once Jest times out.
+  // //
+  // function onSnapshot(handler) {    // ((...) => ...) => () => Promise of ()   // returned function is 'unsub'
+  //   let unsub = ref.onSnapshot(handler);
 
-    autoUnsubs.add(unsub);        // tbd. works?
+  //   autoUnsubs.add(unsub);        // tbd. works?
 
-    return async () => {    // wrapper around 'unsub'
-      if (!unsub) fail("'unsub' called twice")
+  //   return async () => {    // wrapper around 'unsub'
+  //     if (!unsub) fail("'unsub' called twice")
 
-      assert(autoUnsubs.has(unsub));
-      autoUnsubs.delete(unsub);
-      await unsub();
-      unsub = null;
-    };
-  }
+  //     assert(autoUnsubs.has(unsub));
+  //     autoUnsubs.delete(unsub);
+  //     await unsub();
+  //     unsub = null;
+  //   };
+  // }
 
-  return {
-    get: () => ref.get(),     // () => ...
-    set: (v) => ref.set(v),   // (...) => Promise of ...
-    onSnapshot
-  }
+  // return {
+  //   get: () => ref.get(),     // () => ...
+  //   set: (v) => ref.set(v),   // (...) => Promise of ...
+  //   onSnapshot
+  // }
 }
 
 /*
