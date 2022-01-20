@@ -8,29 +8,20 @@ import { strict as assert } from 'assert'
 import {PRIME_ROUND} from '../config.js'
 assert(!PRIME_ROUND);
 
-import { initializeApp } from 'firebase-admin/app'    // "modular API" (10.x)
+import { adminApp } from '../adminApp.js'    // "modular API" (10.x)
 import { getFirestore } from 'firebase-admin/firestore'
 
 import {FIRESTORE_HOST, projectId} from '../config.js'
-
-import { afterAll } from '@jest/globals'
 
 /*
 * All the exposed methods operate on this one Firestore Admin app. This hides emulator configuration from the rest.
 */
 const dbAdmin = (_ => {
-  const adminApp = initializeApp({
-    projectId
-  }, `unlimited-${ Date.now() }`);   // unique name keeps away from other "apps" (configurations, really); btw. would be nice if Firebase APIs had nameless "apps" easier.
-
   const db = getFirestore(adminApp);    // was: 'adminApp.firestore()' (9.x)
+
   db.settings({
     host: FIRESTORE_HOST,
     ssl: false
-  });
-
-  afterAll( async () => {   // clean up, automatically
-    await adminApp.delete();
   });
 
   return db;

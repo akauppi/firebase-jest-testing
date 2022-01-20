@@ -24,7 +24,8 @@
     "./firestoreAdmin": "./src/firestoreAdmin/index.js",
     "./firestoreAdmin/setup": "./src/firestoreAdmin/setup/index.js",
     "./firestoreRules": "./src/firestoreRules/index.js",
-    "./firebaseClientLike": "./src/firebaseClientLike/index.js"
+    "./firebaseClientLike": "./src/firebaseClientLike/index.js",
+    "./storageAdmin": "./src/storageAdmin/index.js"
   },
   "engines": {
     "node": "^14.3 || >=16 <16.6 || >= 16.6.1",
