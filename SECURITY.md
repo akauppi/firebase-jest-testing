@@ -1,6 +1,94 @@
 # Security
 
 
+## Audit warnings
+
+```
+$ npm install
+...
+3 vulnerabilities (2 low, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+...
+26 vulnerabilities (22 moderate, 4 high)
+```
+
+<font color=red>That looks BAD</font>.
+
+The bar for this library's production releases is:
+
+- *no* high vulnerabilities 
+
+If they are in libraries, we should wait until those are resolved. <!-- #whisper: this also gives an incentive to keep number of dependencies to the minimum.
+-->
+
+Let's see where they arise:
+
+### `@firebase/util`
+
+The list is so long and cryptic, I'm not placing it here...
+
+Firebase **MAY HAVE A SERIOUS (ATTITUDE?) PROBLEM WITH NODE AUDITS** and if you dislike that, going to another serverless stack may be the only option. The name of the library has `firebase` in it, so we're kind of stuck/doomed... 🦤
+
+### `ajv`
+
+```
+$ npm list ajv
+@local/root@
+└─┬ firebase-tools@10.2.0
+  ├─┬ @eslint/eslintrc@1.0.5 extraneous
+  │ └── ajv@6.12.6 deduped
+  ├── ajv@6.12.6
+  ├─┬ better-ajv-errors@0.6.7 extraneous
+  │ └── ajv@6.12.6 deduped
+  ├─┬ eslint@8.6.0 extraneous
+  │ └── ajv@6.12.6 deduped
+  ├─┬ exegesis@4.1.0
+  │ ├─┬ ajv-formats@2.1.1
+  │ │ └── ajv@8.8.2
+  │ └── ajv@8.8.2
+  ├─┬ oas-validator@4.0.8 extraneous
+  │ └── ajv@5.5.2 extraneous
+  └─┬ request@2.88.2
+    └─┬ har-validator@5.1.3
+      └── ajv@6.12.6 deduped
+```
+
+*See below*
+
+### `jsonpointer`
+
+```
+$ npm list jsonpointer
+@local/root@
+└─┬ firebase-tools@10.2.0
+  ├─┬ atlassian-openapi@1.0.13 extraneous
+  │ └── jsonpointer@4.1.0 deduped
+  ├─┬ better-ajv-errors@0.6.7 extraneous
+  │ └── jsonpointer@4.1.0 deduped
+  └── jsonpointer@4.1.0 extraneous
+```
+
+*See below*
+
+### `nanoid`
+
+Why would `firebase-tools` bring `mocha` to deployment??
+
+```
+$ npm list nanoid
+@local/root@
+└─┬ firebase-tools@10.2.0
+  ├─┬ mocha@9.1.3 extraneous
+  │ └── nanoid@3.1.25 deduped
+  └── nanoid@3.1.25 extraneous
+```
+
+>We can contain `firebase-tools` within a Docker VM (see `firebase-ci-builder`), but the author doesn't wish to make Docker a build dependency. It is an option, though...
+
+
 ## Running tests offline
 
 By using `demo-...` project id, the Firebase Emulators are told that the project is to be run offline.

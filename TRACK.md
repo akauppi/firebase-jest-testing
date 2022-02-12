@@ -92,12 +92,6 @@ The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` fl
 We've already built a stable work-around. The benefit would be simplified code (and a ~5% speed improvement).
 -->
 
-## `node-fetch` v3
-
-[v3 Roadmap](https://github.com/node-fetch/node-fetch/issues/668)
-
->Situation 13-May-21: 7 checkboxes (only) missing; `beta.9` is the latest release
-
 
 ## Firebase: deprecated `npm` dependencies
 
@@ -199,3 +193,10 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
    Finally reported that.
    
    Let's see when we get the initial comment. ⏱ Aug 2021.
+
+## Node.js: Native `fetch`
+
+- ["Fetch API has landed into Node.js"](https://news.ycombinator.com/item?id=30161626) (discussion; Feb 22)
+
+- [ ] Which Node.js version brings that
+- [ ] evaluate and consider letting `node-fetch` go (once we can demand such node version)

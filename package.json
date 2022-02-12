@@ -22,9 +22,9 @@
     "//_ci_warm-up": "true",
     "_ci_warm-up": "WARM_UP_TIMEOUT=4000 npm run -s test:rules:symbols 2&> /dev/null",
     "--  -": "",
-    "test:fns:callables": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --detectOpenHandles --all",
-    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --detectOpenHandles --all",
-    "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --detectOpenHandles --all",
+    "test:fns:greet": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f greet.test.js --verbose --all",
+    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js -f userInfo.test.js --verbose --all",
+    "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-fns/jest.config.js --verbose --all",
     "-- --": "",
     "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f invitesC.test.js --verbose --detectOpenHandles --all",
     "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config sample/test-rules/jest.config.js -f projectsC.test.js --verbose --detectOpenHandles --all",
@@ -35,8 +35,10 @@
     "--   -": "",
     "postinstall": "npm --prefix sample/functions install",
     "-- - -": "",
-    "prestart": "npm run -s _checkNoActive",
+    "prestart": "npm run -s _checkNoActive && npm run -s _skinDown",
     "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
+    "_skinDown": "sed -i '' -E 's/(\"node\": \").+(\")/\\116\\2/' sample/functions/package.json",
+    "^--- NOTE": "Above is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?",
     "--  --": "",
     "timings:1": "npm run test:fns:userInfo",
     "timings:2": "npm run test:rules:projects",
@@ -47,9 +49,10 @@
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^9.21.0",
-    "jest": "^27.3.1",
-    "vm2": "^3.9.5"
+    "firebase-tools": "^10.2.0",
+    "jest": "^28.0.0-alpha.0",
+    "node-fetch": "^2.6.7",
+    "vm2": "^3.9.7"
   },
   "//": {
     "--experimental-vm-modules": [

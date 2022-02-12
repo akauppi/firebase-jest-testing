@@ -16,5 +16,5 @@ export default {
   testTimeout: warmUpTimeoutMs || 2000,
 
   // Resolves the subpackage paths using the package's 'exports' (until Jest does...).
-  resolver: "../hack-jest/self-resolver.cjs"
+  //resolver: "../hack-jest/self-resolver.cjs"
 }

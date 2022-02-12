@@ -1,5 +1,10 @@
 # Changelog
 
+## 12-Feb-22
+
+- Updated dependencies
+- Moving to Jest 28 (alpha)!
+
 ## 24-Oct-21
 
 - Removed `cjs` resolver provided by the package; instead asking users to copy-paste (and modify) a sample.
