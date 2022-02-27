@@ -30,15 +30,8 @@ The files used for managing the Firebase project and running tests are at the ro
 
 ## Requirements
 
-- node >= 17.5
+- node >= 16.5
 - npm >= 7.7.0
-- Jest >= 28
-
-   Jest 28 is currently in alpha. This library **hops to only support it** (not Jest 27), starting 0.0.4-alpha.6. If you need the tool for Jest 27, use earlier releases.
-
-<!--
->Note: `npm` 6 support is there, because it's the default for Node 14 Docker images. Kept somewhat grudgingly, for now. CI runs `npm` 6; all development is done with `npm` 7.
--->
 
 <!--
 Developed with:

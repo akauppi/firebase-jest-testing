@@ -121,5 +121,15 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
 
 - ["Fetch API has landed into Node.js"](https://news.ycombinator.com/item?id=30161626) (discussion; Feb 22)
 
-- [ ] Which Node.js version brings that
-- [ ] evaluate and consider letting `node-fetch` go (once we can demand such node version)
+   - Node 17.5 has it, but behind a feature flag: `--experimental-fetch`
+
+- [ ] Track node.js releases; when it's been **stable** without needing the feature flag, for **two major releases** ;) we can let the `undici` imports go. 
+
+   Benefit: Nothing much. Less dependencies.
+
+
+## Undici: `fetch` trouble with `localhost`
+
+- [ ] [TypeError: fetch failed](https://github.com/nodejs/undici/issues/1248)
+
+   Found a cure, for now (see `config.js`). Once the issue may be resolved, remove the cure.
