@@ -5,8 +5,8 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^14.3 || >=16 < 16.6 || >=16.6.1",
-    "npm": "6 || >= 7.7.0"
+    "node": ">= 16.5",
+    "npm": ">= 7.7.0 || 8"
   },
   "bin": {
     "active-project": "./tools/active-project.sh",
@@ -38,7 +38,6 @@
     "prestart": "npm run -s _checkNoActive && npm run -s _skinDown",
     "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "_skinDown": "sed -i '' -E 's/(\"node\": \").+(\")/\\116\\2/' sample/functions/package.json",
-    "^--- NOTE": "Above is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?",
     "--  --": "",
     "timings:1": "npm run test:fns:userInfo",
     "timings:2": "npm run test:rules:projects",
@@ -49,21 +48,21 @@
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
     "firebase-jest-testing": "file:package",
-    "firebase-tools": "^10.2.0",
-    "jest": "^28.0.0-alpha.0",
-    "node-fetch": "^2.6.7",
-    "vm2": "^3.9.7"
+    "firebase-tools": "^10.2.1",
+    "jest": "^28.0.0-alpha.5",
+    "undici": "^4.14.1",
+    "vm2": "^3.9.9"
   },
   "//": {
     "--experimental-vm-modules": [
-      "Needed for now (May 2021, ~Aug 2020~), to use native ES6 modules with Jest"
+      "Needed for now (Feb 2022, ~May 2021~, ~Aug 2020~), to use native ES6 modules with Jest"
     ],
     "firebase emulators:...": [
       "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
       "construction of the URL for the callable."
     ],
     "engines.node": [
-      "Avoid 16.6.0 due to: https://github.com/facebook/jest/issues/11708"
+      "16.5 required by undici (fetch)"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
@@ -73,18 +72,22 @@
         "Allows us to use the 'bin' section to alias commands."
       ],
       "vm2": [
-        "To suppress a critical audit warning, until 'firebase-tools' updates their dependency to >= 3.9.4."
+        "To suppress a critical audit warning, until 'firebase-tools' updates their dependency to >= 3.9.4",
+        "(or we hop to using a Docker image)"
       ]
     },
     "scripts": {
       "NODE_OPTIONS=--experimental-vm-modules": [
-        "Still needed on both Node.js 14 and 16. (not knowing where to track it's removal)"
+        "Still needed on Node.js 17,16 (not knowing where to track its removal)"
       ],
       "_ci_warm-up": [
         "Warm-up is used to guarantee normal tests run within the 2000 ms timeout."
       ],
       "no [[": [
         "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
+      ],
+      "_skinDown": [
+        "sed -i '' is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?"
       ]
     }
   }

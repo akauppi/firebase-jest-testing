@@ -1,5 +1,10 @@
 # Changelog
 
+## 26-Feb-22
+
+- Updated dependencies; Jest 28 alpha.5
+- Moving to `udici` from `node-fetch` (Node native fetch will be based on it.)
+
 ## 12-Feb-22
 
 - Updated dependencies
