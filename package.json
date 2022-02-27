@@ -50,8 +50,7 @@
     "firebase-jest-testing": "file:package",
     "firebase-tools": "^10.2.1",
     "jest": "^28.0.0-alpha.5",
-    "undici": "^4.14.1",
-    "vm2": "^3.9.9"
+    "undici": "^4.14.1"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -70,10 +69,6 @@
     "devDependencies": {
       "@local/self": [
         "Allows us to use the 'bin' section to alias commands."
-      ],
-      "vm2": [
-        "To suppress a critical audit warning, until 'firebase-tools' updates their dependency to >= 3.9.4",
-        "(or we hop to using a Docker image)"
       ]
     },
     "scripts": {

@@ -32,7 +32,12 @@ const url = (() => {
   if (!c2) {
     failExit( `Bad param (expecting '[host:]port'): ${arg}`);
   }
-  return `http://${c1 || 'localhost'}:${c2}`;
+
+  // Undici needs '127.0.0.1' to be able to check port 5002 (checking 6767 works also with 'localhost').
+  //
+  const defHost = '127.0.0.1';    // 'localhost'
+
+  return `http://${c1 || defHost}:${c2}`;
 })();
 
 const POLL_INTERVAL_MS = 150;

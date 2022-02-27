@@ -1,11 +1,12 @@
 # Changelog
 
-## 26-Feb-22
+## 27-Feb-22
 
 - Updated dependencies; Jest 28 alpha.5
 - Moved to `udici` from `node-fetch` (Node native fetch is based on it)
   - pumps up Node requirement to 16.5+
   - `npm` 6 "support" removed
+- `npm test` works, again
 
 ## 12-Feb-22
 
