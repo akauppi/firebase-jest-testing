@@ -23,7 +23,6 @@ firebase-ci-builder.sub/
 For building the builder, you need:
 
 - Docker
-- GNU `make`
 - `gcloud` 
 
 For pushing the image to a Cloud Registry, you need:
@@ -59,24 +58,24 @@ The needs *may* be sufficiently different that it makes sense for people to "bui
 $ cd firebase-ci-builder.sub/
 ```
 
-### 1. `make build`
+### 1. `build`
 
 ```
-$ make build
+$ ./build
 [+] Building 1.6s (9/9) FINISHED
 ...
- => => naming to firebase-ci-builder:9.11.0-node16-npm7
+ => => naming to firebase-ci-builder:9.16.0-node16-npm7
 ```
 
-This created the `firebase-ci-builder:9.11.0-node16-npm7` image.
+This created the `firebase-ci-builder:9.16.0-node16-npm7` image.
 
 >```
 >$ docker image ls firebase-ci-builder  
-REPOSITORY            TAG                  IMAGE ID       CREATED        SIZE
->firebase-ci-builder   9.11.0-node16-npm7   eea2a1c4a330   19 hours ago   533MB
+>REPOSITORY            TAG                  IMAGE ID       CREATED        SIZE
+>firebase-ci-builder   9.16.0-node16-npm7   9016a3bba25f   8 seconds ago  467MB
 >```
 >
->It's 533 MB.
+>It's 467 MB.
 
 
 ### 2. Push to Container Registry
@@ -100,9 +99,9 @@ $ gcloud config set project testing-230321
 ```
 
 ```
-$ make push
+$ ./push-to-gcr
 ...
-docker build --pull --build-arg FIREBASE_VERSION=9.11.0 . -t firebase-ci-builder:9.11.0-node16-npm7
+docker build --pull --build-arg FIREBASE_VERSION=9.16.0 . -t firebase-ci-builder:9.16.0-node16-npm7
 [+] Building 1.6s (9/9) FINISHED                                                                                                                                                                                                                          
 ...
 ```

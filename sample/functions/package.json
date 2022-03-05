@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "16 || 17"
+    "node": "16"
   },
   "dependencies": {
     "firebase-admin": "^10.0.2",

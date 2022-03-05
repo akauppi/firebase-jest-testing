@@ -1,9 +1,19 @@
 #
-# cloudbuild.yaml
+# ci/cloudbuild.yaml
 #
 # Intention:
-#   Check that the project installs and runs the tests, using
-#     - Node 16; npm 7
+#   Check that the project installs and runs the tests.
+#
+# Triggers:
+#   - PR is made or changed; changes affect files other than '*.md', '.images/*', 'images/*'.
+#
+# Cloud Build project:
+#   https://console.cloud.google.com/cloud-build/triggers?project=ci-builder
+#
+# Uses images:
+#   - node:16-alpine
+#   - firebase-ci-builder   (pushed to Container Registry)
+#   - docker
 #
 # Runtime environment:
 #   - Current directory is '/workspace'
@@ -11,15 +21,15 @@
 #     PWD=/workspace
 #     HOME=/builder/home
 #
-# Triggers:
-#   - functional changes to 'master' branch
-#     - changes only affecting '.md' files are excluded
+# Note:
+#   Using 'node:16' to run 'npm install' means that the packages are installed as root, and 'node_modules' is read-only
+#   to regular users (of other images). This is normally not a concern.
 #
 
 steps:
   # DEBUG
-#- name: gcr.io/$PROJECT_ID/firebase-ci-builder:${_BUILDER_TAG}
-#  entrypoint: bash
+#- name: node:16-alpine
+#  entrypoint: sh
 #  args: ['-c', 'env']
 
 #--- Node 16 ---
@@ -34,15 +44,25 @@ steps:
 #
 - name: gcr.io/cloud-builders/docker
   args: [
-    'run',
-      '-d',
-      '-p', '6767:6767', '-p', '5002:5002',
+    'run', '-d', '-p', '6767:6767', '-p', '5002:5002',
       '-v', '${_PWD}:/work', '-w', '/work',
       '--name', 'emul',
       '--network', 'cloudbuild',    # needed for showing the ports in the other steps
       'gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
     'npm', 'run', 'start'
   ]
+
+# DEBUG: Is 'emul' visible??
+- name: node:16-alpine
+  entrypoint: sh
+  args: ['-c', "host emul"]
+
+- name: node:16-alpine
+  entrypoint: npm
+  args: ['run', '//ci:1']
+  env:
+    - EMUL_HOST=emul
+# /DEBUG
 
 - name: node:16-alpine
   entrypoint: npm
@@ -53,13 +73,13 @@ steps:
 # --- Timeout
 #
 # Cloud Build
-#   (node 16):  1m53s, 1m58s (x2)
+#   (node 16):  1m53s, 1m58s (x2), 2m17s
 #
 # Earlier versions
-#   (node 16, DC):  2m7s, 2m9s
 #   (node 14):  1m48s, 1m53s
 #
-timeout: 240s
+#timeout: 240s
+timeout: 400s
 
 substitutions:
   _BUILDER_TAG: 9.17.0-node16-npm7

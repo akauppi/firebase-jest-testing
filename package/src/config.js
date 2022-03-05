@@ -43,7 +43,7 @@ const FUNCTIONS_URL = (() => {
   }
 
   // NOTE:
-  //  Undici 'fetch' doesn't like 'localhost' and 'POST', it seems. This fixes that quietly, for now.
+  //  Undici (4.14.1) 'fetch' doesn't like 'localhost' and 'POST', it seems. This fixes that quietly, for now.
   //  See -> https://github.com/nodejs/undici/issues/1248
   //
   if (true) {

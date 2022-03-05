@@ -26,7 +26,7 @@ The `sample` folder contains a sample Firebase backend used for testing:
 - `sample/test-fns` contains Cloud Function tests
 - `sample/test-rules` contains Security Rules tests
 
-The files used for managing the Firebase project and running tests are at the root.
+You can use this sample as a template for your own Firebase backend testing project.
 
 ## Requirements
 
@@ -38,6 +38,8 @@ Developed with:
 - macOS 12.2
 - node 17.5
 - npm 8.4
+
++ Docker Desktop for Mac 4.5.0
 -->
 
 ## Getting started
@@ -48,7 +50,13 @@ Fetch dependencies:
 $ npm install
 ```
 
->The `package.json` is prepared so that this installs dependencies also for `package` and `sample/functions`. 
+>The `package.json` is prepared so that this installs dependencies also for `package`, `sample` and `sample/functions`. 
+
+```
+$ git update submodule
+```
+
+This brings a submodule's files into the picture. You only need it for Docker / CI (see later).
 
 Now, you're ready to start the emulation and run tests against it.
 
@@ -62,25 +70,10 @@ Let's start with the simpler one.
 
 ### CI: Run all the tests
 
-<!-- hidden; took away `ci:par`
-The `npm` targets in this flow:
-
-|target|what it does|
-|---|---|
-|`ci`|Maps to either `ci:seq` or `ci:par`|
-|`ci:seq`|Run tests sequentially|
-|`ci:par`|Run tests in parallel|
-
-The sequential runs provide easier-to-follow logs, but `ci:par` provides ~2s faster execution[^1-faster], since the Cloud Functions and Security Rules are tested in parallel. 
-
->Depending on your tests, the difference may be starker, so `ci:par` is kept in the repo as a sample.
-
-[^1-faster]: Faster on a desktop (multicore) machine, which you might not have in CI/CD.
--->
-
 Launching the tests is this easy:
 
 ```
+$ cd sample
 $ npm test
 ...
 Test Suites: 2 passed, 2 total
@@ -103,6 +96,10 @@ In "CI mode", each run launches the emulators anew. This takes ~5s that we can s
 ### Dev mode
 
 In dev mode, a server runs continuously on the background so repeated runs of the tests are a bit faster. This same server can be used for both Cloud Functions and Security Rules testing - even in parallel.
+
+```
+$ cd sample  # unless you already are there
+```
 
 **Starting the emulator**
 
@@ -141,6 +138,72 @@ These are prepared for you in `package.json`. When developing something, it's me
 Once you think things are rolling fine, run `npm test` to confirm.
 
 >Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm test` while the emulator is running. Shut it down by Ctrl-C.
+
+
+## Using Docker Compose 🎁
+
+This is a more advanced (complex) setup, but one you should study for your own projects. It has some advantages:
+
+- no need for multiple terminals. Docker Compose keeps the emulators running and their console output can be observed in the Docker Desktop application.
+- no need for installing `concurrently` or `firebase-tools` npm modules.
+
+
+### Requirements
+
+- Docker Compose (Docker Desktop for Mac/Windows is recommended)
+
+	Recommended resources:
+	
+	- 2 cores
+	- 2 GB RAM
+	- 1 GB swap
+	- 4 GB disk
+
+
+### Starting the emulators
+
+```
+$ cd sample.dc
+$ npm run start
+...
+wait-for-it: waiting 60 seconds for warm-up:6768
+wait-for-it: warm-up:6768 is available after 27 seconds
+Firebase Emulators are running. Use 'docker compose down' to run them down.
+```
+
+Unlike with the native `npm run start`, here control returns to the command line. To see the emulators' console output, go to Docker > `Dashboard` > `Containers / Apps` > `sampledc` > `sampledc-emul-1`:
+
+![](.images/dc-sample-console.png)
+
+>**Warm-up**
+
+>Since Firebase doesn't automatically warm up the emulators (i.e. the first tests are way slower than subsequent), there's a second container that does this, `sampledc-warm-up-1`.
+
+>This helps us reach a predictable timeout of 2000 ms for all the tests.
+
+You can now:
+
+```
+$ npm test
+```
+
+```
+$ npm run test:fns:greet
+$ npm run test:rules:project
+```
+
+..just like with the native approach. The differences are:
+
+- Firebase emulators run under Docker, not natively on your system (no `devDependency` on `firebase-tools`! 🥳 )
+- Concurrancy is handled with Docker Compose - no need for `concurrently` module.
+
+### Catch
+
+The `sample.dc` folder is a made-up stage set.
+
+If you look inside its `package.json`, it's full of Docker mounts to `sample`. Also the test commands themselves run on the files under `sample`. This is to help maintain the repo (DRY) but makes it harder for you to use the folder as a template.
+
+To use it as a template, remantle the links to `sample`, move some files/folders to the `sample.dc` folder and - eventually - once you are able to remove `sample` and the things still work (remember to do `docker compose down` to start the Docker images from scratch!), there's your template!!
 
 
 ## CI setup

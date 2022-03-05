@@ -15,6 +15,8 @@ describe("userInfo shadowing", () => {
   // Have this, to move ~320ms of test execution time away from the reports (shows recurring timing). To show first
   // (worst) timing, don't do this.
   //
+  // tbd. Study the timings; this can be made better...!!! #25
+  //
   beforeAll( () => {
     preheat_EXP("projects/1/userInfo");
   })

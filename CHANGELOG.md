@@ -7,6 +7,9 @@
   - pumps up Node requirement to 16.5+
   - `npm` 6 "support" removed
 - `npm test` works, again
+- Introduced `sample.dc` for showing how one can use Docker Compose (instead of native Firebase Emulators) for running the Jest tests.
+
+>These changes only involve the `sample` layout, not the underlying `npm` module. Thus, no new version published.
 
 ## 12-Feb-22
 

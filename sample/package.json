@@ -1,0 +1,86 @@
+{
+  "name": "@local/sample",
+  "description": "Test project template",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">= 16.5",
+    "npm": ">= 7.7.0 || 8"
+  },
+  "bin": {
+    "active-project": "./tools/active-project.sh",
+    "wait-for": "./tools/wait-for.js"
+  },
+  "scripts": {
+    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && wait-for 5002 && npm run -s _test1\"",
+    "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
+    "-- ": "",
+    "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
+    "-- -": "",
+    "ci:test": "wait-for ${EMUL_HOST:-emul}:6767 && wait-for ${EMUL_HOST:-emul}:5002 && npm run -s _ci_warm-up && npm run -s _test1",
+    "//_ci_warm-up": "true",
+    "_ci_warm-up": "WARM_UP_TIMEOUT=4000 npm run -s test:rules:symbols 2&> /dev/null",
+    "--  -": "",
+    "test:fns:greet": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f greet.test.js --verbose --all",
+    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f userInfo.test.js --verbose --all",
+    "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
+    "-- --": "",
+    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f invitesC.test.js --verbose --all",
+    "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f projectsC.test.js --verbose --all",
+    "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f symbolsC.test.js --verbose --all",
+    "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f userInfoC.test.js --verbose --all",
+    "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f visitedC.test.js --verbose --all",
+    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
+    "--   -": "",
+    "postinstall": "npm --prefix functions install",
+    "-- - -": "",
+    "prestart": "npm run -s _checkNoActive && npm run -s _skinDown",
+    "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
+    "_skinDown": "sed -i '' -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
+  },
+  "devDependencies": {
+    "@local/self": "file:.",
+    "concurrently": "^6.3.0",
+    "firebase-jest-testing": "file:../package",
+    "firebase-tools": "^10.2.1",
+    "jest": "^28.0.0-alpha.5",
+    "undici": "^4.14.1"
+  },
+  "//": {
+    "--experimental-vm-modules": [
+      "Needed for now (Feb 2022, ~May 2021~, ~Aug 2020~), to use native ES6 modules with Jest"
+    ],
+    "firebase emulators:...": [
+      "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
+      "construction of the URL for the callable."
+    ],
+    "engines.node": [
+      "16.5 required by undici (fetch)"
+    ],
+    "engines.npm": [
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+    ],
+    "devDependencies": {
+      "@local/self": [
+        "Allows us to use the 'bin' section to alias commands."
+      ]
+    },
+    "scripts": {
+      "NODE_OPTIONS=--experimental-vm-modules": [
+        "Still needed on Node.js 17,16 (not knowing where to track its removal)"
+      ],
+      "test:rules:all": [
+        "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
+      ],
+      "_ci_warm-up": [
+        "Warm-up is used to guarantee normal tests run within the 2000 ms timeout."
+      ],
+      "no [[": [
+        "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
+      ],
+      "_skinDown": [
+        "sed -i '' is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?"
+      ]
+    }
+  }
+}

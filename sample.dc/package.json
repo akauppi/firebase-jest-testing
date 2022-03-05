@@ -1,0 +1,79 @@
+{
+  "name": "@local/sample.dc",
+  "description": "Test project template (uses Docker Compose)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">= 16.5",
+    "npm": ">= 7.7.0 || 8"
+  },
+  "scripts": {
+    "test": "npm run -s _touchEm && docker compose run --rm warmed-up && npm run -s _test1",
+    "_test1": "npm run test:fns:all && npm run test:rules:all",
+    "  -": "",
+    "start": "npm run -s _touchEm && docker compose run --rm warmed-up && echo \"Firebase Emulators are running. Use 'docker compose down' to run them down.\n\"",
+    "  - -": "",
+    "test:fns:greet": "npm run --prefix ../sample test:fns:greet",
+    "test:fns:userInfo": "npm run --prefix ../sample test:fns:userInfo",
+    "test:fns:all": "npm run --prefix ../sample test:fns:all",
+    "  -  -": "",
+    "test:rules:invites": "npm run --prefix ../sample test:rules:invites",
+    "test:rules:projects": "npm run --prefix ../sample test:rules:projects",
+    "test:rules:symbols": "npm run --prefix ../sample test:rules:symbols",
+    "test:rules:userInfo": "npm run --prefix ../sample test:rules:userInfo",
+    "test:rules:visited": "npm run --prefix ../sample test:rules:visited",
+    "test:rules:all": "npm run --prefix ../sample test:rules:all",
+    "  - --": "",
+    "lint": "eslint .",
+    "  -   -": "",
+    "dc:warm-up": "npm run test:fns:all",
+    "  - - -": "",
+    "ci:test": "npm run test:fns:all && npm run test:rules:all",
+    "ci:deploy": "npm run -s _prepFunctions && npm run -s _prepDeploy && firebase deploy --only functions,firestore",
+    "  -  --": "",
+    "postinstall": "npm --prefix ../package install",
+    "//prestart": "npm run -s _skinDown",
+    "~~postinstall": "npm run -s _prepFunctions && ([ -z $BUILDER_OUTPUT ] || npm run -s _touchEm)",
+    "~~_prepFunctions": "npm --prefix functions install",
+    "-- ": "",
+    "_touchEm": "touch firebase-debug.log firestore-debug.log ui-debug.log",
+    "//_skinDown": "sed -i -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
+  },
+  "devDependencies": {
+    "firebase-jest-testing": "file:../package",
+    "jest": "^28.0.0-alpha.5"
+  },
+  "//": {
+    "--experimental-vm-modules": [
+      "Needed for now (Feb 2022, ~May 2021~, ~Aug 2020~), to use native ES6 modules with Jest"
+    ],
+    "firebase emulators:...": [
+      "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
+      "construction of the URL for the callable."
+    ],
+    "engines.node": [
+      "16.5 required by undici (fetch)"
+    ],
+    "engines.npm": [
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+    ],
+    "scripts": {
+      "NODE_OPTIONS=--experimental-vm-modules": [
+        "Still needed on Node.js 17,16 (not knowing where to track its removal)"
+      ],
+      "test:rules:all": [
+        "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
+      ],
+      "no [[": [
+        "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
+      ],
+      "_skinDown": [
+        "sed -i '' is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?"
+      ],
+      "_touchEm": [
+        "If the *.log files are shared separately (with ':delegate' suffix), they need to pre-exist before the mount.",
+        "Otherwise, Docker Compose would create them as folders."
+      ]
+    }
+  }
+}
