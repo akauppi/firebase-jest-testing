@@ -56,7 +56,7 @@ $ npm install
 $ git update submodule
 ```
 
-This brings a submodule's files into the picture. You only need it for Docker / CI (see later).
+This populates the `firebase-ci-builder.sub` folder. It's needed for local Docker operation, only.
 
 Now, you're ready to start the emulation and run tests against it.
 
@@ -147,63 +147,7 @@ This is a more advanced (complex) setup, but one you should study for your own p
 - no need for multiple terminals. Docker Compose keeps the emulators running and their console output can be observed in the Docker Desktop application.
 - no need for installing `concurrently` or `firebase-tools` npm modules.
 
-
-### Requirements
-
-- Docker Compose (Docker Desktop for Mac/Windows is recommended)
-
-	Recommended resources:
-	
-	- 2 cores
-	- 2 GB RAM
-	- 1 GB swap
-	- 4 GB disk
-
-
-### Starting the emulators
-
-```
-$ cd sample.dc
-$ npm run start
-...
-wait-for-it: waiting 60 seconds for warm-up:6768
-wait-for-it: warm-up:6768 is available after 27 seconds
-Firebase Emulators are running. Use 'docker compose down' to run them down.
-```
-
-Unlike with the native `npm run start`, here control returns to the command line. To see the emulators' console output, go to Docker > `Dashboard` > `Containers / Apps` > `sampledc` > `sampledc-emul-1`:
-
-![](.images/dc-sample-console.png)
-
->**Warm-up**
-
->Since Firebase doesn't automatically warm up the emulators (i.e. the first tests are way slower than subsequent), there's a second container that does this, `sampledc-warm-up-1`.
-
->This helps us reach a predictable timeout of 2000 ms for all the tests.
-
-You can now:
-
-```
-$ npm test
-```
-
-```
-$ npm run test:fns:greet
-$ npm run test:rules:project
-```
-
-..just like with the native approach. The differences are:
-
-- Firebase emulators run under Docker, not natively on your system (no `devDependency` on `firebase-tools`! 🥳 )
-- Concurrancy is handled with Docker Compose - no need for `concurrently` module.
-
-### Catch
-
-The `sample.dc` folder is a made-up stage set.
-
-If you look inside its `package.json`, it's full of Docker mounts to `sample`. Also the test commands themselves run on the files under `sample`. This is to help maintain the repo (DRY) but makes it harder for you to use the folder as a template.
-
-To use it as a template, remantle the links to `sample`, move some files/folders to the `sample.dc` folder and - eventually - once you are able to remove `sample` and the things still work (remember to do `docker compose down` to start the Docker images from scratch!), there's your template!!
+See [`sample.dc/README`](sample.dc/README.md) for details.
 
 
 ## CI setup

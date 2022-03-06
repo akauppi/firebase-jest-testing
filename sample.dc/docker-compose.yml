@@ -21,20 +21,31 @@
 # Docker Compose (v3) note:
 #   BE CAREFUL with use of pipe ('|') or '&&' in the commands! See -> https://stackoverflow.com/a/68590318/14455
 #
+# NOTE!!! 🎉🎉🎉
+#   From 'docker-compose' 1.27 onwards:
+#     - 'version' field is optional (don't use it; see below!!)
+#     - 'depends_on' long syntax [1] IS BACK (which is ultra handy!!!)
+#
+#   This was VERY CONFUSING because for a while, because there was deviation between the versions and the Internet
+#   saying 'depends_on: xxx: condition' is going away. It isn't. Even the Webstorm IDE syntax highlighting is FINE
+#   with it as long as you don't have a 'version: 3.0' entry.
+#
+#   See: Comment on "Can this work with v3 of docker compose" (Mar, 2021) [2]
+#
+#   [1]: https://github.com/compose-spec/compose-spec/blob/master/spec.md#long-syntax-1
+#   [2]: https://github.com/peter-evans/docker-compose-healthcheck/issues/3#issuecomment-790332404
+#
 # References:
 #   Overview of Docker Compose (Docker docs)
 #     -> https://docs.docker.com/compose/
 #   Compose file version 3 reference
 #     -> https://docs.docker.com/compose/compose-file/compose-file-v3/
 #
-version: '3.0'
-
 services:
   # Launch Firebase Emulators, with certain warning and info messages suppressed.
   #
   emul:
     image: ${CI_BUILDER_IMAGE:-firebase-ci-builder:10.0.1-node16-npm8}
-      # 10.0.1-node16-npm8 is also available
     ports:
       - "4000:4000"
       - "5002:5002"
@@ -70,18 +81,22 @@ services:
       - CHOKIDAR_USEPOLLING=true
         # Without this, Firebase-tools (9.17.0) don't see changes (Security Rules, Cloud Functions)
 
+    healthcheck:
+      test: "nc -z localhost 6767 && nc -z localhost 5002"
+        # Note: 'nc' in that image doesn't handle checking multiple ports at once.
+      interval: 0.7s
+      start_period: 23s
+
   # WARM UP the engines
   #
   # Firebase Emulators are SLOW to wake. This part runs a minimal set of tests (the results of which are not used),
   # to wake up the necessary subsystems server-side. This results in more dependable test times in the actual tests.
   #
+  # Note: Instead of returning, the service is kept running. This guarantees that the warm-up is only ever run once,
+  #     per 'emul' instance.
+  #
   warm-up:
-    build:
-      context: ../dc-tools/n-user/
-      args:
-        - NODE=${NODE_V:-16}
-    ports:
-      - "6768:6768"
+    image: node:16-alpine
     volumes:
       #- .:/work
 
@@ -99,42 +114,44 @@ services:
       - ../package:/package:ro
 
     working_dir: /work
-    #command: sh -o pipefail -c
-    #  'ls -al ./test-fns &&
-    #  false
-    #  '
     command: sh -o pipefail -c
-      'wait-for-it emul:6767 --timeout=20 &&
-      wait-for-it emul:5002 --timeout=10 &&
+      'npm config set update-notifier false &&
       npm run dc:warm-up &&
-      echo "[INFO] Warmed up, opening port 6768" &&
-      socat TCP-LISTEN:6768,fork TCP:emul:6767
+      touch .healthy &&
+      sleep infinity
       '
     environment:
       - EMUL_HOST=emul
       - WARM_UP_TIMEOUT=8000
           # seen durations of:
-          #   3306, 3324, 4692 ms (fns:userInfo, macOS Intel, DC 4.5)
-          #   2206, 2223, 2241 ms (fns:greet, macOS Intel, DC 4.5)
+          #   6631 ms (fns:userInfo summary, macOS Intel, DC 4.5)
+          #   2098 ms (fns:greet, macOS Intel, DC 4.5)
 
-    depends_on: ['emul']
+    depends_on:
+      emul:
+        condition: service_healthy
+
+    healthcheck:
+      test: "[ -f .healthy ]"
+      interval: 2s
+      start_period: 40s
+
     # Enable manual launch to debug 'emul' launch, only.
     #profiles: ['manual']
 
+  # A pass-through target.
+  #
   # Used via 'docker compose run --rm warmed-up'.
   #
   # A separate target, so that the warm-up log output is always visible only in Docker Desktop, not the terminal
   # output for something like 'npm test' (if launched with a cold DC).
   #
   warmed-up:
-    build:
-      context: ../dc-tools/n-user/
-      args:
-        - NODE=${NODE_V:-16}
+    image: node:16-alpine
     command: sh -o pipefail -c
-      'wait-for-it warm-up:6768 --timeout=60
+      'true
       '
-      # seen (cold boot) waits of:
-      #   34s (macOS Intel, DX 4.5)
-    depends_on: ['warm-up']
+    depends_on:
+      warm-up:
+        condition: service_healthy
     profiles: ['manual']

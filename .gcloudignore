@@ -32,9 +32,7 @@
 /.idea/
 .DS_Store
 
-/ci/firebase-ci-builder.sub/
 /ci/cloudbuild.yaml
-# /ci/n14-user/ is allowed through
 
 # Others irrelevant for the build
 #
@@ -44,9 +42,18 @@
 .editorconfig
 .npmrc
 
+# sample/*-debug.log
+*.log
+
+# For manual use, only
+/sh/
+
+# Local Docker specific
+/firebase-ci-builder.sub/
+
 *.disabled
 *.delme
 
 # Cruft
-/body*.json
-/curl.sh
+#/body*.json
+#/curl.sh

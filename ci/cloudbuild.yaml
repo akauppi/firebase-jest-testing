@@ -5,15 +5,18 @@
 #   Check that the project installs and runs the tests.
 #
 # Triggers:
-#   - PR is made or changed; changes affect files other than '*.md', '.images/*', 'images/*'.
+#   - PR is made or changed; changes affect files other than '*.md', '.images/*', 'images/*'. [1]
 #
-# Cloud Build project:
+#     [1]: Also some subfolders are ignored by the CI trigger, say 'sh', ... (the list may change; they should be
+#          included also in '../.gcloudignore').
+#
+# Cloud Build project (private access):
 #   https://console.cloud.google.com/cloud-build/triggers?project=ci-builder
 #
 # Uses images:
 #   - node:16-alpine
 #   - firebase-ci-builder   (pushed to Container Registry)
-#   - docker
+#   - docker/compose
 #
 # Runtime environment:
 #   - Current directory is '/workspace'
@@ -32,41 +35,43 @@ steps:
 #  entrypoint: sh
 #  args: ['-c', 'env']
 
-#--- Node 16 ---
+## DEBUG
+#- name: gcr.io/cloud-builders/docker
+#  args: [
+#    'compose', '--help'
+#  ]
+#  # "Docker version 19.03.9" (5-Mar-22)
+#- name: node:16-alpine
+#  entrypoint: sh
+#  args: ['-c', 'false']
+## /DEBUG
+
+# Install
 #
 - name: node:16-alpine
   entrypoint: npm
+  dir: sample.dc
   args: ['install']
 
-# Launch emul, keeps running in the background.
+# Launch emul/warm-up in DC, keeps them running in the background.
 #
-# Note: It's vital to wrap the command in Docker. This allows it to remain running for the rest of the steps.
-#
-- name: gcr.io/cloud-builders/docker
-  args: [
-    'run', '-d', '-p', '6767:6767', '-p', '5002:5002',
-      '-v', '${_PWD}:/work', '-w', '/work',
-      '--name', 'emul',
-      '--network', 'cloudbuild',    # needed for showing the ports in the other steps
-      'gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}',
-    'npm', 'run', 'start'
-  ]
+- name: docker/compose:${_DOCKER_COMPOSE_TAG}
+  args: ['-f', 'docker-compose.yml', '-f', 'docker-compose.ci.yml', 'run', 'warmed-up']
+  dir: sample.dc
+  env:
+    - CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
 
-# DEBUG: Is 'emul' visible??
+# DOESN'T REACH HERE: "bad address 'warm-up'" !!!!!!!!!!!!
+#DEBUG
 - name: node:16-alpine
   entrypoint: sh
-  args: ['-c', "host emul"]
-
-- name: node:16-alpine
-  entrypoint: npm
-  args: ['run', '//ci:1']
-  env:
-    - EMUL_HOST=emul
-# /DEBUG
+  args: ['-c', 'false']
+#/DEBUG
 
 - name: node:16-alpine
   entrypoint: npm
   args: ['run', 'ci:test']
+  dir: sample.dc
   env:
     - EMUL_HOST=emul
 
@@ -75,7 +80,7 @@ steps:
 # Cloud Build
 #   (node 16):  1m53s, 1m58s (x2), 2m17s
 #
-# Earlier versions
+# Earlier versions (..remove..??)
 #   (node 14):  1m48s, 1m53s
 #
 #timeout: 240s
@@ -83,5 +88,8 @@ timeout: 400s
 
 substitutions:
   _BUILDER_TAG: 9.17.0-node16-npm7
-  _PWD: /workspace
-    # tbd. How to escape and use the 'PWD' env.var. in a command? #SO #help
+  _DOCKER_COMPOSE_TAG: 1.29.2
+    #
+    # ^-- Note: That's tremendously (10 months; Mar 2022) out of date!  But that's not the cause of problems.
+    #           Our tests should pass also with it.
+

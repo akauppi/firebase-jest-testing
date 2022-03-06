@@ -26,10 +26,11 @@
     "  - --": "",
     "lint": "eslint .",
     "  -   -": "",
-    "dc:warm-up": "npm run test:fns:all",
+    "dc:warm-up": "npm run -s _dc_ci_fns",
+    "_dc_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
     "  - - -": "",
-    "ci:test": "npm run test:fns:all && npm run test:rules:all",
-    "ci:deploy": "npm run -s _prepFunctions && npm run -s _prepDeploy && firebase deploy --only functions,firestore",
+    "ci:test": "npm run -s _dc_ci_fns && npm run -s _ci_rules_all",
+    "_ci_rules_all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
     "  -  --": "",
     "postinstall": "npm --prefix ../package install",
     "//prestart": "npm run -s _skinDown",
@@ -63,6 +64,10 @@
       ],
       "test:rules:all": [
         "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
+      ],
+      "ci:*, dc:*": [
+        "These targets are only run within a Docker container. Thus, they see './test-{fns|rules}' folders.",
+        "In contrast, 'test:...' are launched by the user, manually."
       ],
       "no [[": [
         "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."

@@ -125,11 +125,20 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
 
 - [ ] Track node.js releases; when it's been **stable** without needing the feature flag, for **two major releases** ;) we can let the `undici` imports go. 
 
-   Benefit: Nothing much. Less dependencies.
-
 
 ## Undici: `fetch` trouble with `localhost`
 
 - [ ] [TypeError: fetch failed](https://github.com/nodejs/undici/issues/1248)
 
    Found a cure, for now (see `config.js`). Once the issue may be resolved, remove the cure.
+   
+   Note: They claim it cannot be `undici`. Would require more debugging... `#notime`
+
+
+## Google Cloud Build: `docker` image is behind (19.03.9 < 20)
+
+- [ ] [Docker image latest uses outdated client 19.03.8 ...](https://github.com/GoogleCloudPlatform/cloud-builders/issues/778)
+
+   Also see [`cloud-builders/docker`](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/docker) (GitHub)
+
+We want version 20 because of `docker compose` v2. Have to use a Docker Hub image (no caching), until Google Cloud Build provides a 20-something.

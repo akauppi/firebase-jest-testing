@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 # Provide audit info, without changing repo.
 #
-PATHS=". sample sample/functions package"
+PATHS="package sample sample/functions sample.dc"
 
 false   # NOT TESTED!!! tbd.
 
