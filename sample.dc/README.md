@@ -13,6 +13,26 @@
 
 >For Linux, a Docker installation with Docker Compose v2 [plugin installed](https://docs.docker.com/compose/cli-command/#install-on-linux).
 
+- `firebase-ci-builder` Docker image built
+
+   ```
+   # at the repo root
+   $ git update submodule
+   ...
+   
+   $ cd firebase-ci-builder.sub
+   $ ./build
+   ...
+   ```
+
+   This populates the `firebase-ci-builder.sub` folder and builds the Firebase Emulators image we use in `docker-compose.yml` and CI.
+
+
+## Pull in the dependencies
+
+```
+$ npm install
+```
 
 ## Starting the emulators
 

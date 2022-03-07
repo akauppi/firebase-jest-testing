@@ -37,8 +37,8 @@
   "devDependencies": {
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
-    "firebase-tools": "^10.2.1",
-    "undici": "^4.14.1"
+    "firebase-tools": "^10.2.2",
+    "undici": "^4.15.1"
   },
   "//": {
     "--experimental-vm-modules": [

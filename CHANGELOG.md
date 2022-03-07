@@ -1,5 +1,15 @@
 # Changelog
 
+## 7-Mar-22
+
+- CI back in shape!!! 🏋️‍♂️🤾🏃‍♂️
+- Updated dependencies; Jest 28 alpha.7
+- Need separate `npm install` on either `sample` and/or `sample.dc` level
+
+   This is a bit odd, but keeps the bleed of `firebase-tools` `npm` warnings only on the `sample` side - could soon call it `sample.legacy`...
+
+>Time to manually test it; thinking of publishing *only* once Jest 28 is past its alpha.
+
 ## 27-Feb-22
 
 - Updated dependencies; Jest 28 alpha.5

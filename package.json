@@ -5,12 +5,19 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": ""
   },
   "devDependencies": {
     "firebase-jest-testing": "file:package",
-    "jest": "^28.0.0-alpha.6"
+    "jest": "^28.0.0-alpha.7"
   },
   "//": {
+    "scripts": {
+      "postinstall": [
+        "Do not install 'sample[.dc]' dependencies. This is so that the bleed of warnings from 'firebase-tools' (sample)",
+        "is clearly indicated of affecting 'sample' only - not 'sample.dc'. May be in vain, but... :R"
+      ]
+    },
     "devDependencies": [
       "Dependencies common to both 'sample' and 'sample.dc'. This kind-of quirky arrangement allows them to be steered",
       "in one place, but also helps in the ... DRY-ish arrangement of sharing test specifications between the two.",

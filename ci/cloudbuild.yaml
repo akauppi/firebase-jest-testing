@@ -39,19 +39,16 @@ steps:
 #
 - name: node:16-alpine
   entrypoint: sh
-  args: ['-c', 'npm install && npm --prefix sample.dc install']
+  args: ['-c', '
+    npm install &&
+    npm --prefix sample.dc install &&
+    npm --prefix sample.dc -s run _touchEm
+  ']
 
 # Launch emul/warm-up in DC, keeps them running in the background.
 #
-# Note: Using the '... run warmed-up' approach (same as manual) lead for some reason to this:
-#     <<
-#        Step #1: ERROR: for warmed-up  Container "fa3f97950a65" is unhealthy.
-#     <<
-#
-#     However, we don't need to use that step in CI, since warm-up would always happen just once.
-#
 - name: docker/compose:${_DOCKER_COMPOSE_TAG}
-  args: ['-f', 'docker-compose.yml', '-f', 'docker-compose.ci.yml', 'up', '-d', 'warm-up']
+  args: ['-f', 'docker-compose.yml', '-f', 'docker-compose.ci.yml', 'run', 'warmed-up']
   dir: sample.dc
   env:
     - CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
@@ -62,23 +59,22 @@ steps:
   dir: sample.dc
   env:
     - EMUL_HOST=emul
+    - WARM_UP_TIMEOUT=10000
 
 # --- Timeout
 #
 # Cloud Build
-#   xxx s
+#   1m52s
 #
 # Earlier versions (just for comparison)
 #   (node 16):  1m53s, 1m58s, 2m17s
 #   (node 14):  1m48s, 1m53s
 #
-#timeout: 240s
-timeout: 400s
+timeout: 240s
 
 substitutions:
-  _BUILDER_TAG: 9.17.0-node16-npm7
+  _BUILDER_TAG: 10.2.2-node16-npm8
   _DOCKER_COMPOSE_TAG: 1.29.2
     #
     # ^-- Note: That's tremendously (10 months; Mar 2022) out of date!  But that's not the cause of problems.
     #           Our tests should pass also with it.
-

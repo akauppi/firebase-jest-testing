@@ -50,14 +50,6 @@ Fetch dependencies:
 $ npm install
 ```
 
->The `package.json` is prepared so that this installs dependencies also for `package`, `sample` and `sample/functions`. 
-
-```
-$ git update submodule
-```
-
-This populates the `firebase-ci-builder.sub` folder. It's needed for local Docker operation, only.
-
 Now, you're ready to start the emulation and run tests against it.
 
 
@@ -74,6 +66,11 @@ Launching the tests is this easy:
 
 ```
 $ cd sample
+$ npm install
+...
+```
+
+```
 $ npm test
 ...
 Test Suites: 2 passed, 2 total

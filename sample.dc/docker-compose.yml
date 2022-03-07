@@ -66,9 +66,9 @@ services:
       - ../sample/firestore.indexes.json:/work/firestore.indexes.json:cached
       - ../sample/firestore.rules:/work/firestore.rules:cached
       # --- output
-      #- ./firebase-debug.log:/work/firebase-debug.log:delegated
-      #- ./firestore-debug.log:/work/firestore-debug.log:delegated
-      #- ./ui-debug.log:/work/ui-debug.log:delegated
+      - ./firebase-debug.log:/work/firebase-debug.log:delegated
+      - ./firestore-debug.log:/work/firestore-debug.log:delegated
+      - ./ui-debug.log:/work/ui-debug.log:delegated
 
     working_dir: /work
     command: bash -o pipefail -c
@@ -110,8 +110,10 @@ services:
 
       # Remove in your own use:
       #   '../../package' symbolic link would fail; place right in '/work/node_modules'
+      #   - so has access to Jest
       #
       - ../package:/package:ro
+      - ../node_modules:/node_modules
 
     working_dir: /work
     command: sh -o pipefail -c
@@ -124,8 +126,11 @@ services:
       - EMUL_HOST=emul
       - WARM_UP_TIMEOUT=8000
           # seen durations of:
-          #   6631 ms (fns:userInfo summary, macOS Intel, DC 4.5)
+          #   4770 ms (fns:userInfo, macOS Intel, DC 4.5)
           #   2098 ms (fns:greet, macOS Intel, DC 4.5)
+          #
+          #   2810 ms (fns:userInfo, CloudBuild)
+          #   1706 ms (fns:greet, CloudBuild)
 
     depends_on:
       emul:
@@ -133,11 +138,11 @@ services:
 
     healthcheck:
       test: "[ -f .healthy ] && echo 'HEALTHY!'"
-      interval: 2s
-      start_period: 100s
+      interval: 1.5s
+      start_period: 80s
         # cold start times of:
-        #   - 42.1 s (manual, 'docker compose down; time npm run start', macOS Intel, DC 4.5)
-        #   - xxx s (CI, CloudBuild)
+        #   - 42.1, 43.3 s (manual, 'docker compose down; time docker compose run --rm warmed-up'; macOS Intel, DC 4.5)
+        #   - ~23 s (CI, from CloudBuild logs between "Creating emul..." to "Ran all test suites.")
 
     # Enable manual launch to debug 'emul' launch, only.
     #profiles: ['manual']
