@@ -26,21 +26,20 @@ The `sample` folder contains a sample Firebase backend used for testing:
 - `sample/test-fns` contains Cloud Function tests
 - `sample/test-rules` contains Security Rules tests
 
-The files used for managing the Firebase project and running tests are at the root.
+You can use this sample as a template for your own Firebase backend testing project.
 
 ## Requirements
 
-- node >= 14.3 or 16.x
-- npm 6 or >= 7.7.0
-- Jest >= 27
-
->Note: `npm` 6 support is there, because it's the default for Node 14 Docker images. Kept somewhat grudgingly, for now. CI runs `npm` 6; all development is done with `npm` 7.
+- node >= 16.5
+- npm >= 7.7.0
 
 <!--
 Developed with:
-- macOS 11.6
-- node 16.11
-- npm 7.21
+- macOS 12.2
+- node 17.5
+- npm 8.4
+
++ Docker Desktop for Mac 4.5.0
 -->
 
 ## Getting started
@@ -50,8 +49,6 @@ Fetch dependencies:
 ```
 $ npm install
 ```
-
->The `package.json` is prepared so that this installs dependencies also for `package` and `sample/functions`. 
 
 Now, you're ready to start the emulation and run tests against it.
 
@@ -65,23 +62,13 @@ Let's start with the simpler one.
 
 ### CI: Run all the tests
 
-<!-- hidden; took away `ci:par`
-The `npm` targets in this flow:
-
-|target|what it does|
-|---|---|
-|`ci`|Maps to either `ci:seq` or `ci:par`|
-|`ci:seq`|Run tests sequentially|
-|`ci:par`|Run tests in parallel|
-
-The sequential runs provide easier-to-follow logs, but `ci:par` provides ~2s faster execution[^1-faster], since the Cloud Functions and Security Rules are tested in parallel. 
-
->Depending on your tests, the difference may be starker, so `ci:par` is kept in the repo as a sample.
-
-[^1-faster]: Faster on a desktop (multicore) machine, which you might not have in CI/CD.
--->
-
 Launching the tests is this easy:
+
+```
+$ cd sample
+$ npm install
+...
+```
 
 ```
 $ npm test
@@ -107,6 +94,10 @@ In "CI mode", each run launches the emulators anew. This takes ~5s that we can s
 
 In dev mode, a server runs continuously on the background so repeated runs of the tests are a bit faster. This same server can be used for both Cloud Functions and Security Rules testing - even in parallel.
 
+```
+$ cd sample  # unless you already are there
+```
+
 **Starting the emulator**
 
 Start the emulator in one terminal, and leave it running:
@@ -122,7 +113,7 @@ Once we run tests, it's worth checking the emulator output, occasionally.
 In another terminal:
 
 ```
-$ npm run test:fns:callables
+$ npm run test:fns:greet
 $ npm run test:fns:userInfo
 ...
 ```
@@ -144,6 +135,16 @@ These are prepared for you in `package.json`. When developing something, it's me
 Once you think things are rolling fine, run `npm test` to confirm.
 
 >Note: Since both CI and dev use the same emulator ports (defined in `firebase.json`), one cannot launch `npm test` while the emulator is running. Shut it down by Ctrl-C.
+
+
+## Using Docker Compose 🎁
+
+This is a more advanced (complex) setup, but one you should study for your own projects. It has some advantages:
+
+- no need for multiple terminals. Docker Compose keeps the emulators running and their console output can be observed in the Docker Desktop application.
+- no need for installing `concurrently` or `firebase-tools` npm modules.
+
+See [`sample.dc/README`](sample.dc/README.md) for details.
 
 
 ## CI setup

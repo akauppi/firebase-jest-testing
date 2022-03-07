@@ -1,0 +1,75 @@
+{
+  "name": "@local/sample.dc",
+  "description": "Test project template (uses Docker Compose)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">= 16.5",
+    "npm": ">= 7.7.0 || 8"
+  },
+  "scripts": {
+    "test": "npm run -s _touchEm && docker compose run --rm warmed-up && npm run -s _test1",
+    "_test1": "npm run test:fns:all && npm run test:rules:all",
+    "-- ": "",
+    "start": "npm run -s _touchEm && docker compose run --rm warmed-up && echo \"Firebase Emulators are running. Use 'docker compose down' to run them down.\n\"",
+    "-- -": "",
+    "test:fns:greet": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f greet.test.js --verbose --all",
+    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f userInfo.test.js --verbose --all",
+    "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
+    "--  -": "",
+    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f invitesC.test.js --verbose --all",
+    "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f projectsC.test.js --verbose --all",
+    "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f symbolsC.test.js --verbose --all",
+    "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f userInfoC.test.js --verbose --all",
+    "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f visitedC.test.js --verbose --all",
+    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
+    "-- --": "",
+    "lint": "eslint .",
+    "--   -": "",
+    "dc:warm-up": "npm run -s _dc_fns",
+    "_dc_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
+    "-- - -": "",
+    "ci:test": "npm run -s _test1",
+    "--  --": "",
+    "postinstall": "npm --prefix ../sample/functions install",
+    "-- ---": "",
+    "_touchEm": "touch firebase-debug.log firestore-debug.log ui-debug.log",
+    "//_skinDown": "sed -i -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
+  },
+  "//": {
+    "--experimental-vm-modules": [
+      "Needed for now (Feb 2022, ~May 2021~, ~Aug 2020~), to use native ES6 modules with Jest"
+    ],
+    "firebase emulators:...": [
+      "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
+      "construction of the URL for the callable."
+    ],
+    "engines.node": [
+      "16.5 required by undici (fetch)"
+    ],
+    "engines.npm": [
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+    ],
+    "scripts": {
+      "NODE_OPTIONS=--experimental-vm-modules": [
+        "Still needed on Node.js 17,16 (not knowing where to track its removal)"
+      ],
+      "test:rules:all": [
+        "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
+      ],
+      "dc:*": [
+        "These targets are run from within a Docker container. Thus, they see './test-{fns|rules}' folders."
+      ],
+      "no [[": [
+        "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
+      ],
+      "_skinDown": [
+        "sed -i '' is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?"
+      ],
+      "_touchEm": [
+        "If the *.log files are shared separately (with ':delegate' suffix), they need to pre-exist before the mount.",
+        "Otherwise, Docker Compose would create them as folders."
+      ]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.4-alpha.5",
+  "version": "0.0.5-alpha.1",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -27,32 +27,30 @@
     "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
-    "node": "^14.3 || >=16 <16.6 || >= 16.6.1",
-    "npm": "6 || >= 7.7.0"
+    "node": ">= 16.5",
+    "npm": ">= 7.7.0 || 8"
   },
   "publishConfig": {
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^27.0.6"
+    "jest": "^28.0.0-alpha.7"
   },
   "dependencies": {
-    "firebase-admin": "^10.0.0",
-    "node-fetch": "^3.0.0"
+    "firebase-admin": "^10.0.2",
+    "undici": "^4.15.1"
   },
   "//": {
     "engines.node": [
-      "16.6.0: has an incompatibility with Jest (fixed in 16.6.1)"
+      "16.5 required by undici (fetch)"
     ],
     "engines.npm": [
-      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834",
-      "6 support kept only because it's the Node.js 14 default"
+      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
     ],
     "peerDependencies": {
       "jest": [
         "Jest is left as a peer dependency, since the using project surely is aware of it (and may want to use a different version).",
-        "The author is NOT SURE WHETHER the library really works down to mentioned version. If you have problems,",
-        "please raise an Issue (and/or update to latest Jest)."
+        "If you have problems, please raise an Issue (or update to latest Jest)."
       ]
     },
     "dependencies": {

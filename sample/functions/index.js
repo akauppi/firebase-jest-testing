@@ -17,10 +17,8 @@ const regionalFunctions = functions.region("mars-central2");
 // Note: The file is executed three times by Cloud Functions (once to list the exports; then once per each function).
 //    This initialization only matters to certain functions, but it also takes just 2ms, so we can have it in the root.
 //
-//const t0 = Date.now()
 initializeApp()
 const db = getFirestore()
-//console.debug("!!! Initialization took:", Date.now()-t0 )   // 2, 2, 2
 
 /*
 * { msg: string } -> string

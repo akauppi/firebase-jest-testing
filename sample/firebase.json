@@ -1,9 +1,9 @@
 {
   "firestore": {
-    "rules": "sample/firestore.rules"
+    "rules": "firestore.rules"
   },
   "functions": {
-    "source": "sample/functions"
+    "source": "functions"
   },
   "emulators": {
     "firestore": {

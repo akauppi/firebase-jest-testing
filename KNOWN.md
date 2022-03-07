@@ -4,7 +4,6 @@
 
 ```
 $ npm update
-npm WARN deprecated har-validator@5.1.5: this library is no longer supported
 npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
 npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
 ```
@@ -13,9 +12,8 @@ These are due to:
 
 |||
 |---|---|
-|`har-validator`|`firebase-tools@9.14.0`, via `request`|
-|`request`|`firebase-tools@9.14.0`|
-|`uuid@3.4.0`|`firebase-tools@9.14.0`, via `request` and `universal-analytics`|
+|`request`|`firebase-tools@9.14.0` .. `10.1.2`|
+|`uuid@3.4.0`|`firebase-tools@9.14.0` .. `10.1.2`, via `request` and `universal-analytics`|
 
 ## WSL2 warnings
 
@@ -62,3 +60,45 @@ That causes problems (errors) in development, if the development machine runs No
    There is **no explicit mention** about needing to support `||` but since Node itself is fine with such a syntax, so should be a tool (Firebase CLI). Firebase is now playing more narrow-minded than its runtime environment.
 
 >See [TRACK](TRACK.md) for the GitHub Issue where this has been reported.
+
+
+## CI warnings
+
+```
+$ cd ci
+$ gcloud builds submit ..
+...
+Step #2: Jest has detected the following 2 open handles potentially keeping Jest from exiting:
+Step #2: 
+Step #2:   ●  MESSAGEPORT
+Step #2: 
+Step #2:       at Object.<anonymous> (../../node_modules/node-domexception/index.js:6:12)
+Step #2:           at async Promise.all (index 16)
+Step #2:           at async Promise.all (index 2)
+Step #2:           at async Promise.all (index 0)
+Step #2:           at async Promise.all (index 2)
+Step #2:           at async Promise.all (index 1)
+Step #2: 
+Step #2: 
+Step #2:   ●  MESSAGEPORT
+Step #2: 
+Step #2:       at Object.<anonymous> (../../node_modules/node-domexception/index.js:6:12)
+Step #2:           at async Promise.all (index 16)
+Step #2:           at async Promise.all (index 2)
+Step #2:           at async Promise.all (index 0)
+Step #2:           at async Promise.all (index 2)
+Step #2:           at async Promise.all (index 1)
+Step #2:       at TestScheduler.scheduleTests (../../node_modules/@jest/core/build/TestScheduler.js:333:13)
+Step #2:       at runJest (../../node_modules/@jest/core/build/runJest.js:404:19)
+Step #2:       at _run10000 (../../node_modules/@jest/core/build/cli/index.js:320:7)
+Step #2:       at runCLI (../../node_modules/@jest/core/build/cli/index.js:173:3)
+Step #2: 
+Finished Step #2
+```
+
+This is annoying and noisy - but notice that the CI run still succeeds.
+
+```
+ID                                    CREATE_TIME                DURATION  SOURCE                                                                                    IMAGES  STATUS
+43b835fa-d4bd-4843-aa4d-15ed61483ff9  2022-02-27T19:59:19+00:00  2M17S     gs://ci-builder_cloudbuild/source/1645991958.175113-59a148405f4647f589f5e86062abb79a.tgz  -       SUCCESS
+```

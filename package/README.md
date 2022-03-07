@@ -8,7 +8,7 @@ This README is visible on the npm package page: https://www.npmjs.com/package/fi
 
 Tools for testing Firebase backend features, using Jest.
 
-<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/0.0.3-beta.2/package/images/tin-can-beta.png" width="350" />
+<img alt="a can" src="https://github.com/akauppi/firebase-jest-testing/raw/0.0.3-beta.2/package/images/tin-can-beta.png" width="200" style="transform: rotate(10deg) translate(2em);" />
 
 <!--
 Can designed in Fusion 360, by A.Kauppi - https://a360.co/3fHTV9y
@@ -16,26 +16,33 @@ Can designed in Fusion 360, by A.Kauppi - https://a360.co/3fHTV9y
 
 Offers:
 
-- 🥫Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate!
+- 🥫 Emulator detection. The library *automatically picks up the configuration* when running the tests. Less boilerplate!
 
-- 🪶Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required.
+- 🪶 Light. Uses Firestore *REST API* so *no Firebase client JS SDK* is required.
 
-- ⚡️Fast. Optimized for multithreading and Node.js. You'll likely max out your cores.
+   This is an implementation detail. In practise, it means less npm dependencies. 
+
+- ⚡️ Fast. Optimized for multithreading and Node.js. You'll likely max out your cores.
+
+   This may be overpromising. The Firebase Emulators themselves are the bottleneck, and there's an issue for handling this. Anyways, we are pushing for speedy testability of Firebase backend.
 
 - ‖‖‖ Security Rules are tested **immutably** - a passing write or delete operation does not change the data, and cannot disturb other tests. This is why we can parallelize the tests so much. No flaky tests.
 
-- ﹛﹜Help functions for priming Firestore with *JSON data*.
+- 👨‍🦯 Help functions for priming of Firestore with *JSON data*.
 
+   Firebase emulators provide binary import/export which is not very useful for small, hand-crafted datasets. JSON is more human friendly.
+   
 - `+` Means for testing callables <sub>(without a client SDK)</sub>.
 
-Only to be used with Jest 27 and above.
 
+Only to be used with Jest 28 and above.
+
+   The aim for this repo is on ESM projects and Jest 28 brings this support. Thus the lack of interest for supporting even Jest 27 (it is possible, using some hacks - see release `0.0.4-alpha.5`).
 
 ## Requires
 
-- Jest 27
+- Jest 28 as a peer dependency
 
-   The module is built with ES modules in mind.
 
 ## Using in your project
 
@@ -45,6 +52,7 @@ In your application project:
 $ npm install --save-dev firebase-jest-testing@beta
 ```
 
+<!-- no longer needed (Jest 28)
 Add this to the `jest.config.js`:
 
 ```
@@ -105,7 +113,7 @@ const res = ( request, options ) => {   // (string, { ..see above.. }) => ...
 module.exports = res;
 </pre>
 </details>
-
+-->
 
 ### Using with Docker Compose
 

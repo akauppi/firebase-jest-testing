@@ -8,7 +8,7 @@
 *
 * Waits until the named port becomes available.
 *
-* Used 'wait-on' npm package earlier, but it misbehaves with Firebase Hosting, starting some version (of emulation,
+* Used 'wait-on' npm package earlier, but it misbehaves with Firebase Hosting, since some version (of emulation,
 * or the tool, not sure).
 *
 * - Firebase Hosting DOES NOT PROVIDE 'HEAD' (but gives 404), for paths where 'GET' gives 200. This is the main cause.
@@ -21,7 +21,7 @@
 *   The author recommends 'wait-for-it' command line tool, if Docker (Compose) is used for development/testing.
 *   Here, we are not requiring developers to have Docker; thus the self-made tool.
 */
-import fetch from 'node-fetch'
+import { fetch } from 'undici'
 
 const t0 = Date.now();
 
@@ -32,7 +32,12 @@ const url = (() => {
   if (!c2) {
     failExit( `Bad param (expecting '[host:]port'): ${arg}`);
   }
-  return `http://${c1 || 'localhost'}:${c2}`;
+
+  // Undici needs '127.0.0.1' to be able to check port 5002 (checking 6767 works also with 'localhost').
+  //
+  const defHost = '127.0.0.1';    // 'localhost'
+
+  return `http://${c1 || defHost}:${c2}`;
 })();
 
 const POLL_INTERVAL_MS = 150;
@@ -48,16 +53,11 @@ function areWeThereYet() {
       process.exit(4);
     }
 
-  }).catch( err => {    // FetchError => ()
+  }).catch( err => {
+    const { code } = err.cause;
 
-    if (err.code === 'ECONNREFUSED') {    // port not open (yet)
+    if (code === 'ECONNREFUSED') {    // port not open (yet)
       setTimeout(areWeThereYet, POLL_INTERVAL_MS);
-
-    /*** trying without it! Could be because we did not wait for Functions end point, then.
-    } else if (err.code === 'ECONNRESET') {   // "request to http://localhost:4000/ failed, reason: socket hang up" (type: 'system'; errno: 'ECONNRESET', code: 'ECONNRESET')
-      // This came when Firebase is running under Docker, and getting ready for action (but not quite, yet..)
-      setTimeout(areWeThereYet, POLL_INTERVAL_MS);
-    ***/
 
     } else {
       console.error("Unexpected error:", err);

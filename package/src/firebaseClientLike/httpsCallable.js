@@ -5,7 +5,7 @@
 *   - Protocol specification for https.onCall (Cloud Functions docs)
 *     -> https://firebase.google.com/docs/functions/callable-reference
 */
-import fetch from 'node-fetch'
+import { fetch } from 'undici'
 
 import { FUNCTIONS_URL, projectId } from '../config.js'
 
@@ -53,6 +53,7 @@ function httpsCallable(name) {    // (string) => ((data) => Promise of { data: a
       ...(token ? { "Authorization": `Bearer ${token}` } : {})
     }
 
+    //console.debug( "!!!", { uri, method, headers, body } )    // DEBUG
     const res = await fetch(uri, {method, headers, body });
 
     const status = res.status;

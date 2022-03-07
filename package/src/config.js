@@ -42,7 +42,16 @@ const FUNCTIONS_URL = (() => {
     console.warning(`No 'emulators.functions.port' in '${fn}': using default (${port}).`);
   }
 
-  return `http://${host}:${port}`;
+  // NOTE:
+  //  Undici (4.14.1) 'fetch' doesn't like 'localhost' and 'POST', it seems. This fixes that quietly, for now.
+  //  See -> https://github.com/nodejs/undici/issues/1248
+  //
+  if (true) {
+    return `http://${ host.replace("localhost","127.0.0.1") }:${port}`;
+
+  } else {
+    return `http://${host}:${port}`;
+  }
 })();
 
 // If Global Setup, pass

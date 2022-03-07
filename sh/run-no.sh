@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 # List possibly outdated dependencies, in all the subpackages.
 #
-PATHS=". sample/functions package"
+PATHS=". package sample sample/functions sample.dc"
 
 for _PATH in $PATHS
 do

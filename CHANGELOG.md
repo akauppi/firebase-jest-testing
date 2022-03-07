@@ -1,5 +1,31 @@
 # Changelog
 
+## 7-Mar-22
+
+- CI back in shape!!! 🏋️‍♂️🤾🏃‍♂️
+- Updated dependencies; Jest 28 alpha.7
+- Need separate `npm install` on either `sample` and/or `sample.dc` level
+
+   This is a bit odd, but keeps the bleed of `firebase-tools` `npm` warnings only on the `sample` side - could soon call it `sample.legacy`...
+
+>Time to manually test it; thinking of publishing *only* once Jest 28 is past its alpha.
+
+## 27-Feb-22
+
+- Updated dependencies; Jest 28 alpha.5
+- Moved to `udici` from `node-fetch` (Node native fetch is based on it)
+  - pumps up Node requirement to 16.5+
+  - `npm` 6 "support" removed
+- `npm test` works, again
+- Introduced `sample.dc` for showing how one can use Docker Compose (instead of native Firebase Emulators) for running the Jest tests.
+
+>These changes only involve the `sample` layout, not the underlying `npm` module. Thus, no new version published.
+
+## 12-Feb-22
+
+- Updated dependencies
+- Moving to Jest 28 (alpha)!
+
 ## 24-Oct-21
 
 - Removed `cjs` resolver provided by the package; instead asking users to copy-paste (and modify) a sample.
