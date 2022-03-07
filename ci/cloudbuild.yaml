@@ -35,38 +35,26 @@ steps:
 #  entrypoint: sh
 #  args: ['-c', 'env']
 
-## DEBUG
-#- name: gcr.io/cloud-builders/docker
-#  args: [
-#    'compose', '--help'
-#  ]
-#  # "Docker version 19.03.9" (5-Mar-22)
-#- name: node:16-alpine
-#  entrypoint: sh
-#  args: ['-c', 'false']
-## /DEBUG
-
 # Install
 #
 - name: node:16-alpine
-  entrypoint: npm
-  dir: sample.dc
-  args: ['install']
+  entrypoint: sh
+  args: ['-c', 'npm install && npm --prefix sample.dc install']
 
 # Launch emul/warm-up in DC, keeps them running in the background.
 #
+# Note: Using the '... run warmed-up' approach (same as manual) lead for some reason to this:
+#     <<
+#        Step #1: ERROR: for warmed-up  Container "fa3f97950a65" is unhealthy.
+#     <<
+#
+#     However, we don't need to use that step in CI, since warm-up would always happen just once.
+#
 - name: docker/compose:${_DOCKER_COMPOSE_TAG}
-  args: ['-f', 'docker-compose.yml', '-f', 'docker-compose.ci.yml', 'run', 'warmed-up']
+  args: ['-f', 'docker-compose.yml', '-f', 'docker-compose.ci.yml', 'up', '-d', 'warm-up']
   dir: sample.dc
   env:
     - CI_BUILDER_IMAGE=gcr.io/${PROJECT_ID}/firebase-ci-builder:${_BUILDER_TAG}
-
-# DOESN'T REACH HERE: "bad address 'warm-up'" !!!!!!!!!!!!
-#DEBUG
-- name: node:16-alpine
-  entrypoint: sh
-  args: ['-c', 'false']
-#/DEBUG
 
 - name: node:16-alpine
   entrypoint: npm
@@ -78,9 +66,10 @@ steps:
 # --- Timeout
 #
 # Cloud Build
-#   (node 16):  1m53s, 1m58s (x2), 2m17s
+#   xxx s
 #
-# Earlier versions (..remove..??)
+# Earlier versions (just for comparison)
+#   (node 16):  1m53s, 1m58s, 2m17s
 #   (node 14):  1m48s, 1m53s
 #
 #timeout: 240s

@@ -10,39 +10,31 @@
   "scripts": {
     "test": "npm run -s _touchEm && docker compose run --rm warmed-up && npm run -s _test1",
     "_test1": "npm run test:fns:all && npm run test:rules:all",
-    "  -": "",
-    "start": "npm run -s _touchEm && docker compose run --rm warmed-up && echo \"Firebase Emulators are running. Use 'docker compose down' to run them down.\n\"",
-    "  - -": "",
-    "test:fns:greet": "npm run --prefix ../sample test:fns:greet",
-    "test:fns:userInfo": "npm run --prefix ../sample test:fns:userInfo",
-    "test:fns:all": "npm run --prefix ../sample test:fns:all",
-    "  -  -": "",
-    "test:rules:invites": "npm run --prefix ../sample test:rules:invites",
-    "test:rules:projects": "npm run --prefix ../sample test:rules:projects",
-    "test:rules:symbols": "npm run --prefix ../sample test:rules:symbols",
-    "test:rules:userInfo": "npm run --prefix ../sample test:rules:userInfo",
-    "test:rules:visited": "npm run --prefix ../sample test:rules:visited",
-    "test:rules:all": "npm run --prefix ../sample test:rules:all",
-    "  - --": "",
-    "lint": "eslint .",
-    "  -   -": "",
-    "dc:warm-up": "npm run -s _dc_ci_fns",
-    "_dc_ci_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
-    "  - - -": "",
-    "ci:test": "npm run -s _dc_ci_fns && npm run -s _ci_rules_all",
-    "_ci_rules_all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
-    "  -  --": "",
-    "postinstall": "npm --prefix ../package install",
-    "//prestart": "npm run -s _skinDown",
-    "~~postinstall": "npm run -s _prepFunctions && ([ -z $BUILDER_OUTPUT ] || npm run -s _touchEm)",
-    "~~_prepFunctions": "npm --prefix functions install",
     "-- ": "",
+    "start": "npm run -s _touchEm && docker compose run --rm warmed-up && echo \"Firebase Emulators are running. Use 'docker compose down' to run them down.\n\"",
+    "-- -": "",
+    "test:fns:greet": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f greet.test.js --verbose --all",
+    "test:fns:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js -f userInfo.test.js --verbose --all",
+    "test:fns:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
+    "--  -": "",
+    "test:rules:invites": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f invitesC.test.js --verbose --all",
+    "test:rules:projects": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f projectsC.test.js --verbose --all",
+    "test:rules:symbols": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f symbolsC.test.js --verbose --all",
+    "test:rules:userInfo": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f userInfoC.test.js --verbose --all",
+    "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f visitedC.test.js --verbose --all",
+    "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
+    "-- --": "",
+    "lint": "eslint .",
+    "--   -": "",
+    "dc:warm-up": "npm run -s _dc_fns",
+    "_dc_fns": "NODE_OPTIONS=--experimental-vm-modules jest --config test-fns/jest.config.js --verbose --all",
+    "-- - -": "",
+    "ci:test": "npm run -s _test1",
+    "--  --": "",
+    "postinstall": "npm --prefix ../sample/functions install",
+    "-- ---": "",
     "_touchEm": "touch firebase-debug.log firestore-debug.log ui-debug.log",
     "//_skinDown": "sed -i -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
-  },
-  "devDependencies": {
-    "firebase-jest-testing": "file:../package",
-    "jest": "^28.0.0-alpha.5"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -65,9 +57,8 @@
       "test:rules:all": [
         "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
       ],
-      "ci:*, dc:*": [
-        "These targets are only run within a Docker container. Thus, they see './test-{fns|rules}' folders.",
-        "In contrast, 'test:...' are launched by the user, manually."
+      "dc:*": [
+        "These targets are run from within a Docker container. Thus, they see './test-{fns|rules}' folders."
       ],
       "no [[": [
         "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
