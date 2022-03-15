@@ -1,5 +1,77 @@
 # Known Issues
 
+
+## Lots of vulnerabilities?!
+
+Within `sample` (native running of Firebase Emulators), yes, there are:
+
+```
+$ npm install
+
+> postinstall
+> npm --prefix functions install
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: undefined,
+npm WARN EBADENGINE   required: { node: '16' },
+npm WARN EBADENGINE   current: { node: 'v17.5.0', npm: '8.4.1' }
+npm WARN EBADENGINE }
+
+up to date, audited 231 packages in 828ms
+
+10 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (3 moderate, 1 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+
+up to date, audited 1331 packages in 58s
+
+37 packages are looking for funding
+  run `npm fund` for details
+
+22 vulnerabilities (17 moderate, 5 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+```
+
+22 are too many to even track. I wouldn't take this kind of risks in my project... plus it looks untidy.
+
+Within `sample.dc`, not so:
+
+```
+$ npm install
+
+> postinstall
+> npm --prefix ../sample/functions install
+
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: undefined,
+npm WARN EBADENGINE   required: { node: '16' },
+npm WARN EBADENGINE   current: { node: 'v17.5.0', npm: '8.4.1' }
+npm WARN EBADENGINE }
+
+added 230 packages, and audited 231 packages in 12s
+
+11 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+up to date, audited 1 package in 13s
+
+found 0 vulnerabilities
+```
+
+
+
 ## Deprecation warnings
 
 ```

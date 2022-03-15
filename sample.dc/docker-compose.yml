@@ -124,13 +124,15 @@ services:
       '
     environment:
       - EMUL_HOST=emul
-      - WARM_UP_TIMEOUT=8000
+      - WARM_UP_TIMEOUT=12000
           # seen durations of:
-          #   4770 ms (fns:userInfo, macOS Intel, DC 4.5)
-          #   2098 ms (fns:greet, macOS Intel, DC 4.5)
-          #
+          #   5684, 6316 ms (fns:userInfo, macOS 12.3 Intel, DC 4.6 no VirtioFS)
+          #   5888, 3886 ms (fns:greet, macOS 12.3 Intel, DC 4.6 no VirtioFS)
           #   2810 ms (fns:userInfo, CloudBuild)
           #   1706 ms (fns:greet, CloudBuild)
+          #
+          #   ~~ 4770 ms (fns:userInfo, macOS Intel, DC 4.5)
+          #   ~~ 2098 ms (fns:greet, macOS Intel, DC 4.5)
 
     depends_on:
       emul:
@@ -138,11 +140,13 @@ services:
 
     healthcheck:
       test: "[ -f .healthy ] && echo 'HEALTHY!'"
-      interval: 1.5s
+      interval: 0.7s
       start_period: 80s
         # cold start times of:
-        #   - 42.1, 43.3 s (manual, 'docker compose down; time docker compose run --rm warmed-up'; macOS Intel, DC 4.5)
-        #   - ~23 s (CI, from CloudBuild logs between "Creating emul..." to "Ran all test suites.")
+        #   37.3, 39.2 s (manual, 'docker compose down; time docker compose run --rm warmed-up'; macOS Intel, DC 4.6 no VirtioFS)
+        #   ~23 s (CI, from CloudBuild logs between "Creating emul..." to "Ran all test suites.")
+        #
+        #   ~~ 42.1, 43.3 s (manual, 'docker compose down; time docker compose run --rm warmed-up'; macOS Intel, DC 4.5)
 
     # Enable manual launch to debug 'emul' launch, only.
     #profiles: ['manual']
@@ -156,9 +160,7 @@ services:
   #
   warmed-up:
     image: node:16-alpine
-    command: sh -o pipefail -c
-      'true
-      '
+    command: sh -c true
     depends_on:
       warm-up:
         condition: service_healthy
