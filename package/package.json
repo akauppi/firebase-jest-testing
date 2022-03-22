@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "firebase-admin": "^10.0.2",
-    "undici": "^4.15.1"
+    "undici": "^4.16.0"
   },
   "//": {
     "engines.node": [

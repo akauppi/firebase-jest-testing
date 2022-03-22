@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">= 16.5",
+    "node": ">= 16.6.1",
     "npm": ">= 7.7.0 || 8"
   },
   "scripts": {

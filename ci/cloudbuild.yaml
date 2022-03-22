@@ -64,7 +64,7 @@ steps:
 # --- Timeout
 #
 # Cloud Build
-#   1m52s
+#   1m52s, 1m56s
 #
 # Earlier versions (just for comparison)
 #   (node 16):  1m53s, 1m58s, 2m17s
@@ -73,7 +73,8 @@ steps:
 timeout: 240s
 
 substitutions:
-  _BUILDER_TAG: 10.2.2-node16-npm8
+  #_BUILDER_TAG: 10.2.2-node16-npm8
+  _BUILDER_TAG: 10.4.0-node16-npm8
   _DOCKER_COMPOSE_TAG: 1.29.2
     #
     # ^-- Note: That's tremendously (10 months; Mar 2022) out of date!  But that's not the cause of problems.

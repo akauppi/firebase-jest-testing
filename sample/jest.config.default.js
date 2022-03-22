@@ -14,4 +14,7 @@ export default {
   // Default is 5000. None of our tests take that long; fail fast.
   //
   testTimeout: warmUpTimeoutMs || 2000,
+
+  // need to explicitly import 'test' etc.
+  injectGlobals: false
 }

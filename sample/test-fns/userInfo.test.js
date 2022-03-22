@@ -6,9 +6,10 @@
 */
 import { test, expect, describe, beforeAll } from '@jest/globals'
 
+import { collection, doc, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
+
 import './matchers/toContainObject'
 import './matchers/timesOut'
-import { collection, doc, preheat_EXP } from "firebase-jest-testing/firestoreAdmin"
 
 describe("userInfo shadowing", () => {
 
@@ -72,7 +73,9 @@ function docListener(docPath, filter) {   // (string, ((object) => falsy|object)
   return new Promise( (resolve) => {
 
     const unsub = doc(docPath).onSnapshot( ss => {
-      const o = ss.exists ? (filter || (o => o))( ss.data() ) : null;
+      if (!ss.exists) return;
+
+      const o = (filter || (o => o))( ss.data() );
       if (!o) return;
 
       resolve(o);
