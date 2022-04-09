@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "firebase-jest-testing": "file:package",
-    "jest": "^28.0.0-alpha.7"
+    "jest": "^28.0.0-alpha.8"
   },
   "//": {
     "scripts": {

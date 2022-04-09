@@ -8,7 +8,7 @@
 	
 	- 2 cores
 	- 2 GB RAM
-	- 1 GB swap
+	- 512 MB swap
 	- 4 GB disk
 
 >For Linux, a Docker installation with Docker Compose v2 [plugin installed](https://docs.docker.com/compose/cli-command/#install-on-linux).
@@ -17,7 +17,7 @@
 
    ```
    # at the repo root
-   $ git update submodule
+   $ git submodule update
    ...
    
    $ cd firebase-ci-builder.sub

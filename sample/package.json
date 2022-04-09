@@ -37,7 +37,7 @@
   "devDependencies": {
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
-    "firebase-tools": "^10.4.1",
+    "firebase-tools": "^10.6.0",
     "undici": "^4.16.0"
   },
   "//": {

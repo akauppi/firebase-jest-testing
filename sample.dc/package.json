@@ -33,8 +33,8 @@
     "--  --": "",
     "postinstall": "npm --prefix ../sample/functions install",
     "-- ---": "",
-    "_touchEm": "touch firebase-debug.log firestore-debug.log ui-debug.log",
-    "//_skinDown": "sed -i -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
+    "_touchEm": "touch firebase-debug.log firestore-debug.log ui-debug.log && npm run -s _touchEm2",
+    "_touchEm2": "sed -E 's/(\"node\": \").+(\")/\\116\\2/' ../sample/functions/package.json > tmp/package.dc.json"
   },
   "//": {
     "--experimental-vm-modules": [
@@ -62,9 +62,6 @@
       ],
       "no [[": [
         "Don't use '[[' (bash syntax). 'npm-alpine' used in CI only provides sh. '[' works."
-      ],
-      "_skinDown": [
-        "sed -i '' is macOS specific. Didn't get '-i''' to work. Fix for Linux, one day?"
       ],
       "_touchEm": [
         "If the *.log files are shared separately (with ':delegate' suffix), they need to pre-exist before the mount.",

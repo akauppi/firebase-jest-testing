@@ -10,8 +10,9 @@
 #     [1]: Also some subfolders are ignored by the CI trigger, say 'sh', ... (the list may change; they should be
 #          included also in '../.gcloudignore').
 #
-# Cloud Build project (private access):
-#   https://console.cloud.google.com/cloud-build/triggers?project=ci-builder
+# Cloud Build project:
+#   - Common CI builder (not project specific; no deploys!)
+#     https://console.cloud.google.com/cloud-build/triggers?project=ci-builder
 #
 # Uses images:
 #   - node:16-alpine

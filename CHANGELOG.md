@@ -1,5 +1,9 @@
 # Changelog
 
+## 9-Apr-22
+
+- Updated to Jest `28.0.0-alpha.8`
+
 ## 7-Mar-22
 
 - CI back in shape!!! 🏋️‍♂️🤾🏃‍♂️
