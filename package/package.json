@@ -34,7 +34,7 @@
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^28.0.0-alpha.8"
+    "jest": "^28.0.0-alpha.11"
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
