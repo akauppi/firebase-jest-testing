@@ -52,12 +52,7 @@ services:
       - "6767:6767"
       # Keep ports aligned with 'firebase.json'
     volumes:
-      # If you use this in your project, just do this (and copy the files from 'sample'):
-      #- .:/work
-
-      # Avoiding duplicate files by mapping to '../sample'.
-      #
-      # Note: You may reach better throughput (tbd. test) on Docker on Mac by using the ':{ro|cached|delegated}' suffices.
+      # Avoiding duplicate files by mapping to '../sample' (in your own project, copy those files here).
       #
       ## --- RO
       - ../sample/firebase.json:/work/firebase.json:ro
@@ -115,11 +110,12 @@ services:
       #   - so has access to Jest
       #
       - ../package:/package:ro
-      - ../node_modules:/node_modules
+      - ../node_modules:/node_modules:ro
 
     working_dir: /work
     command: sh -o pipefail -c
       'npm config set update-notifier false &&
+
       npm run dc:warm-up &&
       touch .healthy &&
       sleep infinity

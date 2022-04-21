@@ -16,10 +16,6 @@
 *   part of the miss).
 *
 * It seems faster to do a simple tool, than push for the fix upstream, or find tools. :S
-*
-* NOTE!!!
-*   The author recommends 'wait-for-it' command line tool, if Docker (Compose) is used for development/testing.
-*   Here, we are not requiring developers to have Docker; thus the self-made tool.
 */
 import { fetch } from 'undici'
 
