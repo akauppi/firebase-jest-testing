@@ -3,7 +3,7 @@
 *
 * Cloud Functions so we have something to test against.
 */
-import functions from 'firebase-functions';
+import functions from 'firebase-functions'
 
 // Firebase modular API (starting 10.0) -> https://modular-admin.web.app/get-started/quick-start
 //

@@ -41,9 +41,6 @@
     "undici": "^4.16.0"
   },
   "//": {
-    "--experimental-vm-modules": [
-      "Needed for now (Feb 2022, ~May 2021~, ~Aug 2020~), to use native ES6 modules with Jest"
-    ],
     "firebase emulators:...": [
       "If httpsCallables are among the emulated features, Cloud Functions needs a project id. The value is used in",
       "construction of the URL for the callable."
@@ -64,7 +61,7 @@
         "Still needed on Node.js 17,16 (not knowing where to track its removal)"
       ],
       "test:rules:all": [
-        "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'invites' fails); 5-Mar-22"
+        "For some reason, '--detect-open-handles' is required for this to pass (otherwise 'userInfo' fails)"
       ],
       "_ci_warm-up": [
         "Warm-up is used to guarantee normal tests run within the 2000 ms timeout."

@@ -1,5 +1,10 @@
 # Changelog
 
+## 26-Apr-22
+
+- Jest `28.0.0` is out! 🥇🎉🎉🎁🎊
+
+
 ## 9-Apr-22
 
 - Updated to Jest `28.0.0-alpha.8`

@@ -9,5 +9,5 @@ export default { ...opts,
   //    works in keeping the _function_ tests running under 2s. This is unfortunate. Higher timeouts so that people
   //    wouldn't suffer from flaky 'npm test' experience.
   //
-  //testTimeout: Math.max( opts.testTimeout, 6000 )
+  testTimeout: Math.max( opts.testTimeout, 6000 )
 }
