@@ -62,9 +62,10 @@ This packages the files (filtered by `../.gcloudignore`), ships them to Cloud Bu
 
 It's a GREAT way to check builds when developing them. You don't need to commit changes to git until the builds work!
 
+<!-- hidden
 >Side note: 
->There is also a `cloud-build-local` tool that allows to run the whole build, locally. However, it's badly maintained (Jun 2021), slow, and needs restarting Docker every now and then. Avoid it.
-
+>There has also been a `cloud-build-local` tool that allows to run the whole build, locally. However, it's badly maintained (Jun 2021), slow, and needs restarting Docker every now and then. Avoid it.
+-->
 
 ## Setting up Triggers
 

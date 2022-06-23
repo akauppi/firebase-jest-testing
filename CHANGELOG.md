@@ -1,5 +1,9 @@
 # Changelog
 
+## 23-Jun-22
+
+- Dependency updates
+
 ## 26-Apr-22
 
 - Jest `28.0.0` is out! 🥇🎉🎉🎁🎊

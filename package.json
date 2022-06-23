@@ -6,7 +6,7 @@
   "type": "module",
   "devDependencies": {
     "firebase-jest-testing": "file:package",
-    "jest": "^28.1.0"
+    "jest": "^28.1.1"
   },
   "//": {
     "scripts": {

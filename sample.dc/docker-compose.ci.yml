@@ -13,6 +13,9 @@
 #
 services:
   emul:
+    # tbd. This is BROKEN at the moment. Want to use 'build' for the local development but 'image' for CI.
+    #     Did not find a way to override 'build:' as if it wasn't provided. #later
+    #image: ${CI_BUILDER_IMAGE:-firebase-ci-builder:11.0.1-node18-npm8}
     network_mode: cloudbuild
     container_name: emul
 

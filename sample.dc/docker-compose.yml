@@ -45,7 +45,8 @@ services:
   # Launch Firebase Emulators, with certain warning and info messages suppressed.
   #
   emul:
-    image: ${CI_BUILDER_IMAGE:-firebase-ci-builder:10.6.0-node16-npm8}
+    build:
+      context: ../firebase-ci-builder.sub
     ports:
       - "4000:4000"
       - "5002:5002"
@@ -124,6 +125,10 @@ services:
       - EMUL_HOST=emul
       - WARM_UP_TIMEOUT=12000
           # seen durations of:
+          #   3237 ms (fns:userInfo, macOS 12.4 Intel, DC 4.9.1 with VirtioFS)
+          #   3330 ms (fns:greet, -''-)
+          #
+          # ---
           #   4381 ms (fns:userInfo, macOS 12.3 Intel, DC 4.6 with VirtioFS)
           #   3310 ms (fns:greet, macOS 12.3 Intel, DC 4.6 with VirtioFS)
           #

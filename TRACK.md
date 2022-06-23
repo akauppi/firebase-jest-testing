@@ -1,31 +1,23 @@
 # Track
 
-
-<!-- don't care
-## firebase-js-sdk #2895 ☠️
-
-- [FR: Immutability when testing Firestore Security Rules](https://github.com/firebase/firebase-js-sdk/issues/2895) 
-   - let's see what Firebase authors reply
-		- not a reply in 14 <_!--was: 13,4--_> months #sniff 😢
-
->Note: The issue is clearly in a wrong project - it should be in `firebase-tools`.
-
-The "change" could be e.g. Firebase emulatore REST API recognizing a `dryRun` flag in the URL. If this were to be used, all behaviour would be as-normal (delete, update, set), but no changes would actually be placed in the data.
-
-We've already built a stable work-around. The benefit would be simplified code (and a ~5% speed improvement).
--->
-
-
 ## Firebase: deprecated `npm` dependencies
 
 - [npm WARN deprecated request@2.88.2: request has been deprecated](https://github.com/firebase/firebase-tools/issues/2215)
 
-When doing a fresh `npm install`, this shows up:
+In `sample`, when doing a fresh `npm install`, this shows up:
 
 ```
 $ npm install
-npm WARN deprecated har-validator@5.1.5: this library is no longer supported
+npm WARN deprecated har-validator@5.1.3: this library is no longer supported
+npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+npm WARN deprecated debug@4.1.1: Debug versions >=3.2.0 <3.2.7 || >=4 <4.3.1 have a low-severity ReDos regression when used in a Node.js environment. It is recommended you upgrade to 3.2.7 or 4.3.1. (https://github.com/visionmedia/debug/issues/797)
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
 npm WARN deprecated request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+npm WARN deprecated @manifoldco/swagger-to-ts@2.1.0: This package has changed to openapi-typescript
+...
 ...
 ```
 
@@ -40,7 +32,9 @@ I've raised the idea in Firebase JS SDK [#4793](https://github.com/firebase/fire
 
 > I filed an internal feature request for this matter, however we can't provide definite timelines [...]
 
-- [ ] Check again / ask ~ Jul 2021
+Nothing's going to happen for that, in the Firebase Issues. It's a graveyard!
+
+- [ ] Check again / ask ~ <strike>Jul 2021</strike> 2024
 - [ ] Maybe move the matter to [firebase-tools](https://github.com/firebase/firebase-tools/issues) if making it takes time (it's currently in wrong place since not a matter for the JS client)
 
 
@@ -80,18 +74,6 @@ Earned the ping-pong emoji because seemingly neither on Firebase nor Jest turf
 -->
 
 
-## Jest FR: tapping to the test timeout
-
-- [Expecting a Promise *not* to complete, in Jest
-](https://stackoverflow.com/questions/67822996/expecting-a-promise-not-to-complete-in-jest) (SO)
-
-The SO entry is stale (no answers; Jun 2021). Looks like a case not currently supported (Jest 27).
-
-- [ ] Prepare a PR to Jest that would implemente this. `#contribute`
-
-  See detailed description in [Jest problems](./Jest%20problems.md).
-
-
 <!-- hidden
 ## Concurrently
 
@@ -117,6 +99,8 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
    
    Let's see when we get the initial comment. ⏱ Aug 2021.
 
+>Note: I (Asko) "solved" this by going to Docker Compose and being able to dictate the Node versions, there.
+
 ## Node.js: Native `fetch`
 
 - ["Fetch API has landed into Node.js"](https://news.ycombinator.com/item?id=30161626) (discussion; Feb 22)
@@ -125,20 +109,19 @@ The SO entry is stale (no answers; Jun 2021). Looks like a case not currently su
 
 - [ ] Track node.js releases; when it's been **stable** without needing the feature flag, for **two major releases** ;) we can let the `undici` imports go. 
 
+	- 18.4.0 has it, without a flag
+
+<!--
+		```
+		$ node -e "console.log(fetch)"
+[AsyncFunction: fetch]
+		```
+-->
 
 ## Undici: `fetch` trouble with `localhost`
 
-- [ ] [TypeError: fetch failed](https://github.com/nodejs/undici/issues/1248)
+- [ ] [TypeError: fetch failed](https://github.com/nodejs/undici/issues/1248) (closed; might still be valid?)
 
    Found a cure, for now (see `config.js`). Once the issue may be resolved, remove the cure.
    
    Note: They claim it cannot be `undici`. Would require more debugging... `#notime`
-
-
-## Google Cloud Build: `docker` image is behind (19.03.9 < 20)
-
-- [ ] [Docker image latest uses outdated client 19.03.8 ...](https://github.com/GoogleCloudPlatform/cloud-builders/issues/778)
-
-   Also see [`cloud-builders/docker`](https://github.com/GoogleCloudPlatform/cloud-builders/tree/master/docker) (GitHub)
-
-We want version 20 because of `docker compose` v2. Have to use a Docker Hub image (no caching), until Google Cloud Build provides a 20-something.
