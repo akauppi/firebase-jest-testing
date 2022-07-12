@@ -27,8 +27,7 @@
     "./firebaseClientLike": "./src/firebaseClientLike/index.js"
   },
   "engines": {
-    "node": ">= 16.5",
-    "npm": ">= 7.7.0 || 8"
+    "node": "18"
   },
   "publishConfig": {
     "tag": "beta"
@@ -37,15 +36,13 @@
     "jest": "^28.1.2"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^5.0.2",
     "firebase-admin": "^11.0.0",
-    "undici": "^4.16.0"
-  },
-  "//dependencies": {
-    "//@google-cloud/firestore": "^5.0.2"
+    "undici": "^5.7.0"
   },
   "//": {
     "engines.node": [
-      "16.5 required by undici (fetch)"
+      "18 needed for built-in fetch"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
@@ -58,7 +55,8 @@
     },
     "dependencies": {
       "@google-cloud/firestore": [
-        "Starting Jest 28.0.0-alpha.8, this seems to be explicitly needed (not coming from 'firebase-admin' dependencies)."
+        "Starting Jest 28.0.0-alpha.8 (and in 28.1.2), this is explicitly needed.",
+        "Native 'sample' works also without it, for some reason. Docker Compose 'sample.dc' doesn't."
       ],
       "firebase-admin": [
         "Seen as an implementation detail (not peer dependency), since the using application does not need to touch it,",

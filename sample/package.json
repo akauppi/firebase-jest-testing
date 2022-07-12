@@ -38,7 +38,7 @@
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
     "firebase-tools": "^11.2.1",
-    "undici": "^4.16.0"
+    "undici": "^5.7.0"
   },
   "//": {
     "firebase emulators:...": [

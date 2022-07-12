@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">= 16.6.1",
-    "npm": ">= 7.7.0 || 8"
+    "node": "18"
   },
   "scripts": {
     "test": "npm run -s _touchEm && docker compose run --rm warmed-up && npm run -s _test1",
@@ -45,10 +44,7 @@
       "construction of the URL for the callable."
     ],
     "engines.node": [
-      "16.5 required by undici (fetch)"
-    ],
-    "engines.npm": [
-      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+      "18 has native 'fetch'"
     ],
     "scripts": {
       "NODE_OPTIONS=--experimental-vm-modules": [

@@ -9,17 +9,18 @@
     "jest": "^28.1.2"
   },
   "//": {
-    "scripts": {
-      "postinstall": [
-        "Do not install 'sample[.dc]' dependencies. This is so that the bleed of warnings from 'firebase-tools' (sample)",
-        "is clearly indicated of affecting 'sample' only - not 'sample.dc'. May be in vain, but... :R"
-      ]
-    },
+    "": [
+      "Do not install 'sample[.dc]' dependencies. This is so that the bleed of warnings from 'firebase-tools' (sample)",
+      "is clearly indicated of affecting 'sample' only - not 'sample.dc'. May be in vain, but... :R"
+    ],
     "devDependencies": [
       "Dependencies common to both 'sample' and 'sample.dc'. This kind-of quirky arrangement allows them to be steered",
       "in one place, but also helps in the ... DRY-ish arrangement of sharing test specifications between the two.",
       "",
-      "When you make a template of either 'sample' or 'sample.dc' for your own use, bring these dependencies in there."
+      "When you make a template of either 'sample' or 'sample.dc' for your own use, bring these dependencies in there.",
+      "",
+      "NOTE: IF YOU CHANGE 'package' dependencies, a re-install at the root is needed FOLLOWED BY re-installs at the 'sample'",
+      "     and 'sample.dc'. Not very intuitive!!! Maybe we want to stop doing this."
     ]
   }
 }

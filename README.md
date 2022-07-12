@@ -39,7 +39,7 @@ Developed with:
 - node 18.4
 - npm 8.12
 
-+ Docker Desktop for Mac 4.9.1
++ Docker Desktop for Mac 4.10.1
   - 3 cores, 2 GB, 512 MB swap
   - VirtioFS enabled
 -->
@@ -68,9 +68,11 @@ Launching the tests is this easy:
 
 ```
 $ cd sample
-$ npm install
+$ npm install --omit=optional
 ...
 ```
+
+>NOTE: Without `--omit=optional`, installing `firebase-tools` takes up 715MB of disk space. With it, 95MB.
 
 ```
 $ npm test

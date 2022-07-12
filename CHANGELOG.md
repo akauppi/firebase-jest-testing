@@ -1,5 +1,10 @@
 # Changelog
 
+## 12-Jul-22
+
+- Moved wholly to Node 18; has build-in `fetch` API
+- FIXED: `sample/functions/package.json` does need to have `@google-cloud/firestore` as a dependency. `sample.dc` was broken, because of this.
+
 ## 23-Jun-22
 
 - Dependency updates

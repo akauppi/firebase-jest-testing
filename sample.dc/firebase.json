@@ -1,1 +1,18 @@
-../sample/firebase.json
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "emulators": {
+    "firestore": {
+      "port": 6767,
+      "host": "0.0.0.0"
+    },
+    "functions": {
+      "port": 5002,
+      "host": "0.0.0.0"
+    }
+  }
+}
