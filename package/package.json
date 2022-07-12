@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.5-beta.1",
+  "version": "0.0.5-beta.2",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -34,7 +34,7 @@
     "tag": "beta"
   },
   "peerDependencies": {
-    "jest": "^28.1.1"
+    "jest": "^28.1.2"
   },
   "dependencies": {
     "firebase-admin": "^11.0.0",

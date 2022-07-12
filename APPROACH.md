@@ -161,7 +161,4 @@ Other times, you do.
 
 ## Using native `fetch()` so early
 
-The underlying aim in moving to Node's native `fetch` API is minimizing the number of dependencies. At one point, `test:fns:greet` started to fail and I it wasn't sure which change had done that. Instead of going up/down `node-fetch` versions, I decided to ditch it.
-
-If someone needs support for Node.js < 17.5, re-establishing that (by adding the `node-fetch` dependency) should be relatively easy. If no-one does, well... :)
-
+The underlying aim in moving to Node's native `fetch` API is minimizing the number of dependencies. At one point, `test:fns:greet` started to fail and it wasn't clear which change had done that. Instead of going up/down `node-fetch` versions, I decided to ditch it.

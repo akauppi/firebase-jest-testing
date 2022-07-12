@@ -2,16 +2,14 @@
 
 ## Requirements
 
-- Docker Desktop for Mac/Windows
+- Docker Desktop for Mac/Windows/Linux
 
 	Recommended resources:
 	
-	- 2 cores
+	- 3 cores
 	- 2 GB RAM
 	- 512 MB swap
 	- 4 GB disk
-
->For Linux, a Docker installation with Docker Compose v2 [plugin installed](https://docs.docker.com/compose/cli-command/#install-on-linux).
 
 
 ## Pull in the dependencies
