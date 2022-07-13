@@ -1,6 +1,6 @@
 {
   "name": "firebase-jest-testing",
-  "version": "0.0.5-beta.2",
+  "version": "0.0.5-beta.3",
   "description": "Tools for testing Firebase back-end features, using Jest.",
   "license": "MIT",
   "repository": {
@@ -37,12 +37,11 @@
   },
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
-    "firebase-admin": "^11.0.0",
-    "undici": "^5.7.0"
+    "firebase-admin": "^11.0.0"
   },
   "//": {
     "engines.node": [
-      "18 needed for built-in fetch"
+      "18: built-in fetch (no need for undici; less dependencies)"
     ],
     "engines.npm": [
       ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"

@@ -3,8 +3,6 @@
 *
 * Handle the actual REST API access, including authentication.
 */
-import { fetch } from 'undici'
-
 import { path_v1 } from './common'
 
 /*

@@ -94,7 +94,7 @@ services:
   #     per 'emul' instance.
   #
   warm-up:
-    image: node:16-alpine
+    image: node:18-alpine
     volumes:
       #- .:/work
 
@@ -123,10 +123,11 @@ services:
       '
     environment:
       - EMUL_HOST=emul
-      - WARM_UP_TIMEOUT=12000
+      - WARM_UP_TIMEOUT=10000
           # seen durations of:
-          #   3237 ms (fns:userInfo, macOS 12.4 Intel, DC 4.9.1 with VirtioFS)
-          #   3330 ms (fns:greet, -''-)
+          #   - macOS 12.4, DC 4.10.1 (3 cores, 2GB, VirtioFS enabled):
+          #     2658 ms (fns:greet)
+          #     3192 ms (fns:userInfo)
           #
           # ---
           #   4381 ms (fns:userInfo, macOS 12.3 Intel, DC 4.6 with VirtioFS)

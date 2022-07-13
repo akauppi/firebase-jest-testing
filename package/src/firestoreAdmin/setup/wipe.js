@@ -7,7 +7,6 @@
 * Clear a whole project's Firestore database.
 */
 import { strict as assert } from 'assert'
-import { fetch } from 'undici'
 
 // Note: project id is *not* available at import time; 'wipe' gets it as a parameter.
 
@@ -25,10 +24,15 @@ async function wipe(projectId) {   // (string) => Promise of ()
     database: `projects/${projectId}/databases/(default)`
   });
 
-  const res = await fetch(uri, {method, body});
+  const res = await fetch(uri, {method, body}).catch( err => {
+    console.error("FETCH failed:", err);
+    throw err;
+  });
+    // Catching errors because the Jest reporting for them is not that great (28.1.2 says just "fetch failed")
     //
-    // No reason to catch the error. If those arise, they are of the form:
+    //  <<
     //    FetchError: request to http://localhost:6767/emulator/v1/projects/rules-test/databases/(default)/documents failed, reason: connect ECONNREFUSED 127.0.0.1:6767
+    //  <<
 
   const status = res.status;
 

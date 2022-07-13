@@ -41,6 +41,10 @@ Only to be used with Jest 28 and above.
 
 ## Requires
 
+- Node 18
+
+   <small>..because it has built-in `fetch`. If you really need Node 16 compatibility ([undici](https://www.npmjs.com/package/undici?activeTab=readme) needs Node >= 16.5), add `import { fetch } from 'undici'` to the sources. It will work. The author just didn't need Node 16 compatibility.</small>
+   
 - Jest 28 as a peer dependency
 
 

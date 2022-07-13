@@ -15,7 +15,6 @@
 import util from 'util'   // for JSON logging
 
 import { strict as assert } from 'assert'
-import { fetch } from 'undici'
 
 import { path_v1 } from './common'
 import { projectId } from '../config'

@@ -17,8 +17,6 @@
 *
 * It seems faster to do a simple tool, than push for the fix upstream, or find tools. :S
 */
-import { fetch } from 'undici'
-
 const t0 = Date.now();
 
 const url = (() => {
@@ -29,6 +27,7 @@ const url = (() => {
     failExit( `Bad param (expecting '[host:]port'): ${arg}`);
   }
 
+  // tbd. check both with Node.js built-in fetch
   // Undici needs '127.0.0.1' to be able to check port 5002 (checking 6767 works also with 'localhost').
   //
   const defHost = '127.0.0.1';    // 'localhost'

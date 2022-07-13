@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">= 16.5",
-    "npm": ">= 7.7.0 || 8"
+    "node": "18"
   },
   "bin": {
     "active-project": "./tools/active-project.sh",
@@ -37,8 +36,7 @@
   "devDependencies": {
     "@local/self": "file:.",
     "concurrently": "^6.3.0",
-    "firebase-tools": "^11.2.1",
-    "undici": "^5.7.0"
+    "firebase-tools": "^11.2.1"
   },
   "//": {
     "firebase emulators:...": [
@@ -46,10 +44,7 @@
       "construction of the URL for the callable."
     ],
     "engines.node": [
-      "16.5 required by undici (fetch)"
-    ],
-    "engines.npm": [
-      ">= 7.7.0 because of this (only matters for 'npm publish') -> https://github.com/npm/cli/issues/2834"
+      "18 has built-in fetch"
     ],
     "devDependencies": {
       "@local/self": [
