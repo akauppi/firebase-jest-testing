@@ -27,6 +27,7 @@
     "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f visitedC.test.js --verbose --all",
     "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
     "-- --": "",
+    "preinstall": "[ ${npm_config_omit:-_} == optional ] || ( echo >&2 \"Please install with '--omit=optional' to save disk space and your time.\"; false )",
     "postinstall": "npm --prefix functions install",
     "--   -": "",
     "prestart": "npm run -s _checkNoActive && npm run -s _skinDown",

@@ -15,10 +15,12 @@ const fn = process.env["FIREBASE_JSON"] || './firebase.json';
 
 // Needed for working with Docker Compose.
 //
-// Note: TRIED desperately to have this provided through some other means. Chiefly, Jest config doesn't allow custom
-//    entries (tried), and even if it did, the given globals are not reflected in Global Setup, only in test environment (Jest 27.0.6).
+// NOTE:
+//  Since moving to Undici (~ 4.14.1), 'fetch' doesn't like 'localhost' but '127.0.0.1' works. Node.js built-in fetch
+//  API behaves the same (18.5.0).
+//  See -> https://github.com/nodejs/undici/issues/1248
 //
-const host = process.env["EMUL_HOST"] || 'localhost';
+const host = process.env["EMUL_HOST"] || '127.0.0.1';
 
 function fail(msg) { throw new Error(msg); }
 
@@ -42,16 +44,7 @@ const FUNCTIONS_URL = (() => {
     console.warning(`No 'emulators.functions.port' in '${fn}': using default (${port}).`);
   }
 
-  // NOTE:
-  //  Undici (4.14.1) 'fetch' doesn't like 'localhost' and 'POST', it seems. This fixes that quietly, for now.
-  //  See -> https://github.com/nodejs/undici/issues/1248
-  //
-  if (true) {
-    return `http://${ host.replace("localhost","127.0.0.1") }:${port}`;
-
-  } else {
-    return `http://${host}:${port}`;
-  }
+  return `http://${host}:${port}`;
 })();
 
 // If Global Setup, pass

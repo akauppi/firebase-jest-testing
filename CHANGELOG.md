@@ -1,5 +1,10 @@
 # Changelog
 
+## 18-Jul-22
+
+- Made `npm install --omit=optional` flag compulsory in `sample`, to save resources.
+- Always using `127.0.0.1` instead of `localhost` (Undici / Node.js built-in Fetch API only work that way).
+
 ## 12-Jul-22
 
 - Moved wholly to Node 18; has build-in `fetch` API
