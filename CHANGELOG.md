@@ -1,5 +1,10 @@
 # Changelog
 
+## 26-Aug-22
+
+- Took away `npm install --omit=optional`. It was not clear, whether it's beneficial after all.
+- Updated dependencies of both `sample` and `package`.
+
 ## 18-Jul-22
 
 - Made `npm install --omit=optional` flag compulsory in `sample`, to save resources.

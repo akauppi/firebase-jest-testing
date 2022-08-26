@@ -11,7 +11,7 @@
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
-    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && wait-for 5002 && npm run -s _test1\"",
+    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"./tools/wait-for 6767 && ./tools/wait-for 5002 && npm run -s _test1\"",
     "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
     "-- ": "",
     "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
@@ -27,17 +27,16 @@
     "test:rules:visited": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js -f visitedC.test.js --verbose --all",
     "test:rules:all": "NODE_OPTIONS=--experimental-vm-modules jest --config test-rules/jest.config.js --verbose --detect-open-handles --all",
     "-- --": "",
-    "preinstall": "[ ${npm_config_omit:-_} == optional ] || ( echo >&2 \"Please install with '--omit=optional' to save disk space and your time.\"; false )",
+    "~~preinstall": "[ ${npm_config_omit:-_} == dev ] || ( echo >&2 \"Please install with '--omit=dev' to save ~disk space.\"; false )",
     "postinstall": "npm --prefix functions install",
     "--   -": "",
     "prestart": "npm run -s _checkNoActive && npm run -s _skinDown",
-    "_checkNoActive": "[ -z $BUILD_ID ] || (! active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
+    "_checkNoActive": "[ -z $BUILD_ID ] || (! ./tools/active-project) || ( >&2 grep -v '^#' step-down.txt; false )",
     "_skinDown": "sed -i '' -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
   },
   "devDependencies": {
-    "@local/self": "file:.",
     "concurrently": "^6.3.0",
-    "firebase-tools": "^11.2.1"
+    "firebase-tools": "^11.8.0"
   },
   "//": {
     "firebase emulators:...": [

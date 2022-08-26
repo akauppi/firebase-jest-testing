@@ -1,6 +1,6 @@
 # firebase-jest-testing
 
-This `README` is for the developers. 
+This `README` is for the developers.
 
 For using the package, see [package/README.md](package/README.md) (that ships with the package).
 
@@ -35,11 +35,11 @@ You can use this sample as a template for your own Firebase backend testing proj
 
 <!--
 Developed with:
-- macOS 12.4
-- node 18.4
-- npm 8.12
+- macOS 12.5.1
+- node 18.7
+- npm 8.15
 
-+ Docker Desktop for Mac 4.10.1
++ Docker Desktop for Mac 4.11.1
   - 3 cores, 2 GB, 512 MB swap
   - VirtioFS enabled
 -->
@@ -68,11 +68,9 @@ Launching the tests is this easy:
 
 ```
 $ cd sample
-$ npm install --omit=optional
+$ npm install
 ...
 ```
-
->NOTE: Without `--omit=optional`, installing `firebase-tools` takes up 715MB of disk space. With it, 95MB.
 
 ```
 $ npm test
