@@ -35,11 +35,11 @@ You can use this sample as a template for your own Firebase backend testing proj
 
 <!--
 Developed with:
-- macOS 12.5.1
-- node 18.7
-- npm 8.15
+- macOS 12.6
+- node 18.9
+- npm 8.19
 
-+ Docker Desktop for Mac 4.11.1
++ Docker Desktop for Mac 4.12.0
   - 3 cores, 2 GB, 512 MB swap
   - VirtioFS enabled
 -->

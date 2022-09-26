@@ -42,6 +42,8 @@ To address all issues, run:
 Run `npm audit` for details.
 ```
 
+>**Update:** On 26-Sep-2022, the count is `29 vulnerabilities (22 moderate, 7 high)`.
+
 22 are too many to even track. I wouldn't take this kind of risks in my project... plus it looks untidy.
 
 Within `sample.dc`, not so:

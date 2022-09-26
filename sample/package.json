@@ -11,7 +11,7 @@
     "wait-for": "./tools/wait-for.js"
   },
   "scripts": {
-    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"./tools/wait-for 6767 && ./tools/wait-for 5002 && npm run -s _test1\"",
+    "test": "concurrently --kill-others --success=first --prefix none \"npm run start\" \"wait-for 6767 && wait-for 5002 && npm run -s _test1\"",
     "_test1": "npm run -s test:fns:all && npm run -s test:rules:all",
     "-- ": "",
     "start": "firebase emulators:start --project=demo-1 | grep -v -E \"Detected demo project|You are not currently authenticated|You are not signed in to the Firebase CLI\"",
@@ -35,8 +35,9 @@
     "_skinDown": "sed -i '' -E 's/(\"node\": \").+(\")/\\116\\2/' functions/package.json"
   },
   "devDependencies": {
+    "@local/self": ".",
     "concurrently": "^6.3.0",
-    "firebase-tools": "^11.8.0"
+    "firebase-tools": "^11.10.0"
   },
   "//": {
     "firebase emulators:...": [
